@@ -8,7 +8,7 @@ export const metadata = {
 export default async function InsiderTradesPage() {
   // Always fetch fresh data
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/insidertrades`,
+    `${process.env.NEXT_PUBLIC_API_URL}/InsiderTrades`,
     { cache: 'no-store' }
   );
   if (!res.ok) {
@@ -21,32 +21,32 @@ export default async function InsiderTradesPage() {
       <h1 className="text-3xl font-bold mb-6">Insider Trades</h1>
       <ul className="space-y-4">
         {trades.map((trade) => (
-          <li
-            key={trade.Id}
-            className="border rounded-xl p-4 shadow-sm"
-          >
-            <div className="flex justify-between">
-              <h2 className="text-2xl font-semibold">
-                {trade.CompanyName}
-              </h2>
-              <span className="text-gray-500">
-                {new Date(trade.Date).toLocaleDateString()}
-              </span>
-            </div>
-            <p>
-              <strong>Insider:</strong> {trade.InsiderName} (
-              {trade.Position})
-            </p>
-            <p>
-              <strong>Type:</strong> {trade.TransactionType}
-            </p>
-            <p>
-              <strong>Shares:</strong> {trade.Shares.toLocaleString()}
-            </p>
-            <p>
-              <strong>Price:</strong> €{trade.Price.toFixed(2)}
-            </p>
-          </li>
+          <li key={trade.id} className="border rounded-xl p-4 shadow-sm">
+  <div className="flex justify-between">
+    <h2 className="text-2xl font-semibold">
+      {trade.companyName}
+    </h2>
+    <time
+      dateTime={new Date(trade.date).toISOString()}
+      className="text-gray-500 text-sm"
+    >
+      {new Date(trade.date).toLocaleDateString()}
+    </time>
+  </div>
+  <p>
+    <strong>Insider:</strong> {trade.insiderName} (
+    {trade.position})
+  </p>
+  <p>
+    <strong>Type:</strong> {trade.transactionType}
+  </p>
+  <p>
+    <strong>Shares:</strong> {trade.shares.toLocaleString()}
+  </p>
+  <p>
+    <strong>Price:</strong> {trade.price.toFixed(2)} Sek
+  </p>
+</li>
         ))}
       </ul>
     </main>

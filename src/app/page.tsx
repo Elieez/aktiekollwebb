@@ -34,35 +34,35 @@ export default async function InsiderTradesPage() {
       <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {trades.map((trade) => (
           <li
-            key={trade.Id}
+            key={trade.id}
             className="border rounded-xl p-6 shadow hover:shadow-md transition"
           >
             <div className="flex justify-between items-center mb-2">
               <h2 className="text-2xl font-semibold">
-                {trade.CompanyName}
+                {trade.companyName}
               </h2>
               <time
-                dateTime={trade.Date.toISOString()}
+                dateTime={trade.date}
                 className="text-gray-500 text-sm"
               >
-                {new Date(trade.Date).toLocaleDateString()}
+                {new Date(trade.date).toLocaleDateString()}
               </time>
             </div>
             <p className="mb-1">
               <span className="font-medium">Insider:</span>{' '}
-              {trade.InsiderName} <em>({trade.Position})</em>
+              {trade.insiderName} <em>({trade.position})</em>
             </p>
             <p className="mb-1">
               <span className="font-medium">Transaction:</span>{' '}
-              {trade.TransactionType}
+              {trade.transactionType}
             </p>
             <p className="mb-1">
               <span className="font-medium">Shares:</span>{' '}
-              {trade.Shares.toLocaleString()}
+              {trade.shares.toLocaleString()}
             </p>
             <p>
               <span className="font-medium">Price:</span> €
-              {trade.Price.toFixed(2)}
+              {trade.price.toFixed(2)}
             </p>
           </li>
         ))}

@@ -1,10 +1,10 @@
 export interface InsiderTrade {
-  Id: number;
-  CompanyName: string;
-  InsiderName: string;
-  Position: string;
-  TransactionType: string;
-  Shares: number;
-  Price: number;
-  Date: Date;
+id: number;
+  companyName: string;
+  insiderName: string;
+  position: string;
+  transactionType: string;
+  shares: number;
+  price: number;
+  date: string;
 }
