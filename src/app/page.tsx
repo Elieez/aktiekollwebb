@@ -1,17 +1,24 @@
 import { InsiderTrade } from '../types';
 import TradesList from '../components/TradesList';
+import BigTradesList from '../components/BigTradesList';
 
 export const metadata = {
-  title: 'Insider Trades',
+  title: 'Insider Trades & Big Trades',
 };
 
 export default async function InsiderTradesPage() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/insidertrades`,
-    { cache: 'no-store' }
-  );
-  if (!res.ok) throw new Error('Failed to load insider trades');
-  const trades: InsiderTrade[] = await res.json();
+  const [tradesRes, bigRes] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades`, {
+      cache: 'no-store',
+    }),
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bigtrades`, {
+      cache: 'no-store',
+    }),
+  ]);
+  if (!tradesRes.ok) throw new Error('Failed to load insider trades');
+  if (!bigRes.ok) throw new Error('Failed to load big trades');
+  const trades: InsiderTrade[] = await tradesRes.json();
+  const bigTrades: InsiderTrade[] = await bigRes.json();
 
   return (
     <div className="container">
@@ -23,6 +30,7 @@ export default async function InsiderTradesPage() {
 
       <main className="main-content">
         <TradesList trades={trades} />
+        <BigTradesList trades={bigTrades} />
       </main>
     </div>
   );
