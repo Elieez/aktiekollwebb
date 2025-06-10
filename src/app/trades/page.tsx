@@ -1,6 +1,5 @@
-import { InsiderTrade } from '../types';
-import Image from 'next/image';
-import './globals.css';
+import { InsiderTrade } from '../../types';
+import '../../app/globals.css';
 import TradesList from '../../components/TradesList';
 import BigTradesList from '../../components/BigTradesList';
 
@@ -8,43 +7,41 @@ export const metadata = {
   title: 'Insider Trades & Big Trades',
 };
 
-export default async function InsiderTradesPage() {
-  const [tradesRes, bigRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades`, {
-      cache: 'no-store',
-    }),
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/bigtrades`, {
-      cache: 'no-store',
-    }),
-  ]);
+export default async function TradesPage() {
+  // Fetch the data once
+  const tradesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades`, {
+    cache: 'no-store',
+  });
+
   if (!tradesRes.ok) throw new Error('Failed to load insider trades');
-  if (!bigRes.ok) throw new Error('Failed to load big trades');
+
   const trades: InsiderTrade[] = await tradesRes.json();
-  const bigTrades: InsiderTrade[] = await bigRes.json();
+
+  // Simulate "big trades" by filtering the top 3
+  const bigTrades: InsiderTrade[] = trades
+    .sort((a, b) => b.shares * b.price - a.shares * a.price) // Sort by trade value
+    .slice(0, 10); // Take the top 10 trades
 
   return (
-    <div className="container">
-      {/* Header */}
-      <div className="header">
-        <div className="title">
-          <Image
-            src="/next.svg"
-            alt="Next.js logo"
-            width={120}
-            height={26}
-            className="dark:invert mr-2 inline"
-            priority
-          />
-          AktieKoll
-        </div>
-        {/* If you want stats/buttons in future, drop them here inside .stats-overview */}
-      </div>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">AktieKoll</h1>
+          <p className="text-gray-600 mt-2">Track the latest insider transactions</p>
+        </header>
 
-      {/* Main content: just the list for now */}
-        <div className="main-content">
-          <TradesList trades={trades} />
-          <BigTradesList trades={bigTrades} />
-        </div>
+        <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Trades Section */}
+          <section className="lg:col-span-2">
+            <TradesList trades={trades} />
+          </section>
+
+          {/* Big Trades Section */}
+          <section className="lg:col-span-1">
+            <BigTradesList trades={bigTrades} />
+          </section>
+        </main>
+      </div>
     </div>
   );
 }
