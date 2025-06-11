@@ -17,10 +17,14 @@ export default async function TradesPage() {
 
   const trades: InsiderTrade[] = await tradesRes.json();
 
-  // Simulate "big trades" by filtering the top 3
-  const bigTrades: InsiderTrade[] = trades
-    .sort((a, b) => b.shares * b.price - a.shares * a.price) // Sort by trade value
-    .slice(0, 10); // Take the top 10 trades
+  // Fetch the big trades data
+  const bigTradesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/top`, {
+    cache: 'no-store',
+  });
+
+  if (!bigTradesRes.ok) throw new Error('Failed to load big trades');
+
+  const bigTrades: InsiderTrade[] = await bigTradesRes.json();
 
   return (
     <div className="min-h-screen bg-white">
