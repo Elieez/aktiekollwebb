@@ -6,5 +6,5 @@ id: number;
   transactionType: string;
   shares: number;
   price: number;
-  date: string;
+  publishingDate: string;
 }

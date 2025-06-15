@@ -88,7 +88,7 @@ export default function TradesList({ trades }: TradesListProps) {
                   </div>
                   <div>
                     <span className="text-gray-500">Date:</span>
-                    <p className="font-medium text-gray-900">{formatDate(trade.date)}</p>
+                    <p className="font-medium text-gray-900">{formatDate(trade.publishingDate)}</p>
                   </div>
                 </div>
               </div>
