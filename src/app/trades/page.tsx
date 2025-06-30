@@ -2,6 +2,7 @@ import { InsiderTrade } from '../../types';
 import '../../app/globals.css';
 import TradesList from '../../components/TradesList';
 import BigTradesList from '../../components/BigTradesList';
+import TradesCount from '../../components/TradesCount';
 
 export const metadata = {
   title: 'Insider Trades & Big Trades',
@@ -26,6 +27,14 @@ export default async function TradesPage() {
 
   const bigTrades: InsiderTrade[] = await bigTradesRes.json();
 
+  const tradesCount = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/top-companies`, {
+    cache: 'no-store',
+  });
+
+  if (!tradesCount.ok) throw new Error('Failed to load trades count');
+
+  const tradesCountData = await tradesCount.json();
+
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -34,7 +43,12 @@ export default async function TradesPage() {
           <p className="text-gray-600 mt-2">Track the latest insider transactions</p>
         </header>
 
-        <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <main className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Trades Count Section */}
+          <section className="lg:col-span-1">
+            <TradesCount companies={tradesCountData} />
+          </section>
+
           {/* Trades Section */}
           <section className="lg:col-span-2">
             <TradesList trades={trades} />
