@@ -33,12 +33,28 @@ const formatNumber = (num: number) => {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('sv-SE', {
-    month: 'short',
-    day: 'numeric',
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const time = date.toLocaleTimeString('sv-SE', {
     hour: '2-digit',
     minute: '2-digit',
   });
+  if (date >= today && date < new Date(today.getTime() + 86400000)) {
+    return `Today ${time}`;
+  }
+
+  if (date >= yesterday && date < today) {
+    return `Yesterday ${time}`;
+  }
+
+  const dayMonth = date
+    .toLocaleDateString('sv-SE', { month: 'short', day: '2-digit' })
+    .replace(/\//g, ' ');
+
+  return `${dayMonth} ${time}`;
 };
 
 export default function TradesList({ trades }: TradesListProps) {
