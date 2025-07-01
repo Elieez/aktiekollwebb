@@ -7,15 +7,15 @@ interface TradesListProps {
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
     case 'Förvärv':
-      return 'text-green-600 bg-green-50';
+      return 'text-green-600 bg-green-100';
     case 'Avyttring':
-      return 'text-red-600 bg-red-50';
+      return 'text-red-600 bg-red-100';
     case 'Teckning':
-      return 'text-blue-600 bg-blue-50';
+      return 'text-blue-600 bg-blue-100';
     case 'Tilldelning':
-      return 'text-purple-600 bg-purple-50';
+      return 'text-purple-600 bg-purple-100';
     default:
-      return 'text-gray-600 bg-gray-50';
+      return 'text-gray-600 bg-gray-100';
   }
 };
 
@@ -29,6 +29,16 @@ const formatCurrency = (amount: number) => {
 
 const formatNumber = (num: number) => {
   return new Intl.NumberFormat('sv-SE').format(num);
+};
+
+const mapPosition = (position: string) => {
+  if (
+    position ===
+    'Annan medlem i bolagets administrations-, lednings- eller kontrollorgan'
+  ) {
+    return 'Övrig medlem i ledning';
+  }
+  return position;
 };
 
 const formatDate = (dateString: string) => {
@@ -75,35 +85,32 @@ export default function TradesList({ trades }: TradesListProps) {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="font-semibold text-gray-900">{trade.companyName}</h3>
-                  <span className="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    Ticker
-                  </span>
                   <span
-                    className={`text-sm font-medium px-2 py-1 rounded ${getTransactionTypeColor(trade.transactionType)}`}>
+                    className={`text-sm font-medium px-2 py-1 rounded-full ${getTransactionTypeColor(trade.transactionType)}`}>
                     {trade.transactionType}
                   </span>
                 </div>
                 
                 <div className="flex items-center gap-2">
                   <p className="text-gray-700">{trade.insiderName}</p>
-                  <p className="text-sm text-gray-500">{trade.position}</p>
+                  <p className="text-sm text-gray-500">{mapPosition(trade.position)}</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Shares:</span>
+                    <span className="text-gray-500">Shares</span>
                     <p className="font-medium text-gray-900">{formatNumber(trade.shares)}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Price/Share:</span>
+                    <span className="text-gray-500">Price/Share</span>
                     <p className="font-medium text-gray-900">{trade.price.toFixed(2)} SEK</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Total Value:</span>
+                    <span className="text-gray-500">Total Value</span>
                     <p className="font-medium text-gray-900">{formatCurrency(trade.shares * trade.price)}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Date:</span>
+                    <span className="text-gray-500">Date</span>
                     <p className="font-medium text-gray-900">{formatDate(trade.publishingDate)}</p>
                   </div>
                 </div>
