@@ -9,7 +9,7 @@ interface TradesCountProps {
 
 export default function TradesCount({ companies }: TradesCountProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
       <h3 className="text-xl font-semibold mb-6">Most Insider Transactions</h3>
       <ul className="space-y-4">
         {companies.map((company) => (

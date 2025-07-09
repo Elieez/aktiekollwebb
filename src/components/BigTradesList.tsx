@@ -12,6 +12,32 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  const time = date.toLocaleTimeString('sv-SE', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  if (date >= today && date < new Date(today.getTime() + 86400000)) {
+    return `Today ${time}`;
+  }
+
+  if (date >= yesterday && date < today) {
+    return `Yesterday ${time}`;
+  }
+
+  const dayMonth = date
+    .toLocaleDateString('sv-SE', { month: 'short', day: '2-digit' })
+    .replace(/\//g, ' ');
+
+  return `${dayMonth} ${time}`;
+};
+
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
     case 'Förvärv':
@@ -58,9 +84,14 @@ export default function BigTradesList({ trades }: TopTradesProps) {
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 truncate">{trade.insiderName}</p>
-                <p className="text-sm font-semibold text-gray-900">
-                  {formatCurrency(trade.shares * trade.price)}
-                </p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {formatCurrency(trade.shares * trade.price)} 
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {formatDate(trade.publishingDate)}
+                    </p>
+                  </div>
               </div>
             </div>
           ))}
