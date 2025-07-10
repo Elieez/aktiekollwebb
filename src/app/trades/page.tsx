@@ -3,6 +3,7 @@ import '../../app/globals.css';
 import TradesList from '../../components/TradesList';
 import BigTradesList from '../../components/BigTradesList';
 import TradesCount from '../../components/TradesCount';
+import CompanySearch from '../../components/SearchBar';
 
 export const metadata = {
   title: 'Insider Trades & Big Trades',
@@ -44,6 +45,11 @@ export default async function TradesPage() {
         </header>
 
         <main className="grid grid-cols-1 lg:grid-cols-6 gap-10">
+          {/* Search Bar Section */}
+          <section className="lg:col-span-1">
+            <CompanySearch />
+          </section>
+
           {/* Trades Count Section */}
           <section className="lg:col-span-1">
             <TradesCount companies={tradesCountData} />
