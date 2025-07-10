@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-export default function CompanySearch({ onSelect }: { onSelect: (symbol: string) => void }) {
+export default function CompanySearch({
+  onSelect,
+}: {
+  onSelect?: (symbol: string) => void;
+}) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<{symbol: string; description: string }[]>([]);
 
@@ -38,7 +42,7 @@ export default function CompanySearch({ onSelect }: { onSelect: (symbol: string)
                             key={r.symbol}
                             className="p-2 hover:bg-gray-100 cursor-pointer"
                             onClick={() => {
-                                onSelect(r.symbol);
+                                onSelect?.(r.symbol);
                                 setQuery('');
                                 setResults([]);
                             }}

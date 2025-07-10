@@ -44,11 +44,11 @@ export default async function TradesPage() {
           <p className="text-gray-600 mt-2">Track the latest insider transactions</p>
         </header>
 
-        <main className="grid grid-cols-1 lg:grid-cols-6 gap-10">
-          {/* Search Bar Section */}
-          <section className="lg:col-span-1">
+          <section className="">
             <CompanySearch />
           </section>
+        <main className="grid grid-cols-1 lg:grid-cols-6 gap-10">
+          {/* Search Bar Section */}
 
           {/* Trades Count Section */}
           <section className="lg:col-span-1">
