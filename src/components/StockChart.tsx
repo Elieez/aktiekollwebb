@@ -9,9 +9,11 @@ import {
   LineElement,
   Tooltip,
   Legend,
+  Filler,
 } from 'chart.js';
+import { brotliDecompress } from 'zlib';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler);
 
 interface DataPoint {
   date: string;
@@ -25,8 +27,9 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
         {
         label: 'Close',
         data: data.map((d) => d.close),
-        borderColor: 'rgb(34, 197, 94)', 
+        borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.2)',
+        fill: true,
         tension: 0.5,
         pointRadius: 0,
         pointHoverRadius: 5,
