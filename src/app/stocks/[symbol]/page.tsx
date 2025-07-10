@@ -5,9 +5,11 @@ interface PageProps {
     params: {symbol: string};
 }
 
-export const metadata = ({ params }: PageProps) => ({
-    title: `${params.symbol.toUpperCase()} Stock Information`,
-});
+export async function generateMetadata({ params }: PageProps) {
+    return {
+        title: `${params.symbol.toUpperCase()} Stock Information`,
+    };
+}
 
 export default async function StockPage({ params }: PageProps) {
     const symbol = params.symbol.toUpperCase();

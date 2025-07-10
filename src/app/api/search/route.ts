@@ -11,10 +11,12 @@ export async function GET(req: Request) {
 
   try {
     const results = await yahooFinance.search(query);
-    const mapped = (results.quotes || []).map((r: any) => ({
-      symbol: r.symbol,
-      description: r.shortname || r.longname || r.symbol,
-    }));
+        const mapped = (results.quotes || [])
+      .filter((r: any) => r.symbol)
+      .map((r: any) => ({
+        symbol: r.symbol,
+        description: r.shortname || r.longname || r.symbol,
+      }));
     return NextResponse.json(mapped);
   } catch (err) {
     console.error('yahoo search failed', err);

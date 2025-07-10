@@ -39,7 +39,7 @@ export default function CompanySearch({
                 <ul className="absolute z-10 bg-white border border-gray-300 rounded w-full mt-1 max-h-60 overflow-y-auto">
                     {results.map((r) => (
                         <li 
-                            key={r.symbol}
+                            key={`${r.symbol}-${r.description}`}
                             className="p-2 hover:bg-gray-100 cursor-pointer"
                             onClick={() => {
                                 onSelect?.(r.symbol);
