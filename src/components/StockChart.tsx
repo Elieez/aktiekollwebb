@@ -22,15 +22,15 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
   const chartData = {
     labels: data.map((d) => d.date),
     datasets: [
-      {
+        {
         label: 'Close',
         data: data.map((d) => d.close),
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.2,
+        borderColor: 'rgb(34, 197, 94)', 
+        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+        tension: 0.5,
         pointRadius: 0,
         pointHoverRadius: 5,
-      },
+        },
     ],
   };
 
@@ -38,7 +38,7 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
     responsive: true,
     interaction: {
         mode: 'index',
-        interesct: 'false',
+        intersect: false,
     },
     plugins: {
       legend: {
