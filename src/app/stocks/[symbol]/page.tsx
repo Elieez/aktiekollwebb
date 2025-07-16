@@ -27,7 +27,7 @@ export default async function StockPage({ params }: PageProps) {
         const start = new Date();
         start.setFullYear(end.getFullYear() - 1);
 
-        const history = await yahooFinance.historical(symbol, {
+        const chartRes = await yahooFinance.chart(symbol, {
             period1: start,
             period2: end,
             interval: '1d',
@@ -38,7 +38,6 @@ export default async function StockPage({ params }: PageProps) {
         try {
             const tradeRes = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/InsiderTrades/company?name=${encodeURIComponent(companyName)}`,
-                { cache: 'no-store' }
             );
             if (tradeRes.ok) {
                 trades = await tradeRes.json();
@@ -47,10 +46,12 @@ export default async function StockPage({ params }: PageProps) {
             console.error('Failed to fetch insider trades:', error);
         }
 
-        const chartData = (history || []).map((h: any) => ({
-            date: h.date.toISOString().split('T')[0],
-            close: h.close,
-        }));
+        const chartData = (chartRes?.meta?.regularMarketTime && chartRes?.quotes?.length > 0)
+            ? chartRes.quotes.map((quote: any, idx: number) => ({
+                date: quote.date ? new Date(quote.date).toISOString().split('T')[0] : '',
+                close: quote.close,
+            }))
+            : [];
 
         return (
             <div className="p-8 space-y-4">
