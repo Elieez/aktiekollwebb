@@ -21,8 +21,9 @@ interface DataPoint {
 }
 
 export default function StockChart({ data }: { data: DataPoint[] }) {
+  const labels = data.map((d) => d.date);
   const chartData = {
-    labels: data.map((d) => d.date),
+    labels,
     datasets: [
         {
         label: 'Close',
@@ -59,7 +60,18 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
     },
     scales: {
       x: {
-        ticks: { display: false },
+        ticks: {
+          maxTicksLimit: 12,
+          maxRotation: 45,
+          minRotation: 30,
+          callback: (_value: any, index: number) => {
+            const date = new Date(labels[index]);
+            return date.toLocaleDateString('default', {
+              month: 'short',
+              day: 'numeric',
+            });
+          },
+        },
         grid: { display: false },
       },
       y: {
@@ -68,5 +80,9 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
     },
   } as const;
 
-  return <Line data={chartData} options={options} />;
+  return (
+    <div className="border rounded-md border-gray-300 p-2">
+      <Line data={chartData} options={options} />
+    </div>
+  );
 }

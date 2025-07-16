@@ -1,6 +1,8 @@
 import yahooFinance from 'yahoo-finance2';
 import { notFound } from 'next/navigation';
 import StockChart from '@/components/StockChart';
+import TradesList from '@/components/TradesList';
+import { InsiderTrade } from '@/types';
 
 interface PageProps {
     params: {symbol: string};
@@ -31,6 +33,20 @@ export default async function StockPage({ params }: PageProps) {
             interval: '1d',
         });
 
+        const companyName = quote.longName || quote.shortName || symbol;
+        let trades: InsiderTrade[] = [];
+        try {
+            const tradeRes = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/InsiderTrades/company?name=${encodeURIComponent(companyName)}`,
+                { cache: 'no-store' }
+            );
+            if (tradeRes.ok) {
+                trades = await tradeRes.json();
+            }
+        } catch (error) {
+            console.error('Failed to fetch insider trades:', error);
+        }
+
         const chartData = (history || []).map((h: any) => ({
             date: h.date.toISOString().split('T')[0],
             close: h.close,
@@ -52,6 +68,10 @@ export default async function StockPage({ params }: PageProps) {
                     <StockChart data={chartData} />
                 </div>
             )}
+            <div className="pt-8">
+                <h2 className="text-xl font-semibold mb-4">Insider Transactions</h2>
+                <TradesList trades={trades} />
+            </div>
         </div>
     )
     } catch (error) {
