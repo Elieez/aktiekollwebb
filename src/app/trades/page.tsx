@@ -4,30 +4,22 @@ import BigTradesList from "../../components/BigTradesList";
 import TradesCount from "@/components/TradesCount";
 import CompanySearchWithRouter from "../../components/CompanySearchWithRouter";
 
-import { get } from "@/lib/api/utils";
-import { InsiderTrade } from "@/lib/types/InsiderTrade";
-import { CompanyTradeCount } from "@/lib/types/CompanyTradeCount";
+import {
+  getCompanyTradesCountSell,
+  getBigInsiderTrades,
+  getCompanyTradesCountBuy,
+  getInsiderTrades,
+} from "@/lib/api/insider-trades";
 
 export const metadata = {
   title: "Insider Trades & Big Trades",
 };
 
 export default async function TradesPage() {
-  
-  const trades = await get<InsiderTrade[]>("insidertrades", {
-    cache: "no-store",
-  });
-  const bigTrades = await get<InsiderTrade[]>("insidertrades/top", {
-    cache: "no-store",
-  });
-  const tradesCountBuyData = await get<CompanyTradeCount[]>(
-    "insidertrades/count-buy",
-    { cache: "no-store" }
-  );
-  const tradesCountSellData = await get<CompanyTradeCount[]>(
-    "insidertrades/count-sell",
-    { cache: "no-store" }
-  );
+  const trades = await getInsiderTrades();
+  const bigTrades = await getBigInsiderTrades();
+  const tradesCountBuy = await getCompanyTradesCountBuy();
+  const tradesCountSell = await getCompanyTradesCountSell();
 
   return (
     <div className="min-h-screen bg-white">
@@ -40,8 +32,8 @@ export default async function TradesPage() {
 
           {/* Trades Count Section */}
           <section className="lg:col-span-1">
-            <TradesCount companies={tradesCountBuyData} />
-            <TradesCount companies={tradesCountSellData} />
+            <TradesCount companies={tradesCountBuy} />
+            <TradesCount companies={tradesCountSell} />
           </section>
 
           {/* Trades Section */}
