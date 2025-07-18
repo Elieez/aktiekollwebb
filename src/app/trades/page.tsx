@@ -28,13 +28,23 @@ export default async function TradesPage() {
 
   const bigTrades: InsiderTrade[] = await bigTradesRes.json();
 
-  const tradesCount = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/top-companies`, {
+  // Fetch the trades buy count data
+  const tradesCountBuy = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/count-buy`, {
     cache: 'no-store',
   });
 
-  if (!tradesCount.ok) throw new Error('Failed to load trades count');
+  if (!tradesCountBuy.ok) throw new Error('Failed to load trades count');
 
-  const tradesCountData = await tradesCount.json();
+  const tradesCountBuyData = await tradesCountBuy.json();
+
+    // Fetch the trades sell count data
+  const tradesCountSell = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/count-sell`, {
+    cache: 'no-store',
+  });
+
+  if (!tradesCountSell.ok) throw new Error('Failed to load trades count');
+
+  const tradesCountSellData = await tradesCountSell.json();
 
   return (
     <div className="min-h-screen bg-white">
@@ -52,7 +62,8 @@ export default async function TradesPage() {
 
           {/* Trades Count Section */}
           <section className="lg:col-span-1">
-            <TradesCount companies={tradesCountData} />
+            <TradesCount companies={tradesCountBuyData} />
+            <TradesCount companies={tradesCountSellData} />
           </section>
 
           {/* Trades Section */}

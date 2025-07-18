@@ -2,7 +2,9 @@ import yahooFinance from 'yahoo-finance2';
 import { notFound } from 'next/navigation';
 import StockChart from '@/components/StockChart';
 import TradesList from '@/components/TradesList';
+import PieChart from '@/components/PieChart';
 import { InsiderTrade } from '@/types';
+
 
 interface PageProps {
     params: {symbol: string};
@@ -53,6 +55,25 @@ export default async function StockPage({ params }: PageProps) {
             }))
             : [];
 
+        const query = `days=365&top=&companyName=${encodeURIComponent(companyName)}`;
+
+        const companyTradeCountsBuy = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/count-buy?${query}`, {
+            cache: 'no-store',
+        });
+
+        if (!companyTradeCountsBuy.ok) throw new Error('Failed to load buy trades count');
+
+        const companyTradeCountsSell = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/count-sell?${query}`, {
+            cache: 'no-store',
+        });
+
+        if (!companyTradeCountsSell.ok) throw new Error('Failed to load sell trades count');
+        
+        const buyCount = (await companyTradeCountsBuy.json())[0]?.transactionCount || 0;
+        const sellCount = (await companyTradeCountsSell.json())[0]?.transactionCount || 0;
+
+        const companyTradeCounts = [buyCount, sellCount];
+
         return (
             <div className="p-8 space-y-4">
             <h1 className="text-2xl font-bold">
@@ -69,6 +90,9 @@ export default async function StockPage({ params }: PageProps) {
                     <StockChart data={chartData} />
                 </div>
             )}
+            <div className="max-w-xs mx-auto">
+                <PieChart data={companyTradeCounts} />
+            </div>
             <div className="pt-8">
                 <h2 className="text-xl font-semibold mb-4">Insider Transactions</h2>
                 <TradesList trades={trades} />
