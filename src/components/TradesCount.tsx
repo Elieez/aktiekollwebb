@@ -1,7 +1,4 @@
-interface CompanyTradeCount {
-  companyName: string;
-  transactionCount: number;
-}
+import { CompanyTradeCount } from "@/lib/types/CompanyTradeCount";
 
 interface TradesCountProps {
   companies: CompanyTradeCount[];
