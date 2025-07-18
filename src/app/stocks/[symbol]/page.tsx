@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import StockChart from '@/components/StockChart';
 import TradesList from '@/components/TradesList';
 import PieChart from '@/components/PieChart';
-import { InsiderTrade } from '@/types';
+import { InsiderTrade } from '@/lib/types/InsiderTrade';
 
 
 interface PageProps {
