@@ -1,5 +1,5 @@
 export interface InsiderTrade {
-id: number;
+  id: number;
   companyName: string;
   insiderName: string;
   position: string;

@@ -1,69 +1,39 @@
-import { InsiderTrade } from '../../types';
-import '../../app/globals.css';
-import TradesList from '../../components/TradesList';
-import BigTradesList from '../../components/BigTradesList';
-import TradesCount from '../../components/TradesCount';
-import CompanySearchWithRouter from '../../components/CompanySearchWithRouter';
+import "../../app/globals.css";
+import TradesList from "../../components/TradesList";
+import BigTradesList from "../../components/BigTradesList";
+import TradesCount from "@/components/TradesCount";
+import CompanySearchWithRouter from "../../components/CompanySearchWithRouter";
+
+import {
+  getCompanyTradesCountSell,
+  getBigInsiderTrades,
+  getCompanyTradesCountBuy,
+  getInsiderTrades,
+} from "@/lib/api/insider-trades";
 
 export const metadata = {
-  title: 'Insider Trades & Big Trades',
+  title: "Insider Trades & Big Trades",
 };
 
 export default async function TradesPage() {
-  // Fetch the data once
-  const tradesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades`, {
-    cache: 'no-store',
-  });
-
-  if (!tradesRes.ok) throw new Error('Failed to load insider trades');
-
-  const trades: InsiderTrade[] = await tradesRes.json();
-
-  // Fetch the big trades data
-  const bigTradesRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/top`, {
-    cache: 'no-store',
-  });
-
-  if (!bigTradesRes.ok) throw new Error('Failed to load big trades');
-
-  const bigTrades: InsiderTrade[] = await bigTradesRes.json();
-
-  // Fetch the trades buy count data
-  const tradesCountBuy = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/count-buy`, {
-    cache: 'no-store',
-  });
-
-  if (!tradesCountBuy.ok) throw new Error('Failed to load trades count');
-
-  const tradesCountBuyData = await tradesCountBuy.json();
-
-    // Fetch the trades sell count data
-  const tradesCountSell = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/insidertrades/count-sell`, {
-    cache: 'no-store',
-  });
-
-  if (!tradesCountSell.ok) throw new Error('Failed to load trades count');
-
-  const tradesCountSellData = await tradesCountSell.json();
+  const trades = await getInsiderTrades();
+  const bigTrades = await getBigInsiderTrades();
+  const tradesCountBuy = await getCompanyTradesCountBuy();
+  const tradesCountSell = await getCompanyTradesCountSell();
 
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">AktieKoll</h1>
-          <p className="text-gray-600 mt-2">Track the latest insider transactions</p>
-        </header>
-
-          <section className="">
-            <CompanySearchWithRouter />
-          </section>
+        <section className="">
+          <CompanySearchWithRouter />
+        </section>
         <main className="grid grid-cols-1 lg:grid-cols-6 gap-10">
           {/* Search Bar Section */}
 
           {/* Trades Count Section */}
           <section className="lg:col-span-1">
-            <TradesCount companies={tradesCountBuyData} />
-            <TradesCount companies={tradesCountSellData} />
+            <TradesCount companies={tradesCountBuy} />
+            <TradesCount companies={tradesCountSell} />
           </section>
 
           {/* Trades Section */}

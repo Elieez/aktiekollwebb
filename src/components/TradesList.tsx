@@ -1,4 +1,4 @@
-import { InsiderTrade } from '../types';
+import { InsiderTrade } from "@/lib/types/InsiderTrade";
 
 interface TradesListProps {
   trades: InsiderTrade[];
