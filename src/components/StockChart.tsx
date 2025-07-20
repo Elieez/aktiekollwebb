@@ -11,7 +11,7 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { brotliDecompress } from 'zlib';
+import type { TooltipItem } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler);
 
@@ -53,10 +53,10 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
         intersect: false,
         axis: 'x',
         callbacks: {
-            title: (items: any) => items[0].label,
-            label: (ctx: any) => `Price: ${ctx.formattedValue}`,
-            },
-        },
+              title: (items: TooltipItem<'line'>[]) => items[0].label,
+              label: (ctx: TooltipItem<'line'>) => `Price: ${ctx.formattedValue}`,
+              },
+          },
     },
     scales: {
       x: {
@@ -64,7 +64,7 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
           maxTicksLimit: 12,
           maxRotation: 45,
           minRotation: 30,
-          callback: (_value: any, index: number) => {
+          callback: (_value: number | string, index: number) => {
             const date = new Date(labels[index]);
             return date.toLocaleDateString('default', {
               month: 'short',

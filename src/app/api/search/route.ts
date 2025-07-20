@@ -1,6 +1,12 @@
 import yahooFinance from 'yahoo-finance2';
 import { NextResponse } from 'next/server';
 
+interface QuoteResult {
+  symbol: string;
+  shortname?: string;
+  longname?: string;
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('query');
@@ -11,12 +17,22 @@ export async function GET(req: Request) {
 
   try {
     const results = await yahooFinance.search(query);
-        const mapped = (results.quotes || [])
-      .filter((r: any) => r.symbol)
-      .map((r: any) => ({
-        symbol: r.symbol,
-        description: r.shortname || r.longname || r.symbol,
-      }));
+    const raw = results.quotes ?? [];
+
+    const quotes = raw.filter(
+      (item) =>
+        'symbol' in item &&
+        typeof item.symbol === 'string'
+    );
+
+    const mapped = quotes.map((r) => {
+      const quote = r as QuoteResult;
+      return {
+        symbol: quote.symbol,
+        description: quote.shortname ?? quote.longname ?? quote.symbol,
+      };
+    });
+
     return NextResponse.json(mapped);
   } catch (err) {
     console.error('yahoo search failed', err);
