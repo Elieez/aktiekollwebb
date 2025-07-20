@@ -4,6 +4,7 @@ import StockChart from '@/components/StockChart';
 import TradesList from '@/components/TradesList';
 import PieChart from '@/components/PieChart';
 import { InsiderTrade } from '@/lib/types/InsiderTrade';
+import Page from '@/components/Page';
 
 
 interface PageProps {
@@ -75,29 +76,31 @@ export default async function StockPage({ params }: PageProps) {
         const companyTradeCounts = [buyCount, sellCount];
 
         return (
-            <div className="p-8 space-y-4">
-            <h1 className="text-2xl font-bold">
-                {quote.longName || quote.shortName || symbol} ({quote.symbol})
-            </h1>
-            <p>
-                Price: {quote.regularMarketPrice} {quote.currency}
-            </p>
-            {typeof quote.regularMarketChangePercent === 'number' && (
-                <p>Change: {quote.regularMarketChangePercent.toFixed(2)}%</p>
-            )}
-            {chartData.length > 0 && (
-                <div className="mx-auto h-150 max-w-4xl">
-                    <StockChart data={chartData} />
+            <Page>
+                <div className="p-8 space-y-4">
+                <h1 className="text-2xl font-bold">
+                    {quote.longName || quote.shortName || symbol} ({quote.symbol})
+                </h1>
+                <p>
+                    Price: {quote.regularMarketPrice} {quote.currency}
+                </p>
+                {typeof quote.regularMarketChangePercent === 'number' && (
+                    <p>Change: {quote.regularMarketChangePercent.toFixed(2)}%</p>
+                )}
+                {chartData.length > 0 && (
+                    <div className="mx-auto h-150 max-w-4xl">
+                        <StockChart data={chartData} />
+                    </div>
+                )}
+                <div className="max-w-xs mx-auto">
+                    <PieChart data={companyTradeCounts} />
                 </div>
-            )}
-            <div className="max-w-xs mx-auto">
-                <PieChart data={companyTradeCounts} />
-            </div>
-            <div className="pt-8">
-                <h2 className="text-xl font-semibold mb-4">Insider Transactions</h2>
-                <TradesList trades={trades} />
-            </div>
-        </div>
+                <div className="pt-8">
+                    <h2 className="text-xl font-semibold mb-4">Insider Transactions</h2>
+                    <TradesList trades={trades} />
+                </div>
+                        </div>
+            </Page>
     )
     } catch (error) {
         console.error('Failed to fetch stock data:', error);
