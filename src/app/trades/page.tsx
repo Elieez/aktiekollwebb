@@ -1,14 +1,15 @@
-import "../../app/globals.css";
+import Page from "@/components/Page";
+import CompanySearch from "@/components/SearchBar";
+import Section from "@/components/Section";
+import TradesCount from "@/components/TradesCount";
 import TradesList from "../../components/TradesList";
 import BigTradesList from "../../components/BigTradesList";
-import TradesCount from "@/components/TradesCount";
-import CompanySearchWithRouter from "../../components/CompanySearchWithRouter";
 
 import {
-  getCompanyTradesCountSell,
+  getInsiderTrades,
   getBigInsiderTrades,
   getCompanyTradesCountBuy,
-  getInsiderTrades,
+  getCompanyTradesCountSell,
 } from "@/lib/api/insider-trades";
 
 export const metadata = {
@@ -21,32 +22,27 @@ export default async function TradesPage() {
   const tradesCountBuy = await getCompanyTradesCountBuy();
   const tradesCountSell = await getCompanyTradesCountSell();
 
+  const spacing = "space-y-6";
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section className="">
-          <CompanySearchWithRouter />
-        </section>
-        <main className="grid grid-cols-1 lg:grid-cols-6 gap-10">
-          {/* Search Bar Section */}
-
-          {/* Trades Count Section */}
-          <section className="lg:col-span-1">
+    <Page className={`${spacing}`}>
+      <CompanySearch />
+      <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
+        <div className={`lg:w-1/6 ${spacing}`}>
+          <Section>
             <TradesCount companies={tradesCountBuy} />
+          </Section>
+          <Section>
             <TradesCount companies={tradesCountSell} />
-          </section>
-
-          {/* Trades Section */}
-          <section className="lg:col-span-3">
-            <TradesList trades={trades} />
-          </section>
-
-          {/* Big Trades Section */}
-          <section className="lg:col-span-2">
-            <BigTradesList trades={bigTrades} />
-          </section>
-        </main>
+          </Section>
+        </div>
+        <Section className="lg:w-3/6">
+          <TradesList trades={trades} />
+        </Section>
+        <Section className="lg:w-2/6">
+          <BigTradesList trades={bigTrades} />
+        </Section>
       </div>
-    </div>
+    </Page>
   );
 }
