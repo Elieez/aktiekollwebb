@@ -69,7 +69,7 @@ const formatDate = (dateString: string) => {
 
 export default function TradesList({ trades }: TradesListProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div>
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-900">Recent Transactions</h2>
         <p className="text-sm text-gray-600 mt-1">Latest insider trading activity</p>

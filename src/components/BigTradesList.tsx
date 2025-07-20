@@ -55,7 +55,7 @@ const getTransactionTypeColor = (type: string) => {
 
 export default function BigTradesList({ trades }: TopTradesProps) {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+    <div>
       <div className="p-6 border-b border-gray-200">
         <h2 className="text-xl font-semibold text-gray-900">Top 10 Trades</h2>
         <p className="text-sm text-gray-600 mt-1">Highest value transactions</p>
