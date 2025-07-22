@@ -14,14 +14,25 @@ export async function getBigInsiderTrades() {
   });
 }
 
-export async function getCompanyTradesCountBuy() {
-  return await get<CompanyTradeCount[]>("insidertrades/count-buy", {
-    cache: "no-store",
-  });
+export async function getCompanyTradesCountBuy(queryParams?: string) {
+  return await get<CompanyTradeCount[]>(
+    `insidertrades/count-buy${queryParams ? `?${queryParams}` : ""}`,
+    {
+      cache: "no-store",
+    }
+  );
 }
 
-export async function getCompanyTradesCountSell() {
-  return await get<CompanyTradeCount[]>("insidertrades/count-sell", {
-    cache: "no-store",
-  });
+export async function getCompanyTradesCountSell(queryParams?: string) {
+  return await get<CompanyTradeCount[]>(
+    `insidertrades/count-sell${queryParams ? `?${queryParams}` : ""}`,
+    {
+      cache: "no-store",
+    }
+  );
+}
+
+export async function getInsiderTradesByCompanyName(companyName: string) {
+  const encoded = encodeURIComponent(companyName);
+  return await get<InsiderTrade[]>(`insidertrades/company?name=${encoded}`);
 }
