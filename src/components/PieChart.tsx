@@ -16,20 +16,19 @@ export default function PieChart({ data }: PieChartProps) {
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    // Destroy any previous chart to prevent overlap
     if (chartRef.current) {
       chartRef.current.destroy();
     }
 
     chartRef.current = new Chart(canvasRef.current, {
-      type: 'pie',
+      type: 'doughnut',
       data: {
         labels: ['Förvärv', 'Avyttring'],
         datasets: [
           {
             label: 'Insider Transactions',
             data,
-            backgroundColor: ['#4CAF50', '#F44336'],
+            backgroundColor: ['#22c55e', '#F44336'],
             borderWidth: 1,
           },
         ],
@@ -39,6 +38,10 @@ export default function PieChart({ data }: PieChartProps) {
         plugins: {
           legend: {
             position: 'bottom',
+            labels: {
+              usePointStyle: true, 
+              pointStyle: 'circle', 
+            },
           },
         },
       },
@@ -49,5 +52,5 @@ export default function PieChart({ data }: PieChartProps) {
     };
   }, [data]);
 
-  return <canvas ref={canvasRef} className="max-w-sm mx-auto" />;
+  return <canvas ref={canvasRef}/>;
 }
