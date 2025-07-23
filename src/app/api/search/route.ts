@@ -1,5 +1,6 @@
 import yahooFinance from 'yahoo-finance2';
 import { NextResponse } from 'next/server';
+import { cleanCompanyName } from '@/lib/api/utils';
 
 interface QuoteResult {
   symbol: string;
@@ -26,10 +27,7 @@ export async function GET(req: Request) {
       .filter(r => Boolean(r.symbol))
       .map(r => {
         const rawName = r.longname ?? r.shortname ?? r.symbol;
-        const description = rawName
-        .replace(/\s*[\(\（][^)]*?publ[^)]*?[\)\）]\s*/gi, '')
-        .replace(/\u00A0/g, ' ')
-        .trim();
+        const description = cleanCompanyName(rawName);
         return {
           symbol: r.symbol,
           description,

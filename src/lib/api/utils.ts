@@ -13,3 +13,10 @@ export async function get<T>(endpoint: string, headers? : HeadersInit): Promise<
 
   return (await response.json()) as T;
 }
+
+export function cleanCompanyName(name: string): string {
+  return name
+    .replace(/\s*[\(\（][^)]*?publ[^)]*?[\)\）]\s*/gi, '')
+    .replace(/\u00A0/g, ' ')
+    .trim();
+}

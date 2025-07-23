@@ -4,6 +4,7 @@ import StockChart from "@/components/StockChart";
 import TradesList from "@/components/TradesList";
 import PieChart from "@/components/PieChart";
 import Section from "@/components/Section";
+import { cleanCompanyName } from "@/lib/api/utils";
 
 import { notFound } from "next/navigation";
 import {
@@ -41,7 +42,8 @@ export default async function StockPage({ params }: PageProps) {
       interval: "1d",
     });
 
-    const companyName = quote.longName || quote.shortName || symbol;
+    const rawCompanyName = quote.longName || quote.shortName || symbol;
+    const companyName = cleanCompanyName(rawCompanyName);
     const trades = await getInsiderTradesByCompanyName(companyName);
 
     const chartData =
@@ -72,7 +74,7 @@ export default async function StockPage({ params }: PageProps) {
                     <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">
-                                {quote.longName || quote.shortName || symbol}
+                                {companyName}
                             </h1>
                             <p className="text-xl font-medium text-gray-500">({quote.symbol})</p>
                         </div>
