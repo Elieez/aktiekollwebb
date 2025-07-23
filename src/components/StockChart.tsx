@@ -40,9 +40,10 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: {
-        mode: 'index',
-        intersect: false,
+      mode: 'index',
+      intersect: false,
     },
     plugins: {
       legend: {
@@ -81,7 +82,7 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
   } as const;
 
   return (
-    <div className="border rounded-md border-gray-300 p-2">
+    <div style={{ height: '100%', width: '100%' }}>
       <Line data={chartData} options={options} />
     </div>
   );

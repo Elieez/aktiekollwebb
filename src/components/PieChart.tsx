@@ -1,53 +1,40 @@
-'use client';
-
-import { useEffect, useRef } from 'react';
-import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
-
-Chart.register(ArcElement, Tooltip, Legend);
-
 interface PieChartProps {
   data: number[];
+  title?: string;
 }
 
-export default function PieChart({ data }: PieChartProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const chartRef = useRef<Chart | null>(null);
+export default function PieChart({ data, title = 'Trades Last 12 Months' }: PieChartProps) {
+  const [buy, sell] = data;
+  const total = buy + sell;
 
-  useEffect(() => {
-    if (!canvasRef.current) return;
+  if (total === 0) {
+    return null;
+  }
 
-    // Destroy any previous chart to prevent overlap
-    if (chartRef.current) {
-      chartRef.current.destroy();
-    }
+  const buyDeg = (buy / total) * 360;
+  const style = {
+    background: `conic-gradient(#22c55e 0deg ${buyDeg}deg, #F44336 ${buyDeg}deg 360deg)`,
+  } as const;
 
-    chartRef.current = new Chart(canvasRef.current, {
-      type: 'pie',
-      data: {
-        labels: ['Förvärv', 'Avyttring'],
-        datasets: [
-          {
-            label: 'Insider Transactions',
-            data,
-            backgroundColor: ['#4CAF50', '#F44336'],
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom',
-          },
-        },
-      },
-    });
+  return (
+    <div className="flex flex-col items-center">
+      <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
 
-    return () => {
-      chartRef.current?.destroy();
-    };
-  }, [data]);
+      <div className="relative w-48 h-48">
+        <div className="w-full h-full rounded-full" style={style} />
+        <div className="absolute inset-4 bg-white rounded-full" />
+      </div>
 
-  return <canvas ref={canvasRef} className="max-w-sm mx-auto" />;
+      <div className="flex justify-center mt-2 space-x-4 text-sm">
+        <div className="flex items-center">
+          <span className="inline-block w-3 h-3 mr-1 rounded-full bg-green-500" />
+          <span>{buy} Förvärv</span>
+        </div>
+        <div className="flex items-center">
+          <span className="inline-block w-3 h-3 mr-1 rounded-full bg-red-500" />
+          <span>{sell} Avyttring</span>
+        </div>
+      </div>
+    </div>
+  );
 }

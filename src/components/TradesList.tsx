@@ -76,6 +76,9 @@ export default function TradesList({ trades }: TradesListProps) {
       </div>
 
       <div className="overflow-hidden">
+        {trades.length === 0 && (
+          <p className="p-6 text-center text-gray-500">No Transactions</p>
+        )}
         {trades.map((trade) => (
           <div
             key={trade.id}
