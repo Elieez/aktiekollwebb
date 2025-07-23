@@ -67,6 +67,7 @@ export default async function StockPage({ params }: PageProps) {
     const sellCount = companyTradeCountsSell[0]?.transactionCount || 0;
 
     const companyTradeCounts = [buyCount, sellCount];
+    const hasTransactions = trades.length > 0;
 
     return (
             <Page>
@@ -96,13 +97,16 @@ export default async function StockPage({ params }: PageProps) {
                     </header>
                     <div className="border-b border-gray-200 my-4 -mx-8" />
                     {chartData.length > 0 && (
-                        <div className="mx-auto max-w-4xl flex items-center space-x-6">
-                            <div className="flex-1 border rounded-md border-gray-300 stock-chart-container h-96">
+                        <div className={`mx-auto max-w-4xl flex items-center space-x-6`}>
+                          <div 
+                              className={`${hasTransactions ? 'flex-1' : 'w-full'} border rounded-md border-gray-300 stock-chart-container h-96`}>
                                 <StockChart data={chartData} />
                             </div>
+                            {hasTransactions && (
                             <div className="w-60">
                                 <PieChart data={companyTradeCounts} />
                             </div>
+                            )}
                         </div>
                     )}
                     <div className="pt-8">
