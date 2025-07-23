@@ -14,20 +14,27 @@ import {
 } from "@/lib/api/insider-trades";
 
 interface PageProps {
-  params: { symbol: string };
+  params: Promise<{ symbol: string }>;
+}
+
+interface ChartQuote {
+  date?: string | number | Date;
+  close: number;
 }
 
 export async function generateMetadata({ params }: PageProps) {
+  const { symbol } = await params;
   return {
-    title: `${params.symbol.toUpperCase()} Stock Information`,
+    title: `${symbol.toUpperCase()} Stock Information`,
   };
 }
 
 export default async function StockPage({ params }: PageProps) {
-  const symbol = params.symbol.toUpperCase();
+  const { symbol } = await params;
+  const upperSymbol = symbol.toUpperCase();
 
   try {
-    const quote = await yahooFinance.quote(symbol);
+    const quote = await yahooFinance.quote(upperSymbol);
     if (!quote) {
       return notFound();
     }
@@ -36,29 +43,27 @@ export default async function StockPage({ params }: PageProps) {
     const start = new Date();
     start.setFullYear(end.getFullYear() - 1);
 
-    const chartRes = await yahooFinance.chart(symbol, {
+    const chartRes = await yahooFinance.chart(upperSymbol, {
       period1: start,
       period2: end,
       interval: "1d",
     });
 
-    const rawCompanyName = quote.longName || quote.shortName || symbol;
+    const rawCompanyName = quote.longName || quote.shortName || upperSymbol;
     const companyName = cleanCompanyName(rawCompanyName);
     const trades = await getInsiderTradesByCompanyName(companyName);
 
     const chartData =
       chartRes?.meta?.regularMarketTime && chartRes?.quotes?.length > 0
-        ? chartRes.quotes.map((quote: any, idx: number) => ({
-            date: quote.date
-              ? new Date(quote.date).toISOString().split("T")[0]
-              : "",
-            close: quote.close,
+        ? (chartRes.quotes as ChartQuote[]).map((q) => ({
+            date: q.date
+              ? new Date(q.date).toISOString().split('T')[0]
+              : '',
+              close: q.close,
           }))
         : [];
 
-    const query = `days=365&top=&companyName=${encodeURIComponent(
-      companyName
-    )}`;
+    const query = `days=365&top=&companyName=${encodeURIComponent(companyName)}`;
 
     const companyTradeCountsBuy = await getCompanyTradesCountBuy(query);
     const companyTradeCountsSell = await getCompanyTradesCountSell(query);
