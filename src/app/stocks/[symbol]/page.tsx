@@ -4,7 +4,7 @@ import StockChart from "@/components/StockChart";
 import TradesList from "@/components/TradesList";
 import PieChart from "@/components/PieChart";
 import Section from "@/components/Section";
-import { cleanCompanyName } from "@/lib/api/utils";
+import { cleanCompanyName } from "@/lib/utils";
 
 import { notFound } from "next/navigation";
 import {

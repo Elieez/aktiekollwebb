@@ -1,6 +1,6 @@
 import yahooFinance from 'yahoo-finance2';
 import { NextResponse } from 'next/server';
-import { cleanCompanyName } from '@/lib/api/utils';
+import { cleanCompanyName } from '@/lib/utils';
 
 interface QuoteResult {
   symbol: string;
