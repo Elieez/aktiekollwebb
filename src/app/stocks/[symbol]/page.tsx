@@ -115,7 +115,7 @@ export default async function StockPage({ params }: PageProps) {
                         </div>
                     )}
                     <div className="pt-8">
-                        <TradesList trades={trades} />
+                        <TradesList trades={trades} enablePagination/>
                     </div>
                 </Section>
             </Page>

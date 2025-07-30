@@ -97,9 +97,9 @@ export default function TradesList({ trades, enablePagination = false }: TradesL
         {items.length === 0 && (
           <p className="p-6 text-center text-gray-500">No Transactions</p>
         )}
-        {items.map((trade) => (
+        {items.map((trade, index) => (
           <div
-            key={trade.id}
+            key={`${trade.id}-${index}`}
             className="p-6 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
           >
             <div className="flex items-start justify-between">
@@ -145,9 +145,9 @@ export default function TradesList({ trades, enablePagination = false }: TradesL
           <button
             onClick={loadMore}
             disabled={isPending}
-            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 cursor-pointer"
           >
-            {isPending ? "Loading..." : "Show More"}
+            {isPending ? "Laddar..." : "Visa Mer"}
           </button>
         </div>
       )}

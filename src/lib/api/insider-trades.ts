@@ -33,7 +33,7 @@ export async function getCompanyTradesCountSell(queryParams?: string) {
   );
 }
 
-export async function getInsiderTradesByCompanyName(companyName: string) {
+export async function getInsiderTradesByCompanyName(companyName: string, skip: number = 0, take: number = 10) {
   const encoded = encodeURIComponent(companyName);
-  return await get<InsiderTrade[]>(`insidertrades/company?name=${encoded}`);
+  return await get<InsiderTrade[]>(`insidertrades/company?name=${encoded}&skip=${skip}&take=${take}`);
 }
