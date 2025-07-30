@@ -1,7 +1,12 @@
+"use client";
+
+import { useState, useTransition } from "react";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
+import { getInsiderTrades } from "@/lib/api/insider-trades";
 
 interface TradesListProps {
   trades: InsiderTrade[];
+  enablePagination?: boolean;
 }
 
 const getTransactionTypeColor = (type: string) => {
@@ -67,7 +72,20 @@ const formatDate = (dateString: string) => {
   return `${dayMonth} ${time}`;
 };
 
-export default function TradesList({ trades }: TradesListProps) {
+export default function TradesList({ trades, enablePagination = false }: TradesListProps) {
+  const [items, setItems] = useState(trades);
+  const [page, setPage] = useState(1);
+  const [isPending, startTransition] = useTransition();
+
+  const loadMore = () => {
+    startTransition(async () => {
+      const nextPage = page + 1;
+      const more = await getInsiderTrades(nextPage, 10);
+      setItems(prev => [...prev, ...more]);
+      setPage(nextPage);
+    });
+  };
+
   return (
     <div>
       <div className="p-6 border-b border-gray-200">
@@ -76,10 +94,10 @@ export default function TradesList({ trades }: TradesListProps) {
       </div>
 
       <div className="overflow-hidden">
-        {trades.length === 0 && (
+        {items.length === 0 && (
           <p className="p-6 text-center text-gray-500">No Transactions</p>
         )}
-        {trades.map((trade) => (
+        {items.map((trade) => (
           <div
             key={trade.id}
             className="p-6 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
@@ -122,6 +140,17 @@ export default function TradesList({ trades }: TradesListProps) {
           </div>
         ))}
       </div>
+      {enablePagination && (
+        <div className="p-6 text-center">
+          <button
+            onClick={loadMore}
+            disabled={isPending}
+            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+          >
+            {isPending ? "Loading..." : "Show More"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

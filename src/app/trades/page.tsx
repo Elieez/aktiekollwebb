@@ -17,7 +17,7 @@ export const metadata = {
 };
 
 export default async function TradesPage() {
-  const trades = await getInsiderTrades();
+  const trades = await getInsiderTrades(1, 10);
   const bigTrades = await getBigInsiderTrades();
   const tradesCountBuy = await getCompanyTradesCountBuy();
   const tradesCountSell = await getCompanyTradesCountSell();
@@ -37,7 +37,7 @@ export default async function TradesPage() {
           </Section>
         </div>
         <Section className="lg:w-3/6">
-          <TradesList trades={trades} />
+          <TradesList trades={trades} enablePagination/>
         </Section>
         <Section className="lg:w-2/6">
           <BigTradesList trades={bigTrades} />
