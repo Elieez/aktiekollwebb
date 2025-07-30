@@ -2,11 +2,15 @@
 
 import { useState, useTransition } from "react";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
-import { getInsiderTrades } from "@/lib/api/insider-trades";
+import { 
+  getInsiderTrades,
+  getInsiderTradesByCompanyName,
+} from "@/lib/api/insider-trades";
 
 interface TradesListProps {
   trades: InsiderTrade[];
   enablePagination?: boolean;
+  companyName?: string;
 }
 
 const getTransactionTypeColor = (type: string) => {
@@ -72,17 +76,26 @@ const formatDate = (dateString: string) => {
   return `${dayMonth} ${time}`;
 };
 
-export default function TradesList({ trades, enablePagination = false }: TradesListProps) {
+export default function TradesList({ trades, enablePagination = false, companyName }: TradesListProps) {
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
   const [isPending, startTransition] = useTransition();
+  const [hasMore, setHasMore] = useState(true);
+
+  const pageSize = 10;
 
   const loadMore = () => {
     startTransition(async () => {
       const nextPage = page + 1;
-      const more = await getInsiderTrades(nextPage, 10);
+      const more = companyName
+        ? await getInsiderTradesByCompanyName(companyName, page * pageSize, pageSize)
+        : await getInsiderTrades(nextPage, pageSize);
       setItems(prev => [...prev, ...more]);
       setPage(nextPage);
+
+      if (more.length < pageSize) {
+        setHasMore(false);
+      }
     });
   };
 
@@ -140,7 +153,7 @@ export default function TradesList({ trades, enablePagination = false }: TradesL
           </div>
         ))}
       </div>
-      {enablePagination && (
+      {enablePagination && hasMore && (
         <div className="p-6 text-center">
           <button
             onClick={loadMore}
