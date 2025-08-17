@@ -12,6 +12,7 @@ import {
   Filler,
 } from 'chart.js';
 import type { TooltipItem } from 'chart.js';
+import type { InsiderTrade } from '@/lib/types/InsiderTrade';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Filler);
 
@@ -20,8 +21,42 @@ interface DataPoint {
   close: number;
 }
 
-export default function StockChart({ data }: { data: DataPoint[] }) {
-  const labels = data.map((d) => d.date);
+interface StockChartProps {
+  data: DataPoint[];
+  trades?: InsiderTrade[];
+}
+
+export default function StockChart({ data, trades = [] }: StockChartProps) {
+const labels = data.map((d) => d.date);
+  const getTradeColor = (type: string) => {
+  switch (type) {
+    case 'Förvärv':
+      return 'rgb(34, 197, 94)';
+    case 'Avyttring':
+      return 'rgb(244, 67, 54)';
+    case 'Teckning':
+      return 'rgb(59, 130, 246)';
+    case 'Tilldelning':
+      return 'rgb(168, 85, 247)';
+    default:
+      return 'rgb(107, 114, 128)';
+  }
+};
+
+const tradePrices = Array(labels.length).fill(null);
+const tradeColors = Array(labels.length).fill('rgba(0,0,0,0)');
+const tradeTypes = Array(labels.length).fill('');
+
+trades.forEach((t) => {
+  const date = t.publishingDate.split('T')[0];
+  const idx = labels.indexOf(date);
+  if (idx !== -1) {
+    tradePrices[idx] = t.price;
+    tradeColors[idx] = getTradeColor(t.transactionType);
+    tradeTypes[idx] = t.transactionType;
+  }
+});
+
   const chartData = {
     labels,
     datasets: [
@@ -31,10 +66,18 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.2)',
         fill: true,
-        tension: 0.5,
         pointRadius: 0,
         pointHoverRadius: 5,
         },
+        {
+          label: 'Insider Trades',
+          data: tradePrices,
+          showLine: false,
+          borderColor: tradeColors,
+          backgroundColor: tradeColors,
+          pointRadius: 7,
+          pointHoverRadius: 7,
+        }
     ],
   };
 
@@ -55,7 +98,13 @@ export default function StockChart({ data }: { data: DataPoint[] }) {
         axis: 'x',
         callbacks: {
             title: (items: TooltipItem<'line'>[]) => items[0].label,
-            label: (ctx: TooltipItem<'line'>) => `Price: ${ctx.formattedValue}`,
+            label: (ctx: TooltipItem<'line'>) => {
+              if (ctx.datasetIndex === 1) {
+                const type = tradeTypes[ctx.dataIndex];
+                return `${type}: ${ctx.formattedValue} SEK`;
+              }
+              return `Price: ${ctx.formattedValue}`;
+            },
             },
         },
     },

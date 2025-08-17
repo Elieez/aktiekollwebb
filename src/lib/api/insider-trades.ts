@@ -2,8 +2,9 @@ import { get } from "./utils";
 import { InsiderTrade } from "../types/InsiderTrade";
 import { CompanyTradeCount } from "../types/CompanyTradeCount";
 
-export async function getInsiderTrades() {
-  return await get<InsiderTrade[]>("insidertrades", {
+export async function getInsiderTrades(page = 1, pageSize = 10) {
+  const query = `page=${page}&pageSize=${pageSize}`;
+  return await get<InsiderTrade[]>(`insidertrades/page?${query}`, {
     cache: "no-store",
   });
 }
@@ -32,7 +33,7 @@ export async function getCompanyTradesCountSell(queryParams?: string) {
   );
 }
 
-export async function getInsiderTradesByCompanyName(companyName: string) {
+export async function getInsiderTradesByCompanyName(companyName: string, skip: number = 0, take: number = 10) {
   const encoded = encodeURIComponent(companyName);
-  return await get<InsiderTrade[]>(`insidertrades/company?name=${encoded}`);
+  return await get<InsiderTrade[]>(`insidertrades/company?name=${encoded}&skip=${skip}&take=${take}`);
 }

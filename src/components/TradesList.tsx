@@ -1,7 +1,16 @@
+"use client";
+
+import { useState, useTransition } from "react";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
+import { 
+  getInsiderTrades,
+  getInsiderTradesByCompanyName,
+} from "@/lib/api/insider-trades";
 
 interface TradesListProps {
   trades: InsiderTrade[];
+  enablePagination?: boolean;
+  companyName?: string;
 }
 
 const getTransactionTypeColor = (type: string) => {
@@ -67,7 +76,29 @@ const formatDate = (dateString: string) => {
   return `${dayMonth} ${time}`;
 };
 
-export default function TradesList({ trades }: TradesListProps) {
+export default function TradesList({ trades, enablePagination = false, companyName }: TradesListProps) {
+  const [items, setItems] = useState(trades);
+  const [page, setPage] = useState(1);
+  const [isPending, startTransition] = useTransition();
+  const [hasMore, setHasMore] = useState(true);
+
+  const pageSize = 10;
+
+  const loadMore = () => {
+    startTransition(async () => {
+      const nextPage = page + 1;
+      const more = companyName
+        ? await getInsiderTradesByCompanyName(companyName, page * pageSize, pageSize)
+        : await getInsiderTrades(nextPage, pageSize);
+      setItems(prev => [...prev, ...more]);
+      setPage(nextPage);
+
+      if (more.length < pageSize) {
+        setHasMore(false);
+      }
+    });
+  };
+
   return (
     <div>
       <div className="p-6 border-b border-gray-200">
@@ -76,12 +107,12 @@ export default function TradesList({ trades }: TradesListProps) {
       </div>
 
       <div className="overflow-hidden">
-        {trades.length === 0 && (
+        {items.length === 0 && (
           <p className="p-6 text-center text-gray-500">No Transactions</p>
         )}
-        {trades.map((trade) => (
+        {items.map((trade, index) => (
           <div
-            key={trade.id}
+            key={`${trade.id}-${index}`}
             className="p-6 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
           >
             <div className="flex items-start justify-between">
@@ -122,6 +153,17 @@ export default function TradesList({ trades }: TradesListProps) {
           </div>
         ))}
       </div>
+      {enablePagination && hasMore && (
+        <div className="p-6 text-center">
+          <button
+            onClick={loadMore}
+            disabled={isPending}
+            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 cursor-pointer"
+          >
+            {isPending ? "Laddar..." : "Visa Mer"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

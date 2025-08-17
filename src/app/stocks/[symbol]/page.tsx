@@ -105,7 +105,7 @@ export default async function StockPage({ params }: PageProps) {
                         <div className={`mx-auto max-w-4xl flex items-center space-x-6`}>
                           <div 
                               className={`${hasTransactions ? 'flex-1' : 'w-full'} border rounded-md border-gray-300 stock-chart-container h-96`}>
-                                <StockChart data={chartData} />
+                                <StockChart data={chartData} trades={trades} />
                             </div>
                             {hasTransactions && (
                             <div className="w-60">
@@ -115,7 +115,7 @@ export default async function StockPage({ params }: PageProps) {
                         </div>
                     )}
                     <div className="pt-8">
-                        <TradesList trades={trades} />
+                        <TradesList trades={trades} enablePagination companyName={companyName}/>
                     </div>
                 </Section>
             </Page>
