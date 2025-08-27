@@ -1,11 +1,26 @@
+import Link from "next/link";
+import CompanySearch from "@/components/SearchBar";
+
 export default function Header() {
   return (
-    <header className="bg-red-300">
-      <div className="w-11/12 mx-auto py-3">
-        <h1 className="text-3xl font-bold text-gray-900">AktieKoll</h1>
-        <p className="text-gray-600 mt-2">
-          Track the latest insider transactions
-        </p>
+    <header className="bg-[#242424] shadow-sm sticky top-0 z-50">
+      <div className="w-11/12 mx-auto flex flex-col gap-3 md:flex-row md:items-center md:justify-between py-4">
+        {/* Left: Logo & Title */}
+        <div>
+          <Link href="/">
+            <h1 className="text-2xl font-bold text-white hover:text-gray-300 transition-colors cursor-pointer">
+              AktieKoll
+            </h1>
+          </Link>
+          <p className="text-sm text-gray-300">
+            Track the latest insider transactions
+          </p>
+        </div>
+
+        {/* Right: Searchbar */}
+        <div className="w-full md:w-1/3">
+          <CompanySearch />
+        </div>
       </div>
     </header>
   );
