@@ -6,6 +6,8 @@ import {
   getInsiderTrades,
   getInsiderTradesByCompanyName,
 } from "@/lib/api/insider-trades";
+import { cleanCompanyName } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface TradesListProps {
   trades: InsiderTrade[];
@@ -82,7 +84,7 @@ export default function TradesList({ trades, enablePagination = false, companyNa
   const [page, setPage] = useState(1);
   const [isPending, startTransition] = useTransition();
   const [hasMore, setHasMore] = useState(trades.length === pageSize);
-  
+
   const loadMore = () => {
     startTransition(async () => {
       const nextPage = page + 1;
