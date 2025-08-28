@@ -1,5 +1,4 @@
 import Page from "@/components/Page";
-import CompanySearch from "@/components/SearchBar";
 import Section from "@/components/Section";
 import TradesCount from "@/components/TradesCount";
 import TradesList from "../../components/TradesList";
@@ -26,7 +25,6 @@ export default async function TradesPage() {
 
   return (
     <Page className={`${spacing}`}>
-      <CompanySearch />
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className={`lg:w-1/6 ${spacing}`}>
           <Section>
