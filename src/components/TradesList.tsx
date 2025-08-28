@@ -77,13 +77,12 @@ const formatDate = (dateString: string) => {
 };
 
 export default function TradesList({ trades, enablePagination = false, companyName }: TradesListProps) {
+  const pageSize = 10;
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
   const [isPending, startTransition] = useTransition();
-  const [hasMore, setHasMore] = useState(true);
-
-  const pageSize = 10;
-
+  const [hasMore, setHasMore] = useState(trades.length === pageSize);
+  
   const loadMore = () => {
     startTransition(async () => {
       const nextPage = page + 1;
