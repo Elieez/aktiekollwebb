@@ -47,8 +47,12 @@ export default function CompanySearch() {
     setLoading(true);
     const t = setTimeout(async () => {
       try {
+        const params = new URLSearchParams({
+          query,
+          regionOnly: 'SE'
+        });
         const res = await fetch(
-          `/api/search?query=${encodeURIComponent(query)}`,
+          `/api/search?${params.toString()}`,
           { signal: ac.signal }
         );
         const data: Result[] = await res.json();
