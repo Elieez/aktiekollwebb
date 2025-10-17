@@ -25,7 +25,7 @@
     "@types/react-chartjs-2": "^2.0.2",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.2",
+    "eslint-config-next": "15.5.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
