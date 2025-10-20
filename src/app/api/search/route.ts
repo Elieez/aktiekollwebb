@@ -1,4 +1,4 @@
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from "yahoo-finance2";
 import { NextResponse } from 'next/server';
 import { cleanCompanyName } from '@/lib/utils';
 
@@ -11,7 +11,8 @@ interface QuoteResult {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('query');
-
+  const yahooFinance = new YahooFinance();
+  
   if (!query) {
     return NextResponse.json([]);
   }

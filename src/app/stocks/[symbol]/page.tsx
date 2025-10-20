@@ -1,5 +1,5 @@
 import Page from "@/components/Page";
-import yahooFinance from "yahoo-finance2";
+import YahooFinance from "yahoo-finance2";
 import StockChart from "@/components/StockChart";
 import TradesList from "@/components/TradesList";
 import PieChart from "@/components/PieChart";
@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function StockPage({ params }: PageProps) {
   const { symbol } = await params;
   const upperSymbol = symbol.toUpperCase();
+  const yahooFinance = new YahooFinance();
 
   try {
     const quote = await yahooFinance.quote(upperSymbol);
