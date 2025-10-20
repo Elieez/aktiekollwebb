@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function StockPage({ params }: PageProps) {
   const { symbol } = await params;
   const upperSymbol = symbol.toUpperCase();
-  const yahooFinance = new YahooFinance();
+  const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
   try {
     const quote = await yahooFinance.quote(upperSymbol);
@@ -105,7 +105,7 @@ export default async function StockPage({ params }: PageProps) {
                     {chartData.length > 0 && (
                         <div className={`mx-auto max-w-4xl flex items-center space-x-6`}>
                           <div 
-                              className={`${hasTransactions ? 'flex-1' : 'w-full'} border rounded-md border-gray-300 stock-chart-container h-96`}>
+                              className={`${hasTransactions ? 'flex-1' : 'w-full'} border border-gray-300 stock-chart-container h-96`}>
                                 <StockChart data={chartData} trades={trades} />
                             </div>
                             {hasTransactions && (

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import type { InsiderTrade } from '@/lib/types/InsiderTrade';
 import {
   createChart,
@@ -61,7 +61,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       },
       rightPriceScale: { borderVisible: false },
       leftPriceScale: { visible: false },
-      timeScale: { timeVisible: true, secondsVisible: false, rightOffset: 3 },
+      timeScale: { timeVisible: false, secondsVisible: false, rightOffset: 3 },
       crosshair: {
         mode: CrosshairMode.Normal,
         vertLine: { color: '#eee', width: 1, style: 0 },
@@ -74,7 +74,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     // v5: use LineSeries class and add via chart.addSeries
     const lineSeries = chart.addSeries(LineSeries, {
       color: '#22c55e',
-      lineWidth: 2,
+      lineWidth: 3,
     });
 
     seriesRef.current = lineSeries;
@@ -116,7 +116,6 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
   useEffect(() => {
     const chart = chartRef.current;
     const line = seriesRef.current;
-
     if (!chart || !line) return;
 
     const priceData = data.map((d) => ({
@@ -127,6 +126,14 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     // set series data
     // depending on your typings, setData will accept this shape
     (line as any).setData(priceData);
+
+    requestAnimationFrame(() => {
+      const last = priceData[priceData.length - 1];
+      if (last) {
+        const oneYear = 251 * 24 * 60 * 60;
+        chart.timeScale().setVisibleRange({ from: (last.time - oneYear) as UTCTimestamp, to: last.time as UTCTimestamp });
+      }
+    });
 
     // build markers
     const markers: SeriesMarker<UTCTimestamp>[] = trades
