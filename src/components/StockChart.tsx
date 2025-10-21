@@ -27,7 +27,7 @@ interface StockChartProps {
 const getTradeColor = (type: string) => {
   switch (type) {
     case 'Förvärv':
-      return '#A3E635'; // bright lime
+      return '#A3E635';
     case 'Avyttring':
       return '#EF4444';
     case 'Teckning':
@@ -187,10 +187,10 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       if (tradesAtTime.length > 0) {
         const date = new Date((time as number) * 1000);
         let html = `<div style="font-weight:600">${date.toLocaleDateString()}</div>`;
-        html += `<div style="margin-top:6px"><strong>${tradesAtTime.length}</strong> trade(s)</div>`;
+        html += `<div style="margin-top:6px"><strong>${tradesAtTime.length}</strong> transaktion(er)</div>`;
         const preview = tradesAtTime.slice(0, 3);
         preview.forEach((t) => {
-          html += `<div style="margin-top:6px"><small>${t.transactionType} ${t.price ?? '--'} SEK</small></div>`;
+          html += `<div style="margin-top:6px">${t.transactionType} ${t.price ?? '--'} SEK</div>`;
         });
         if (tradesAtTime.length > 3) html += `<div style="margin-top:6px"><small>+${tradesAtTime.length - 3} more</small></div>`;
 
@@ -213,7 +213,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       }
 
       const d = new Date((param.time as number) * 1000);
-      tooltip.innerHTML = `<div><strong>${d.toLocaleDateString()}</strong></div><div>Price: ${price.toLocaleString()} SEK</div>`;
+      tooltip.innerHTML = `<div><strong>${d.toLocaleDateString()}</strong></div><div>Pris: ${price.toLocaleString()} SEK</div>`;
       tooltip.style.display = 'block';
       const x = param.point.x ?? 0;
       const y = param.point.y ?? 0;

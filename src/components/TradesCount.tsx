@@ -2,12 +2,13 @@ import { CompanyTradeCount } from "@/lib/types/CompanyTradeCount";
 
 interface TradesCountProps {
   companies: CompanyTradeCount[];
+  title?: string;
 }
 
-export default function TradesCount({ companies }: TradesCountProps) {
+export default function TradesCount({ companies, title }: TradesCountProps) {
   return (
     <div className="p-4">
-      <h3 className="text-xl font-semibold mb-6">Most Insider Transactions</h3>
+      <h3 className="text-xl font-semibold mb-6">{title}</h3>
       <ul className="space-y-4">
         {companies.map((company) => (
           <li key={company.companyName} className="flex justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors duration-150 ease-in-out">

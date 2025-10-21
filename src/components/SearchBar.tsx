@@ -107,7 +107,7 @@ export default function CompanySearch() {
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length && setOpen(true)}
         onKeyDown={onKeyDown}
-        placeholder="Search companies..."
+        placeholder="Sök företag..."
         role="combobox"
         aria-expanded={open}
         aria-controls={listId}
@@ -126,11 +126,11 @@ export default function CompanySearch() {
           className="absolute mt-2 w-full max-h-64 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
         >
           {loading && (
-            <li className="px-3 py-2 text-sm text-gray-500">Searching…</li>
+            <li className="px-3 py-2 text-sm text-gray-500">Söker…</li>
           )}
 
           {!loading && results.length === 0 && query.length >= 2 && (
-            <li className="px-3 py-2 text-sm text-gray-500">No matches</li>
+            <li className="px-3 py-2 text-sm text-gray-500">Inga träffar</li>
           )}
 
           {!loading &&

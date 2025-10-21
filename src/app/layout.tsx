@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "AktieKoll",
-  description: "Insider Trades & Big Trades",
+  description: "Insyns transaktioner på aktiemarknaden i Sverige",
 };
 
 export default function RootLayout({

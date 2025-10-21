@@ -28,10 +28,10 @@ export default async function TradesPage() {
       <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
         <div className={`lg:w-1/6 ${spacing}`}>
           <Section>
-            <TradesCount companies={tradesCountBuy} />
+            <TradesCount companies={tradesCountBuy} title="Flest köp senaste 30 dagarna"/>
           </Section>
           <Section>
-            <TradesCount companies={tradesCountSell} />
+            <TradesCount companies={tradesCountSell} title="Flest sälj senaste 30 dagarna"/>
           </Section>
         </div>
         <Section className="lg:w-3/6">
