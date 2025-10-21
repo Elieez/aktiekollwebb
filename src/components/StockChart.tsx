@@ -27,15 +27,15 @@ interface StockChartProps {
 const getTradeColor = (type: string) => {
   switch (type) {
     case 'Förvärv':
-      return '#22c55e';
+      return '#A3E635'; // bright lime
     case 'Avyttring':
-      return '#f44336';
+      return '#EF4444';
     case 'Teckning':
-      return '#3b82f6';
+      return '#2563EB';
     case 'Tilldelning':
-      return '#a855f7';
+      return '#7C3AED';
     default:
-      return '#6b7280';
+      return '#6B7280';
   }
 };
 
@@ -64,12 +64,12 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       crosshair: { mode: CrosshairMode.Normal, vertLine: { color: '#eee', width: 1, style: 0 } },
       grid: { vertLines: { visible: false }, horzLines: { visible: false } },
     });
-
     chartRef.current = chart;
 
-    const lineSeries = chart.addSeries(LineSeries, { color: '#22c55e', lineWidth: 3 });
+    const lineSeries = chart.addSeries(LineSeries, { color: '#0f9d58', lineWidth: 3 });
     seriesRef.current = lineSeries;
 
+    // simple tooltip element (used by crosshair handler)
     const tooltip = document.createElement('div');
     tooltip.style.cssText = `
       position: absolute;
@@ -77,7 +77,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       padding: 8px;
       border-radius: 6px;
       font-size: 12px;
-      background: rgba(255,255,255,0.95);
+      background: rgba(255,255,255,0.98);
       color: #111827;
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
       pointer-events: none;
@@ -103,30 +103,31 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     };
   }, []);
 
-  // update data, aggregated markers, and crosshair tooltip
+  // update data & markers
   useEffect(() => {
     const chart = chartRef.current;
     const line = seriesRef.current;
-    if (!chart || !line) return;
+    const tooltip = tooltipRef.current;
+    if (!chart || !line || !tooltip) return;
 
-    // price data
+    // price data (daily)
     const priceData = data.map((d) => ({ time: toUtcTimestamp(d.date), value: Number(d.close) }));
     (line as any).setData(priceData);
 
-    // default visible range -> 1 year from last point
+    // default visible range: 1 year
     requestAnimationFrame(() => {
       const last = priceData[priceData.length - 1];
       if (last) {
         const stockDays = 251 * 24 * 60 * 60;
         try {
           chart.timeScale().setVisibleRange({ from: (last.time - stockDays) as UTCTimestamp, to: last.time as UTCTimestamp });
-        } catch (err) {
-          // ignore if clamped or fails
+        } catch {
+          // ignore
         }
       }
     });
 
-    // group trades by day (seconds)
+    // Group trades per day (seconds)
     const tradesByTime = new Map<number, InsiderTrade[]>();
     trades.forEach((t) => {
       const day = toUtcTimestamp(t.publishingDate.split('T')[0]) as number;
@@ -135,70 +136,45 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       tradesByTime.set(day, arr);
     });
 
-    // create a dedicated (invisible) trade series so markers can be placed exactly at value
-    let tradeSeries: ISeriesApi<'Line'> | null = null;
-    try {
-      tradeSeries = chart.addSeries(LineSeries, {
-        color: 'rgba(0,0,0,0)',
-        lastValueVisible: false,
-        priceLineVisible: false,
-      }) as ISeriesApi<'Line'>;
-    } catch {
-      tradeSeries = null;
-    }
-
-    // build aggregated points + markers and a lookup map for tooltips
-    const tradePoints: { time: UTCTimestamp; value: number }[] = [];
-    const aggMarkers: SeriesMarker<UTCTimestamp>[] = [];
+    // Build simple markers: one per day; circle shape; no text
+    const markers: SeriesMarker<UTCTimestamp>[] = [];
     const tradeLookup = new Map<number, InsiderTrade[]>();
 
     tradesByTime.forEach((list, time) => {
-      // compute average trade price when available, fall back to day's close or last price
+      // use avg trade price if available else day's close or last price (kept for lookup/consistency)
       const prices = list.map((x) => (typeof x.price === 'number' ? x.price : NaN)).filter(Number.isFinite);
       const avgPrice = prices.length ? prices.reduce((a, b) => a + b, 0) / prices.length : NaN;
       const basePrice = !Number.isNaN(avgPrice)
         ? avgPrice
         : priceData.find((p) => p.time === time)?.value ?? priceData[priceData.length - 1]?.value ?? 0;
 
-      const count = list.length;
-
-      tradePoints.push({ time: time as UTCTimestamp, value: basePrice });
-
-      const markerColor = getTradeColor(list[0].transactionType);
-      aggMarkers.push({
+      // marker uses the same series (no text)
+      const color = getTradeColor(list[0].transactionType);
+      markers.push({
         time: time as UTCTimestamp,
         position: 'inBar',
-        color: markerColor,
+        color,
         shape: 'circle',
+        text: '', // <--- no text
       } as SeriesMarker<UTCTimestamp>);
 
       tradeLookup.set(time, list);
     });
 
-    // attach data and markers to tradeSeries (or fallback to main line)
-    if (tradeSeries) {
+    // attach markers to the main line series using createSeriesMarkers (v5)
+    try {
+      createSeriesMarkers(line as any, markers);
+    } catch (err) {
+      // if helper not available in this build, try setting markers using legacy method (best-effort)
       try {
-        (tradeSeries as any).setData(tradePoints);
-        createSeriesMarkers(tradeSeries as any, aggMarkers);
-      } catch (err) {
-        // fallback to adding markers to main series if createSeriesMarkers not available
-        try {
-          createSeriesMarkers(line as any, aggMarkers);
-        } catch (e) {
-          // ignore
-        }
-      }
-    } else {
-      try {
-        createSeriesMarkers(line as any, aggMarkers);
+        (line as any).setMarkers?.(markers);
       } catch {
-        // ignore
+        // ignore if not supported
       }
     }
 
-    // crosshair tooltip handler (single, unified)
+    // crosshair tooltip: show aggregated trades for hovered time (first 3 + +N)
     const handleMove = (param: MouseEventParams) => {
-      const tooltip = tooltipRef.current;
       if (!tooltip) return;
       if (!param.point) {
         tooltip.style.display = 'none';
@@ -212,10 +188,9 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
         const date = new Date((time as number) * 1000);
         let html = `<div style="font-weight:600">${date.toLocaleDateString()}</div>`;
         html += `<div style="margin-top:6px"><strong>${tradesAtTime.length}</strong> trade(s)</div>`;
-
         const preview = tradesAtTime.slice(0, 3);
         preview.forEach((t) => {
-          html += `<div style="margin-top:6px"><small>${t.transactionType} ${t.price ?? '--'} SEK </small></div>`;
+          html += `<div style="margin-top:6px"><small>${t.transactionType} ${t.price ?? '--'} SEK</small></div>`;
         });
         if (tradesAtTime.length > 3) html += `<div style="margin-top:6px"><small>+${tradesAtTime.length - 3} more</small></div>`;
 
@@ -229,7 +204,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
         return;
       }
 
-      // fallback: show price for the hovered series (main line)
+      // fallback: show price of line series under cursor
       const seriesDataForLine = param.seriesData?.get(line as any) as { value?: number } | undefined;
       const price = seriesDataForLine?.value;
       if (price === undefined) {
@@ -240,18 +215,21 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       const d = new Date((param.time as number) * 1000);
       tooltip.innerHTML = `<div><strong>${d.toLocaleDateString()}</strong></div><div>Price: ${price.toLocaleString()} SEK</div>`;
       tooltip.style.display = 'block';
-
       const x = param.point.x ?? 0;
       const y = param.point.y ?? 0;
       tooltip.style.left = `${x + 12}px`;
       tooltip.style.top = `${y - 28}px`;
     };
 
-    chart.subscribeCrosshairMove(handleMove);
+    const unsub: any = chart.subscribeCrosshairMove(handleMove);
+    let cleanupUnsub: (() => void) | undefined;
+    if (typeof unsub === 'function') cleanupUnsub = unsub;
+    else if (unsub && typeof unsub.unsubscribe === 'function') cleanupUnsub = () => unsub.unsubscribe();
+
     return () => {
-      chart.unsubscribeCrosshairMove(handleMove);
-      // optionally remove the tradeSeries if you created it (chart.remove will handle on chart.remove())
-      // if (tradeSeries) { /* no-op: chart.remove() will remove series on outer cleanup */ }
+      try {
+        cleanupUnsub?.();
+      } catch {}
     };
   }, [data, trades]);
 
