@@ -11,7 +11,7 @@ interface QuoteResult {
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('query');
-  const yahooFinance = new YahooFinance();
+  const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
   
   if (!query) {
     return NextResponse.json([]);
