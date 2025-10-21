@@ -62,11 +62,11 @@ const formatDate = (dateString: string) => {
     minute: '2-digit',
   });
   if (date >= today && date < new Date(today.getTime() + 86400000)) {
-    return `Today ${time}`;
+    return `Idag ${time}`;
   }
 
   if (date >= yesterday && date < today) {
-    return `Yesterday ${time}`;
+    return `Igår ${time}`;
   }
 
   const dayMonth = date
@@ -101,13 +101,13 @@ export default function TradesList({ trades, enablePagination = false, companyNa
   return (
     <div>
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">Recent Transactions</h2>
-        <p className="text-sm text-gray-600 mt-1">Latest insider trading activity</p>
+        <h2 className="text-xl font-semibold text-gray-900">Senaste Transaktioner</h2>
+        <p className="text-sm text-gray-600 mt-1">Senaste insider trading aktivitet</p>
       </div>
 
       <div className="overflow-hidden">
         {items.length === 0 && (
-          <p className="p-6 text-center text-gray-500">No Transactions</p>
+          <p className="p-6 text-center text-gray-500">Inga Transaktioner</p>
         )}
         {items.map((trade, index) => (
           <div
@@ -131,19 +131,19 @@ export default function TradesList({ trades, enablePagination = false, companyNa
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Shares</span>
+                    <span className="text-gray-500">Aktier</span>
                     <p className="font-medium text-gray-900">{formatNumber(trade.shares)}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Price/Share</span>
+                    <span className="text-gray-500">Pris/Aktie</span>
                     <p className="font-medium text-gray-900">{trade.price.toFixed(2)} SEK</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Total Value</span>
+                    <span className="text-gray-500">Total Värde</span>
                     <p className="font-medium text-gray-900">{formatCurrency(trade.shares * trade.price)}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Date</span>
+                    <span className="text-gray-500">Datum</span>
                     <p className="font-medium text-gray-900">{formatDate(trade.publishingDate)}</p>
                   </div>
                 </div>

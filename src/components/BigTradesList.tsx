@@ -24,11 +24,11 @@ const formatDate = (dateString: string) => {
     minute: '2-digit',
   });
   if (date >= today && date < new Date(today.getTime() + 86400000)) {
-    return `Today ${time}`;
+    return `Idag ${time}`;
   }
 
   if (date >= yesterday && date < today) {
-    return `Yesterday ${time}`;
+    return `Igår ${time}`;
   }
 
   const dayMonth = date
@@ -57,8 +57,8 @@ export default function BigTradesList({ trades }: TopTradesProps) {
   return (
     <div>
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">Top 10 Trades</h2>
-        <p className="text-sm text-gray-600 mt-1">Highest value transactions</p>
+        <h2 className="text-xl font-semibold text-gray-900">Topp 10 Transaktioner</h2>
+        <p className="text-sm text-gray-600 mt-1">Största köp & sälj transaktioner</p>
       </div>
 
       <div className="p-6">

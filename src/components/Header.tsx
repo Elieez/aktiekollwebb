@@ -13,7 +13,7 @@ export default function Header() {
             </h1>
           </Link>
           <p className="text-sm text-gray-300">
-            Track the latest insider transactions
+            Följ de senaste insyns transaktionerna
           </p>
         </div>
 

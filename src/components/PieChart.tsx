@@ -3,7 +3,7 @@ interface PieChartProps {
   title?: string;
 }
 
-export default function PieChart({ data, title = 'Trades Last 12 Months' }: PieChartProps) {
+export default function PieChart({ data, title = 'Transaktioner 12 mån' }: PieChartProps) {
   const [buy, sell] = data;
   const total = buy + sell;
 

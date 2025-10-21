@@ -25,13 +25,14 @@ interface ChartQuote {
 export async function generateMetadata({ params }: PageProps) {
   const { symbol } = await params;
   return {
-    title: `${symbol.toUpperCase()} Stock Information`,
+    title: `${symbol.toUpperCase()} Aktie Information`,
   };
 }
 
 export default async function StockPage({ params }: PageProps) {
   const { symbol } = await params;
   const upperSymbol = symbol.toUpperCase();
+  const displaySymbol = upperSymbol.split('.')[0];
   const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
   try {
@@ -80,10 +81,8 @@ export default async function StockPage({ params }: PageProps) {
                 <Section className="max-w-5xl mx-auto p-8 space-y-8">
                     <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                {companyName}
-                            </h1>
-                            <p className="text-xl font-medium text-gray-500">({quote.symbol})</p>
+                            <h1 className="text-3xl font-bold text-gray-900">{companyName}</h1>
+                            <p className="text-xl font-medium text-gray-500">({displaySymbol})</p>
                         </div>
                         <div className="mt-4 sm:mt-0 text-right">
                             <p className="text-4xl font-semibold text-gray-900">
