@@ -12,6 +12,7 @@ import {
   createSeriesMarkers,
   type SeriesMarker,
   type MouseEventParams,
+  type LineData,
 } from 'lightweight-charts';
 
 interface DataPoint {
@@ -111,8 +112,8 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     if (!chart || !line || !tooltip) return;
 
     // price data (daily)
-    const priceData = data.map((d) => ({ time: toUtcTimestamp(d.date), value: Number(d.close) }));
-    (line as any).setData(priceData);
+    const priceData: LineData[] = data.map((d) => ({ time: toUtcTimestamp(d.date), value: Number(d.close) }));
+    line.setData(priceData);
 
     // default visible range: 1 year
     requestAnimationFrame(() => {
@@ -120,7 +121,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       if (last) {
         const stockDays = 251 * 24 * 60 * 60;
         try {
-          chart.timeScale().setVisibleRange({ from: (last.time - stockDays) as UTCTimestamp, to: last.time as UTCTimestamp });
+          chart.timeScale().setVisibleRange({ from: ((last.time as number) - stockDays) as UTCTimestamp, to: last.time as UTCTimestamp });
         } catch {
           // ignore
         }
@@ -141,13 +142,6 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     const tradeLookup = new Map<number, InsiderTrade[]>();
 
     tradesByTime.forEach((list, time) => {
-      // use avg trade price if available else day's close or last price (kept for lookup/consistency)
-      const prices = list.map((x) => (typeof x.price === 'number' ? x.price : NaN)).filter(Number.isFinite);
-      const avgPrice = prices.length ? prices.reduce((a, b) => a + b, 0) / prices.length : NaN;
-      const basePrice = !Number.isNaN(avgPrice)
-        ? avgPrice
-        : priceData.find((p) => p.time === time)?.value ?? priceData[priceData.length - 1]?.value ?? 0;
-
       // marker uses the same series (no text)
       const color = getTradeColor(list[0].transactionType);
       markers.push({
@@ -163,13 +157,14 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
 
     // attach markers to the main line series using createSeriesMarkers (v5)
     try {
-      createSeriesMarkers(line as any, markers);
-    } catch (err) {
-      // if helper not available in this build, try setting markers using legacy method (best-effort)
+      createSeriesMarkers(line, markers);
+    } catch {
+      type SeriesWithMarkers = ISeriesApi<'Line'> & { setMarkers?: (m: SeriesMarker<UTCTimestamp>[]) => void };
+      const maybe = line as SeriesWithMarkers;
       try {
-        (line as any).setMarkers?.(markers);
-      } catch {
-        // ignore if not supported
+        maybe.setMarkers?.(markers);
+      } catch (innerError) {
+        console.warn('Failed to set markers on line series', innerError);
       }
     }
 
@@ -205,7 +200,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       }
 
       // fallback: show price of line series under cursor
-      const seriesDataForLine = param.seriesData?.get(line as any) as { value?: number } | undefined;
+      const seriesDataForLine = param.seriesData?.get(line) as { value?: number } | undefined;
       const price = seriesDataForLine?.value;
       if (price === undefined) {
         tooltip.style.display = 'none';
@@ -221,10 +216,12 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       tooltip.style.top = `${y - 28}px`;
     };
 
-    const unsub: any = chart.subscribeCrosshairMove(handleMove);
+    const unsub: unknown = chart.subscribeCrosshairMove(handleMove);
     let cleanupUnsub: (() => void) | undefined;
-    if (typeof unsub === 'function') cleanupUnsub = unsub;
-    else if (unsub && typeof unsub.unsubscribe === 'function') cleanupUnsub = () => unsub.unsubscribe();
+    if (typeof unsub === 'function') cleanupUnsub = unsub as () => void;
+    else if (unsub && typeof (unsub as { unsubscribe: unknown }).unsubscribe === 'function') {
+      cleanupUnsub = () => ((unsub as { unsubscribe: () => void }).unsubscribe());
+    }
 
     return () => {
       try {
