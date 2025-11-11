@@ -1,5 +1,7 @@
+// components/Header.tsx
 import Link from "next/link";
 import CompanySearch from "@/components/SearchBar";
+import { AuthStatus } from "./Auth";
 
 export default function Header() {
   return (
@@ -17,9 +19,15 @@ export default function Header() {
           </p>
         </div>
 
-        {/* Right: Searchbar */}
+        {/* Middle: Searchbar (collapses on mobile) */}
         <div className="w-full md:w-1/3">
           <CompanySearch />
+        </div>
+
+        {/* Right: Auth status */}
+        <div className="flex items-center gap-4">
+          {/* Put AuthStatus component here; it will render Sign in or Logout + name */}
+          <AuthStatus />
         </div>
       </div>
     </header>
