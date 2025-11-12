@@ -118,7 +118,7 @@ export function AuthStatus() {
   if(!user) {
     return (
       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <a href="/auth" style={{ textDecoration: 'none' }}>Sign in</a>
+        <a href="/auth" className="text-white hover:text-gray-300">Sign in</a>
       </div>
     );
   }
@@ -128,7 +128,7 @@ export function AuthStatus() {
       <span>{user.displayName ?? user.email}</span>
       <button
         onClick={async () => { await logout(); window.location.href = '/'; }}
-        style={{ marginLeft: 8 }}
+        className="text-white hover:text-gray-300"
       >
         Logout
       </button>
