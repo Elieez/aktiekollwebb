@@ -22,6 +22,7 @@ export async function loginApi(email: string, password: string): Promise<AuthRes
 export async function registerApi(email: string, password: string, displayName?: string) {
     const res = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, displayName }),
     });

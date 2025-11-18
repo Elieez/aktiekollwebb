@@ -1,14 +1,14 @@
 "use client";
 
-// pages/auth.tsx
-import Head from "next/head";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useAuth } from "@/components/Auth"; // adjust path if needed
+import { useAuth } from "@/components/Auth";
+import Image from "next/image";
 
 export default function AuthPage() {
   const router = useRouter();
   const { login, register } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
 
   // login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -29,7 +29,7 @@ export default function AuthPage() {
     setLoginLoading(true);
     try {
       await login(loginEmail, loginPassword);
-      router.push("/"); // redirect after login
+      router.push("/");
     } catch (err: any) {
       setLoginError(err?.message ?? "Login failed");
     } finally {
@@ -43,8 +43,8 @@ export default function AuthPage() {
     setRegLoading(true);
     try {
       await register(regEmail, regPassword, regName);
-      // optional: auto-login or go to login page
-      router.push("/login");
+      await login(regEmail, regPassword);
+      router.push("/");
     } catch (err: any) {
       setRegError(err?.message ?? "Registration failed");
     } finally {
@@ -53,116 +53,216 @@ export default function AuthPage() {
   };
 
   return (
-    <>
-      <Head>
-        <title>Sign in / Register — AktieKoll</title>
-      </Head>
-
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
-        {/* Left: Login */}
-        <div className="flex flex-col justify-center items-start bg-gradient-to-b from-[#0f1724] to-[#071324] p-10 text-white">
-          <div className="max-w-md w-full">
-            <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
-            <p className="text-gray-300 mb-6">Sign in to continue to your dashboard</p>
-
-            <form onSubmit={onLogin} className="space-y-4">
-              <div>
-                <label className="block text-sm mb-1">Email</label>
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 rounded-lg bg-[#0b1220] border border-[#1f2937] focus:outline-none"
-                />
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+      {/* Left: Image Section */}
+      <div className="hidden lg:flex relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
+          <div className="max-w-lg text-center space-y-6">
+            <h1 className="text-5xl font-bold">AktieKoll</h1>
+            <p className="text-xl text-blue-100">
+              Track insider trading activity and gain valuable market insights
+            </p>
+            <div className="mt-8 space-y-4 text-left">
+              <div className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <h3 className="font-semibold">Real-time Insider Trades</h3>
+                  <p className="text-sm text-blue-200">Monitor insider transactions as they happen</p>
+                </div>
               </div>
-
-              <div>
-                <label className="block text-sm mb-1">Password</label>
-                <input
-                  type="password"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 rounded-lg bg-[#0b1220] border border-[#1f2937] focus:outline-none"
-                />
+              <div className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <h3 className="font-semibold">Detailed Analytics</h3>
+                  <p className="text-sm text-blue-200">Get comprehensive charts and insights</p>
+                </div>
               </div>
+              <div className="flex items-start gap-3">
+                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <h3 className="font-semibold">Company Profiles</h3>
+                  <p className="text-sm text-blue-200">Deep dive into individual stock performance</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Abstract pattern overlay */}
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/30 to-transparent" />
+      </div>
 
-              {loginError && <div className="text-red-400 text-sm">{loginError}</div>}
+      {/* Right: Auth Forms */}
+      <div className="flex flex-col justify-center bg-gray-50 p-8 lg:p-12">
+        <div className="max-w-md w-full mx-auto">
+          {/* Logo for mobile */}
+          <div className="lg:hidden text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">AktieKoll</h1>
+          </div>
 
-              <div className="flex items-center gap-3 mt-2">
+          {/* Tabs */}
+          <div className="flex gap-4 mb-8 border-b border-gray-200">
+            <button
+              onClick={() => setIsLogin(true)}
+              className={`pb-3 px-1 font-semibold transition-colors relative ${
+                isLogin
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => setIsLogin(false)}
+              className={`pb-3 px-1 font-semibold transition-colors relative ${
+                !isLogin
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
+
+          {/* Login Form */}
+          {isLogin ? (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h2>
+              <p className="text-gray-600 mb-6">Sign in to continue to your dashboard</p>
+
+              <form onSubmit={onLogin} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                {loginError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {loginError}
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="bg-green-500 hover:bg-green-600 transition text-white px-5 py-2 rounded-md font-semibold"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm"
                 >
-                  {loginLoading ? "Signing in…" : "Sign in"}
+                  {loginLoading ? "Signing in..." : "Sign in"}
                 </button>
-                <a href="/forgot" className="text-sm text-gray-300 hover:underline">Forgot password?</a>
-              </div>
-            </form>
-          </div>
-        </div>
 
-        {/* Right: Register */}
-        <div className="flex flex-col justify-center items-start bg-white p-10">
-          <div className="max-w-md w-full">
-            <h2 className="text-2xl font-semibold mb-2">Create account</h2>
-            <p className="text-gray-600 mb-6">Start tracking insiders and get tailored insights.</p>
+                <div className="text-center">
+                  <a href="#" className="text-sm text-blue-600 hover:underline">
+                    Forgot your password?
+                  </a>
+                </div>
+              </form>
+            </div>
+          ) : (
+            /* Register Form */
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Create account</h2>
+              <p className="text-gray-600 mb-6">Start tracking insider trades today</p>
 
-            <form onSubmit={onRegister} className="space-y-4">
-              <div>
-                <label className="block text-sm mb-1">Email</label>
-                <input
-                  type="email"
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none"
-                />
-              </div>
+              <form onSubmit={onRegister} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    value={regEmail}
+                    onChange={(e) => setRegEmail(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    placeholder="you@example.com"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm mb-1">Display name</label>
-                <input
-                  type="text"
-                  value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none"
-                  placeholder="How people will see you (optional)"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Display name <span className="text-gray-400">(optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={regName}
+                    onChange={(e) => setRegName(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    placeholder="John Doe"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm mb-1">Password</label>
-                <input
-                  type="password"
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none"
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    required
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    placeholder="••••••••"
+                  />
+                </div>
 
-              {regError && <div className="text-red-600 text-sm">{regError}</div>}
+                {regError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    {regError}
+                  </div>
+                )}
 
-              <div className="mt-2">
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="border border-gray-300 px-5 py-2 rounded-md font-semibold hover:bg-gray-50"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm"
                 >
-                  {regLoading ? "Creating…" : "Create account"}
+                  {regLoading ? "Creating account..." : "Create account"}
                 </button>
-              </div>
-            </form>
 
-            <p className="text-xs text-gray-400 mt-6">
-              By creating an account you agree to our terms and privacy policy.
-            </p>
-          </div>
+                <p className="text-xs text-gray-500 text-center">
+                  By creating an account you agree to our{" "}
+                  <a href="#" className="text-blue-600 hover:underline">
+                    Terms of Service
+                  </a>{" "}
+                  and{" "}
+                  <a href="#" className="text-blue-600 hover:underline">
+                    Privacy Policy
+                  </a>
+                </p>
+              </form>
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
