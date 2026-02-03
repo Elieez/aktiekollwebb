@@ -9,6 +9,17 @@ export default function AuthPage() {
   const router = useRouter();
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  
+  const switchToLogin = () => {
+    setIsLogin(true);
+    setRegErrors([]);
+  };
+
+  const switchToRegister = () => {
+    setIsLogin(false);
+    setLoginError(null);
+  };
+
 
   // login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -21,17 +32,23 @@ export default function AuthPage() {
   const [regName, setRegName] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [regLoading, setRegLoading] = useState(false);
-  const [regError, setRegError] = useState<string | null>(null);
+  const [regErrors, setRegErrors] = useState<string[]>([]);
 
   const onLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loginLoading) return;
     setLoginError(null);
     setLoginLoading(true);
+
     try {
       await login(loginEmail, loginPassword);
       router.push("/");
     } catch (err: any) {
-      setLoginError(err?.message ?? "Login failed");
+      setLoginError(
+        typeof err == "string"
+          ? err
+          : err?.message ?? "Invalid email or password"
+      );
     } finally {
       setLoginLoading(false);
     }
@@ -39,23 +56,25 @@ export default function AuthPage() {
 
   const onRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setRegError(null);
+    if (regLoading) return;
+    setRegErrors([]);
     setRegLoading(true);
+
     try {
       await register(regEmail, regPassword, regName);
       await login(regEmail, regPassword);
       router.push("/");
-    } catch (err: any) {
-      setRegError(err?.message ?? "Registration failed");
+    } catch (err) {
+      setRegErrors(err as string[]);
     } finally {
       setRegLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+    <div className="h-dvh w-full overflow-hidden grid grid-cols-1 lg:grid-cols-2">
       {/* Left: Image Section */}
-      <div className="hidden lg:flex relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900">
+      <div className="hidden lg:flex relative h-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900">
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
           <div className="max-w-lg text-center space-y-6">
@@ -99,7 +118,7 @@ export default function AuthPage() {
       </div>
 
       {/* Right: Auth Forms */}
-      <div className="flex flex-col justify-center bg-gray-50 p-8 lg:p-12">
+      <div className="flex flex-col justify-center bg-gray-50 p-8 lg:p-12 h-full overflow-y-auto">
         <div className="max-w-md w-full mx-auto">
           {/* Logo for mobile */}
           <div className="lg:hidden text-center mb-8">
@@ -109,7 +128,7 @@ export default function AuthPage() {
           {/* Tabs */}
           <div className="flex gap-4 mb-8 border-b border-gray-200">
             <button
-              onClick={() => setIsLogin(true)}
+              onClick={switchToLogin}
               className={`pb-3 px-1 font-semibold transition-colors relative ${
                 isLogin
                   ? "text-blue-600 border-b-2 border-blue-600"
@@ -119,7 +138,7 @@ export default function AuthPage() {
               Sign In
             </button>
             <button
-              onClick={() => setIsLogin(false)}
+              onClick={switchToRegister}
               className={`pb-3 px-1 font-semibold transition-colors relative ${
                 !isLogin
                   ? "text-blue-600 border-b-2 border-blue-600"
@@ -174,7 +193,7 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm cursor-pointer"
                 >
                   {loginLoading ? "Signing in..." : "Sign in"}
                 </button>
@@ -234,16 +253,18 @@ export default function AuthPage() {
                   />
                 </div>
 
-                {regError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                    {regError}
+                {regErrors.length > 0 && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm space-y-1">
+                    {regErrors.map((err, i) => (
+                      <p key={i}>{err}</p>
+                    ))}
                   </div>
                 )}
 
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm cursor-pointer"
                 >
                   {regLoading ? "Creating account..." : "Create account"}
                 </button>

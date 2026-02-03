@@ -26,8 +26,14 @@ export async function registerApi(email: string, password: string, displayName?:
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, displayName }),
     });
-    if (!res.ok) throw (await handleJson(res)) || new Error('Register failed');
-    return res.json();
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw data as string[];
+    } 
+    
+    return data;
 }
 
 export async function refreshApi(): Promise<AuthResponse> {
