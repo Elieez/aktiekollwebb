@@ -1,42 +1,25 @@
-import YahooFinance from "yahoo-finance2";
 import { NextResponse } from 'next/server';
-import { cleanCompanyName } from '@/lib/utils';
-
-interface QuoteResult {
-  symbol: string;
-  shortname?: string;
-  longname?: string;
-}
+import { searchCompanies } from '@/lib/api/companies';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const query = searchParams.get('query');
-  const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
   
-  if (!query) {
+  if (!query || query.length < 2) {
     return NextResponse.json([]);
   }
 
   try {
-    const results = await yahooFinance.search(query);
+    const results = await searchCompanies(query, 10);
 
-    const quotes: QuoteResult[] = Array.isArray(results?.quotes)
-      ? results.quotes as QuoteResult[]
-      : [];
+    const mapped = results.map(company => ({
+      symbol: company.code,
+      description: company.name,
+    }));
 
-    const mapped = quotes
-      .filter(r => Boolean(r.symbol))
-      .map(r => {
-        const rawName = r.longname ?? r.shortname ?? r.symbol;
-        const description = cleanCompanyName(rawName);
-        return {
-          symbol: r.symbol,
-          description,
-        };
-      });
     return NextResponse.json(mapped);
   } catch (err) {
-    console.error('yahoo search failed', err);
+    console.error('company search failed', err);
     return NextResponse.json([]);
   }
 }

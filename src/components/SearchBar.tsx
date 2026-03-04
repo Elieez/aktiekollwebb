@@ -18,7 +18,8 @@ export default function CompanySearch() {
   const listId = "company-search-listbox";
 
   function onSelect(symbol: string) {
-    router.push(`/stocks/${symbol}`);
+    const yahooSymbol = symbol.includes('.') ? symbol : `${symbol}.ST`;
+    router.push(`/stocks/${yahooSymbol}`);
     setQuery("");
     setResults([]);
     setOpen(false);

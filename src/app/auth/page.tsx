@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useAuth } from "@/components/Auth";
-import Image from "next/image";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -41,18 +40,20 @@ export default function AuthPage() {
     setLoginLoading(true);
 
     try {
-      await login(loginEmail, loginPassword);
-      router.push("/");
-    } catch (err: any) {
-      setLoginError(
-        typeof err == "string"
-          ? err
-          : err?.message ?? "Invalid email or password"
-      );
-    } finally {
-      setLoginLoading(false);
+    await login(loginEmail, loginPassword);
+    router.push("/");
+  } catch (err: unknown) {
+    if (typeof err === "string") {
+      setLoginError(err);
+    } else if (err instanceof Error) {
+      setLoginError(err.message);
+    } else {
+      setLoginError("Invalid email or password");
     }
-  };
+  } finally {
+    setLoginLoading(false);
+  }
+};
 
   const onRegister = async (e: React.FormEvent) => {
     e.preventDefault();
