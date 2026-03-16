@@ -112,7 +112,21 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     if (!chart || !line || !tooltip) return;
 
     // price data (daily)
-    const priceData: LineData[] = data.map((d) => ({ time: toUtcTimestamp(d.date), value: Number(d.close) }));
+    const uniqueDates = new Map<string, number>();
+
+    data.forEach((d) => {
+      if (d.date && d.close) {
+        uniqueDates.set(d.date, Number(d.close));
+      }
+    });
+
+    const priceData: LineData[] = Array.from(uniqueDates.entries())
+      .map(([dateStr, close]) => ({
+        time: toUtcTimestamp(dateStr),
+        value: close,
+      }))
+      .sort((a, b) => (a.time as number) - (b.time as number));
+
     line.setData(priceData);
 
     // default visible range: 1 year

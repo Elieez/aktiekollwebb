@@ -111,7 +111,7 @@ export default function TradesList({ trades, enablePagination = false, companyNa
         )}
         {items.map((trade, index) => (
           <div
-            key={`${trade.id}-${index}`}
+            key={`${trade.publishingDate}-${trade.insiderName}-${trade.transactionType}-${trade.shares}-${trade.price}-${index}`}
             className="p-6 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
           >
             <div className="flex items-start justify-between">
