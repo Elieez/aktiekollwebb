@@ -65,7 +65,7 @@ export default function BigTradesList({ trades }: TopTradesProps) {
         <div className="space-y-4">
           {trades.map((trade, index) => (
             <div
-              key={trade.id}
+              key={`${trade.publishingDate}-${trade.insiderName}-${trade.transactionType}-${trade.shares}-${trade.price}-${index}`}
               className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors duration-150"
             >
               <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
