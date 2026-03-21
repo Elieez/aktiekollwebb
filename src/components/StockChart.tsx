@@ -28,15 +28,15 @@ interface StockChartProps {
 const getTradeColor = (type: string) => {
   switch (type) {
     case 'Förvärv':
-      return '#A3E635';
+      return '#4deba8';
     case 'Avyttring':
-      return '#EF4444';
+      return '#f06b4d';
     case 'Teckning':
-      return '#2563EB';
+      return '#4d94eb';
     case 'Tilldelning':
-      return '#7C3AED';
+      return '#a84deb';
     default:
-      return '#6B7280';
+      return '#8a8a8a';
   }
 };
 
@@ -58,16 +58,41 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight || 300,
-      layout: { textColor: '#111827' },
-      rightPriceScale: { borderVisible: false },
+      layout: { 
+        background: { color: 'transparent' },
+        textColor: '#8a8a8a',
+        fontFamily: "'DM Mono', monospace",
+        fontSize: 11, 
+      },
+      rightPriceScale: { 
+        borderVisible: false,
+        textColor: '#555555' 
+      },
       leftPriceScale: { visible: false },
-      timeScale: { timeVisible: true, secondsVisible: false, rightOffset: 3 },
-      crosshair: { mode: CrosshairMode.Normal, vertLine: { color: '#eee', width: 1, style: 0 } },
-      grid: { vertLines: { visible: false }, horzLines: { visible: false } },
+      timeScale: { 
+        borderVisible: false,
+        timeVisible: true, 
+        secondsVisible: false, 
+        rightOffset: 3,
+        fixLeftEdge: false,
+        fixRightEdge: false,
+      },
+      crosshair: {
+         mode:
+          CrosshairMode.Normal,
+          vertLine: { color: 'rgba(255,255,255,0.12)', width: 1, style: 0 },
+          horzLine: { color: 'rgba(255,255,255,0.12)', width: 1, style: 0 },
+        },
+      grid: { 
+        vertLines: { visible: false }, 
+        horzLines: { color: 'rgba(255,255,255,0.04)' },
+      }
     });
     chartRef.current = chart;
 
-    const lineSeries = chart.addSeries(LineSeries, { color: '#0f9d58', lineWidth: 3 });
+    const lineSeries = chart.addSeries(LineSeries, { 
+      color: '#c8f04d', 
+      lineWidth: 2 });
     seriesRef.current = lineSeries;
 
     // simple tooltip element (used by crosshair handler)
@@ -75,15 +100,16 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     tooltip.style.cssText = `
       position: absolute;
       display: none;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
       font-size: 12px;
-      background: rgba(255,255,255,0.98);
-      color: #111827;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      font-family: 'DM Mono', monospace;
+      background: #181b1f;
+      color: #f0ede8;
       pointer-events: none;
       z-index: 1000;
       white-space: nowrap;
+      line-height:1.6;
     `;
     containerRef.current.appendChild(tooltip);
     tooltipRef.current = tooltip;
@@ -161,7 +187,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       markers.push({
         time: time as UTCTimestamp,
         position: 'inBar',
-        color,
+        color: getTradeColor(list[0].transactionType),
         shape: 'circle',
         text: '', // <--- no text
       } as SeriesMarker<UTCTimestamp>);
@@ -173,13 +199,8 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     try {
       createSeriesMarkers(line, markers);
     } catch {
-      type SeriesWithMarkers = ISeriesApi<'Line'> & { setMarkers?: (m: SeriesMarker<UTCTimestamp>[]) => void };
-      const maybe = line as SeriesWithMarkers;
-      try {
-        maybe.setMarkers?.(markers);
-      } catch (innerError) {
-        console.warn('Failed to set markers on line series', innerError);
-      }
+      type S = ISeriesApi<'Line'> & { setMarkers?: (m: SeriesMarker<UTCTimestamp>[]) => void };
+      (line as S).setMarkers?.(markers);
     }
 
     // crosshair tooltip: show aggregated trades for hovered time (first 3 + +N)
@@ -195,20 +216,20 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
 
       if (tradesAtTime.length > 0) {
         const date = new Date((time as number) * 1000);
-        let html = `<div style="font-weight:600">${date.toLocaleDateString()}</div>`;
-        html += `<div style="margin-top:6px"><strong>${tradesAtTime.length}</strong> transaktion(er)</div>`;
-        const preview = tradesAtTime.slice(0, 3);
-        preview.forEach((t) => {
-          html += `<div style="margin-top:6px">${t.transactionType} ${t.price ?? '--'} SEK</div>`;
+        let html = `<div style="color:#f0ede8;font-weight:600;margin-bottom:4px">${date.toLocaleDateString('sv-SE')}</div>`;
+        html += `<div style="color:#8a8a8a">${tradesAtTime.length} transaktion(er)</div>`;
+        tradesAtTime.slice(0, 3).forEach((t) => {
+          const col = getTradeColor(t.transactionType);
+          html += `<div style="color:${col};margin-top:4px">${t.transactionType} ${t.price ?? '--'} SEK</div>`;
         });
-        if (tradesAtTime.length > 3) html += `<div style="margin-top:6px"><small>+${tradesAtTime.length - 3} more</small></div>`;
+        if (tradesAtTime.length > 3) 
+          html += `<div style="color:#555;margin-top:4px">+${tradesAtTime.length - 3} till</small></div>`;
 
         tooltip.innerHTML = html;
         tooltip.style.display = 'block';
-
         const x = param.point.x ?? 0;
         const y = param.point.y ?? 0;
-        tooltip.style.left = `${x + 12}px`;
+        tooltip.style.left = `${x + 14}px`;
         tooltip.style.top = `${y - 28}px`;
         return;
       }
@@ -222,11 +243,14 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       }
 
       const d = new Date((param.time as number) * 1000);
-      tooltip.innerHTML = `<div><strong>${d.toLocaleDateString()}</strong></div><div>Pris: ${price.toLocaleString()} SEK</div>`;
+      tooltip.innerHTML = `
+      <div style="color:#8a8a8a;margin-bottom:2px">${d.toLocaleDateString('sv-SE')}</div>
+      <div style="color:#f0ede8">${price.toLocaleString('sv-SE')}</div>
+      `;
       tooltip.style.display = 'block';
       const x = param.point.x ?? 0;
       const y = param.point.y ?? 0;
-      tooltip.style.left = `${x + 12}px`;
+      tooltip.style.left = `${x + 14}px`;
       tooltip.style.top = `${y - 28}px`;
     };
 

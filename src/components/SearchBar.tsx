@@ -93,13 +93,18 @@ export default function CompanySearch() {
   }
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-md z-50">
+    <div ref={wrapperRef} className="relative max-w-120 flex-1">
       {/* Icon */}
-      <Search
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-        size={18}
-        aria-hidden="true"
-      />
+      <svg
+          className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+        >
+          <circle cx="6.5" cy="6.5" r="5" stroke="white" strokeWidth="1.5" />
+          <path d="M10.5 10.5L14 14" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
 
       {/* Input */}
       <input
@@ -108,15 +113,15 @@ export default function CompanySearch() {
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length && setOpen(true)}
         onKeyDown={onKeyDown}
-        placeholder="Sök företag..."
+        placeholder="Sök bolag, ticker..."
         role="combobox"
         aria-expanded={open}
         aria-controls={listId}
         aria-activedescendant={
           open && highlight >= 0 ? `${listId}-option-${highlight}` : undefined
         }
-        className="w-full pl-10 pr-3 py-2 rounded-4xl bg-gray-100 text-gray-900 placeholder-gray-500
-                   border border-transparent focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full rounded-lg border border-white/[0.07] bg-[#181b1f] py-2 pl-9 pr-3 font-sans text-[13px]
+        text-[#f0ede8] placeholder:text-[#555] outline-none transition-colors focus:border-white/12"
       />
 
       {/* Dropdown */}
@@ -124,14 +129,19 @@ export default function CompanySearch() {
         <ul
           id={listId}
           role="listbox"
-          className="absolute mt-2 w-full max-h-64 overflow-y-auto rounded-md border border-gray-200 bg-white shadow-lg"
-        >
+          className="
+            absolute mt-2 w-full max-h-64 overflow-y-auto 
+            rounded-xl 
+            border border-white/[0.07] 
+            bg-[#111316] 
+            shadow-[0_8px_30px_rgba(0,0,0,0.4)] backdrop-blur
+            dark-scrollbar">
           {loading && (
-            <li className="px-3 py-2 text-sm text-gray-500">Söker…</li>
+            <li className="px-4 py-3 text-sm text-[#555]">Söker…</li>
           )}
 
           {!loading && results.length === 0 && query.length >= 2 && (
-            <li className="px-3 py-2 text-sm text-gray-500">Inga träffar</li>
+            <li className="px-4 py-3 text-sm text-[#555]">Inga träffar</li>
           )}
 
           {!loading &&
@@ -141,18 +151,29 @@ export default function CompanySearch() {
                 id={`${listId}-option-${i}`}
                 role="option"
                 aria-selected={i === highlight}
-                className={`px-3 py-2 cursor-pointer text-sm ${
-                  i === highlight ? "bg-gray-100" : ""
+                className={`
+                  px-4 py-3 
+                  cursor-pointer 
+                  transition-colors
+                  border-b border-white/4 last:border-b-0 
+                  
+                  ${
+                  i === highlight
+                  ? "bg-[#181b1f]" 
+                  : "hover:bg-[181b1f]"
                 }`}
                 onMouseEnter={() => setHighlight(i)}
-                onMouseDown={(e) => {
-                  // prevent input blur before click
-                  e.preventDefault();
-                }}
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => onSelect(r.symbol)}
               >
-                <span className="font-medium">{r.description}</span>{" "}
-                <span className="text-gray-500">({r.symbol})</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] text-[#f0ede8] font-medium">
+                    {r.description}
+                  </span>
+                  <span className="text-[12px] font-mono text-[#555]">
+                    ({r.symbol})
+                  </span>
+                </div>
               </li>
             ))}
         </ul>
