@@ -159,7 +159,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     requestAnimationFrame(() => {
       const last = priceData[priceData.length - 1];
       if (last) {
-        const stockDays = 251 * 24 * 60 * 60;
+        const stockDays = 240 * 24 * 60 * 60;
         try {
           chart.timeScale().setVisibleRange({ from: ((last.time as number) - stockDays) as UTCTimestamp, to: last.time as UTCTimestamp });
         } catch {
@@ -245,7 +245,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       const d = new Date((param.time as number) * 1000);
       tooltip.innerHTML = `
       <div style="color:#8a8a8a;margin-bottom:2px">${d.toLocaleDateString('sv-SE')}</div>
-      <div style="color:#f0ede8">${price.toLocaleString('sv-SE')}</div>
+      <div style="color:#f0ede8">${price.toLocaleString('sv-SE')} • SEK</div>
       `;
       tooltip.style.display = 'block';
       const x = param.point.x ?? 0;

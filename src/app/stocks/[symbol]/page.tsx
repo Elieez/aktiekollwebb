@@ -102,7 +102,7 @@ export default async function StockPage({ params }: PageProps) {
                 <h1 className="font-display text-2xl font-bold text-ink tracking-tight">
                   {companyName}
                 </h1>
-                <p className="font-mono text-[13px] text-faint mt-0.5">
+                <p className="font-mono text-[14px] text-[#666] mt-0.5">
                   {cleanSymbol} · Stockholmsbörsen
                 </p>
               </div>
@@ -111,12 +111,12 @@ export default async function StockPage({ params }: PageProps) {
               <div className="text-right">
                 <p className="font-display text-3xl font-semibold text-ink leading-none">
                   {quote.regularMarketPrice?.toLocaleString('sv-SE')} 
-                  <span className="font-mono text-base font-normal text-faint ml-1">
+                  <span className="font-mono text-base font-normal text-[#666] ml-1">
                     {quote.currency}
                   </span>
                 </p>
                 {typeof priceChange === 'number' && (
-                  <p className={`font-mono text-[13px] mt-1 ${
+                  <p className={`font-mono text-[14px] mt-1 ${
                     isPositive ? 'text-buy' 
                     : isNegative ? 'text-sell'
                     : 'text-muted' 
@@ -160,7 +160,13 @@ export default async function StockPage({ params }: PageProps) {
               )}
             </Section>
             <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
-              <TradesList trades={trades} enablePagination companyName={companyName}/>
+              <TradesList 
+              trades={trades} 
+              enablePagination 
+              companyName={companyName} 
+              variant="stock"
+              title={`Transaktioner - ${companyName}`} 
+              />
           </Section>
         </div>
       </Page>

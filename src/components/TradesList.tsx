@@ -11,6 +11,8 @@ interface TradesListProps {
   trades: InsiderTrade[];
   enablePagination?: boolean;
   companyName?: string;
+  variant?: 'home' | 'stock';
+  title?: string;
 }
 
 const getTransactionTypeColor = (type: string) => {
@@ -28,11 +30,15 @@ const getTransactionTypeColor = (type: string) => {
   }
 };
 
-const formatCurrency = (amount: number) => {
+const formatCurrency = (amount: number, showDecimals: boolean = false) => {
+
+  const hasDecimals = amount % 1 !== 0;
+
   return new Intl.NumberFormat('sv-SE', {
     style: 'currency',
     currency: 'SEK',
-    maximumFractionDigits: 0,
+    minimumFractionDigits: showDecimals && hasDecimals ? 2 : 0,
+    maximumFractionDigits: showDecimals && hasDecimals ? 2 : 0,
   }).format(amount);
 };
 
@@ -43,7 +49,7 @@ const formatNumber = (num: number) => {
 const mapPosition = (position: string) => {
   if (
     position ===
-    'Annan medlem i bolagets administrations-, lednings- eller kontrollorgan'
+    'Annan medlem i bolagets administrations-, lednings- eller kontrollorgan'
   ) {
     return 'Övrig medlem i ledning';
   }
@@ -76,7 +82,13 @@ const formatDate = (dateString: string) => {
   return `${dayMonth} ${time}`;
 };
  
-export default function TradesList({ trades, enablePagination = false, companyName }: TradesListProps) {
+export default function TradesList({ 
+  trades, 
+  enablePagination = false, 
+  companyName,
+  variant = 'home',
+  title 
+}: TradesListProps) {
   const pageSize = companyName ? 10 : 15;
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
@@ -105,64 +117,107 @@ export default function TradesList({ trades, enablePagination = false, companyNa
     });
   };
 
+    const headers = variant === 'stock' 
+  ? [
+      { label: "Insider", align: "left" },
+      { label: "Roll", align: "left" },
+      { label: "Typ", align: "left" },
+      { label: "Antal", align: "right" },
+      { label: "Pris/aktie", align: "right" },
+      { label: "Totalt värde", align: "right" },
+      { label: "Datum", align: "right" }
+    ]
+  : [
+      { label: "Bolag", align: "left" },
+      { label: "Insider", align: "left" },
+      { label: "Roll", align: "left" },
+      { label: "Typ", align: "left" },
+      { label: "Totalt värde", align: "right" },
+      { label: "Datum", align: "right" }
+    ];
+
+    const defaultTitle = variant === 'stock' 
+      ? 'Insideraffärer' 
+      : 'Senaste insideraffärer';
+
   return (
     <div>
       {/* Section header */}
       <div className="mb-4 px-1">
-        <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-[#8a8a8a]">
-          Senaste insideraffärer
+        <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
+          {title || defaultTitle}
         </h2>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-[#111316] mt-2">
+      <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-bg2 mt-2">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-white/[0.07] bg-[#181b1f]">
-            {["Bolag", "Insider", "Roll", "Typ", "Värde", "Datum"].map((h, i) => (
+            <tr className="border-b border-white/[0.07] bg-bg3">
+            {headers.map((h) => (
               <th
-                key={h}
-                className={`px-4 py-2.5 font-display text-[10px] font-semibold uppercase tracking-widest text-[#555]
-                  ${
-                    i >= 4 ? "text-right" : "text-left"
-                }`}
+                key={h.label}
+                className={`px-4 py-2.5 font-display text-[11px] font-semibold uppercase tracking-widest text-[#666]
+                  ${h.align === "right" ? "text-right" : "text-left"}`}
                 >
-                  {h}
+                  {h.label}
                 </th>
             ))}
             </tr>
           </thead>
           <tbody>
             {items.map((t, idx) => {
+              const colors = getTransactionTypeColor(t.transactionType);
               return (
                 <tr 
                   key={idx}
-                  className="cursor-pointer border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-[#181b1f]">
-                  <td className="px-4 py-3">
-                    <div className="flex flex-col">
-                      <span className="text-[13px] font-medium text-[#f0ede8]">{t.companyName}</span>
+                  className="cursor-pointer border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-bg3">
+                  {variant === 'home' && (
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span className="text-[13px] font-medium text-ink">{t.companyName}</span>
+                      </div>
+                    </td>
+                  )}
+
+                  <td className="px-4 py-3 text-[13px] text-muted">{t.insiderName}</td>
+
+                  <td className="px-4 py-3 max-w-50">
+                    <div className="truncate text-[12px] text-[#666]" title={t.position || '-'}>
+                      {mapPosition(t.position)}
                     </div>
                   </td>
 
-                  <td className="px-4 py-3 text-[13px] text-[#8a8a8a]">{t.insiderName}</td>
-
-                  <td className="px-4 py-3 text-[12px] text-[#555]">{t.position}</td>
-
                   <td className="px-4 py-3">
-              <span
-                className={`inline-flex items-center gap-1 rounded-[5px] px-2 py-0.75 font-mono text-[11px] font-medium ${getTransactionTypeColor(
-                  t.transactionType).badge}`}
-              >
-                <span className={`inline-block h-1.25 w-1.25 rounded-full ${getTransactionTypeColor(t.transactionType).dot}`}/>
-                {t.transactionType}
-              </span>
-            </td>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-[5px] px-2 py-0.75 font-mono text-[11px] font-medium ${colors.badge}`}
+                    >
+                      <span className={`inline-block h-1.25 w-1.25 rounded-full ${colors.dot}`}/>
+                      {t.transactionType}
+                    </span>
+                  </td>
 
-                  <td className="px-4 py-3 text-right font-mono text-[13px] text-[#f0ede8]">
+                  {variant === 'stock' && (
+                    <>
+                      <td className="px-4 py-3 text-right">
+                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                          {formatNumber(t.shares)}
+                        </span>
+                        <span className="ml-1 text-[11px] text-[#666]">st</span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                          {formatCurrency(t.price, true)}
+                        </span>
+                      </td>
+                    </>
+                  )}
+
+                  <td className="px-4 py-3 text-right font-mono text-[13px] text-[#FFFFFF]">
                     {formatCurrency(t.shares * t.price)}
                   </td>
 
-                  <td className="px-4 py-3 text-right font-mono text-[11px] whitespace-nowrap text-[#555]">
+                  <td className="px-4 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666]">
                     {formatDate(t.publishingDate)}
                   </td>
                 </tr>
@@ -181,14 +236,14 @@ export default function TradesList({ trades, enablePagination = false, companyNa
               w-full
               rounded-xl
               border border-white/8
-              bg-[#111316]
+              bg-bg2
               px-4 py-2.5
               font-display text-[12px] font-medium uppercase tracking-[0.06em]
-              text-[#8a8a8a]
+              text-muted
               transition-all duration-200
 
-              hover:bg-[#181b1f]
-              hover:text-[#f0ede8]
+              hover:bg-bg3
+              hover:text-ink
               hover:border-white/12
               cursor-pointer
 

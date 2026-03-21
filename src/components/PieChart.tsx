@@ -36,7 +36,7 @@ export default function PieChart({ data, title = 'Transaktioner 12 mån' }: PieC
           <span className="font-display text-lg font-semibold text-ink leading-none">
             {total}
           </span>
-          <span className="font-mono text-[9px] text-faint uppercase tracking-widest mt-0.5">
+          <span className="font-mono text-[9px] text-[#666] uppercase tracking-widest mt-0.5">
             totalt
           </span>
         </div>
@@ -52,8 +52,8 @@ export default function PieChart({ data, title = 'Transaktioner 12 mån' }: PieC
             <span className="text-[12px] text-muted">Förvärv</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[12px] text-ink">{buy}</span>
-            <span className="font-mono text-[11px] text-faint w-9 text-right">{buyPct}%</span>
+            <span className="font-mono text-[13px] text-ink">{buy}</span>
+            <span className="font-mono text-[12px] text-[#666] w-9 text-right">{buyPct}%</span>
           </div>
         </div>
  
@@ -67,8 +67,8 @@ export default function PieChart({ data, title = 'Transaktioner 12 mån' }: PieC
             <span className="text-[12px] text-muted">Avyttring</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[12px] text-ink">{sell}</span>
-            <span className="font-mono text-[11px] text-faint w-9 text-right">{sellPct}%</span>
+            <span className="font-mono text-[13px] text-ink">{sell}</span>
+            <span className="font-mono text-[12px] text-[#666] w-9 text-right">{sellPct}%</span>
           </div>
         </div>
  

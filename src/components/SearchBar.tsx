@@ -120,8 +120,8 @@ export default function CompanySearch() {
         aria-activedescendant={
           open && highlight >= 0 ? `${listId}-option-${highlight}` : undefined
         }
-        className="w-full rounded-lg border border-white/[0.07] bg-[#181b1f] py-2 pl-9 pr-3 font-sans text-[13px]
-        text-[#f0ede8] placeholder:text-[#555] outline-none transition-colors focus:border-white/12"
+        className="w-full rounded-lg border border-white/[0.07] bg-bg3 py-2 pl-9 pr-3 font-sans text-[13px]
+        text-ink placeholder:text-[#666] outline-none transition-colors focus:border-white/12"
       />
 
       {/* Dropdown */}
@@ -133,7 +133,7 @@ export default function CompanySearch() {
             absolute mt-2 w-full max-h-64 overflow-y-auto 
             rounded-xl 
             border border-white/[0.07] 
-            bg-[#111316] 
+            bg-bg2 
             shadow-[0_8px_30px_rgba(0,0,0,0.4)] backdrop-blur
             dark-scrollbar">
           {loading && (
@@ -159,7 +159,7 @@ export default function CompanySearch() {
                   
                   ${
                   i === highlight
-                  ? "bg-[#181b1f]" 
+                  ? "bg-bg3" 
                   : "hover:bg-[181b1f]"
                 }`}
                 onMouseEnter={() => setHighlight(i)}
@@ -167,10 +167,10 @@ export default function CompanySearch() {
                 onClick={() => onSelect(r.symbol)}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[13px] text-[#f0ede8] font-medium">
+                  <span className="text-[13px] text-ink font-medium">
                     {r.description}
                   </span>
-                  <span className="text-[12px] font-mono text-[#555]">
+                  <span className="text-[12px] font-mono text-[#666]">
                     ({r.symbol})
                   </span>
                 </div>
