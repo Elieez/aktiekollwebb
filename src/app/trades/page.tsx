@@ -10,6 +10,7 @@ import {
   getBigInsiderTrades,
   getCompanyTradesCountBuy,
   getCompanyTradesCountSell,
+  getInsiderTradesStats,
 } from "@/lib/api/insider-trades";
 
 export const metadata = {
@@ -21,12 +22,13 @@ export default async function TradesPage() {
   const bigTrades = await getBigInsiderTrades();
   const tradesCountBuy = await getCompanyTradesCountBuy();
   const tradesCountSell = await getCompanyTradesCountSell();
+  const stats = await getInsiderTradesStats();
 
   const spacing = "space-y-6";
 
   return (
     <Page className="min-h-screen bg-bg text-ink antialiased">
-      <Hero />
+      <Hero stats={stats} />
       <div>
         <div className="mx-auto grid max-w-380 grid-cols-[1fr_340px] gap-6 px-8 py-8">
           <Section>

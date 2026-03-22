@@ -1,4 +1,22 @@
-export default function Hero() {
+import { TradeStats } from "@/lib/types/TradeStats";
+
+interface HeroProps{
+  stats: TradeStats;
+}
+
+
+export default function Hero({ stats }: HeroProps) {
+  function formatValue(value: number): string {
+    if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)} Mdr`;
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)} Mkr`;
+    return new Intl.NumberFormat("sv-SE").format(value);
+  }
+
+  const statItems = [
+    { val: stats.totalTransactions.toLocaleString("sv-SE"), label: "Transaktioner i år" },
+    { val: formatValue(stats.totalValue) + " kr",           label: "Handelsvärde i år" },
+    { val: "218",    label: "Aktiva bolag" },
+  ];
     return (
     <div className="mx-auto flex max-w-380 animate-fadeUp items-end justify-between gap-6 border-b border-white/[0.07] px-8 pt-14 pb-10">
       {/* Copy */}
@@ -16,11 +34,7 @@ export default function Hero() {
  
       {/* Stats */}
       <div className="flex shrink-0 gap-8">
-        {[
-          { val: "1 284", label: "Transaktioner i år" },
-          { val: "342 M",  label: "Handelsvärde kr" },
-          { val: "218",    label: "Aktiva bolag" },
-        ].map((s) => (
+        {statItems.map((s) => (
           <div key={s.label} className="text-right">
             <span className="block font-display text-2xl font-semibold text-ink">
               {s.val}
