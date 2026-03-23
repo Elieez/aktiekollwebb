@@ -22,7 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    {/* lang changed from "en" to "sv" — the app content is Swedish (affects screen readers, SEO) */}
+    <html lang="sv" className={inter.variable}>
       <body className="font-sans bg-bg text-ink">
         <AuthProvider>
           <Header />

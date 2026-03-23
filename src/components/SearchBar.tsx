@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+// Search icon from lucide-react was imported but never used — removed (custom inline SVG is used instead)
 
 type Result = { symbol: string; description: string };
 
@@ -158,9 +158,10 @@ export default function CompanySearch() {
                   border-b border-white/4 last:border-b-0 
                   
                   ${
+                  // Missing '#' prefix on hex color — Tailwind requires it: bg-[#181b1f]
                   i === highlight
-                  ? "bg-bg3" 
-                  : "hover:bg-[181b1f]"
+                  ? "bg-bg3"
+                  : "hover:bg-[#181b1f]"
                 }`}
                 onMouseEnter={() => setHighlight(i)}
                 onMouseDown={(e) => e.preventDefault()}

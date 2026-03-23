@@ -182,14 +182,14 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
     const tradeLookup = new Map<number, InsiderTrade[]>();
 
     tradesByTime.forEach((list, time) => {
-      // marker uses the same series (no text)
-      const color = getTradeColor(list[0].transactionType);
+      // Removed duplicate `color` variable that was computed but never used —
+      // getTradeColor is called inline on the marker object directly
       markers.push({
         time: time as UTCTimestamp,
         position: 'inBar',
         color: getTradeColor(list[0].transactionType),
         shape: 'circle',
-        text: '', // <--- no text
+        text: '',
       } as SeriesMarker<UTCTimestamp>);
 
       tradeLookup.set(time, list);

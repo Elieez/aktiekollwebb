@@ -1,5 +1,9 @@
 const backendUrl = process.env.NEXT_PUBLIC_API_URL;
 
+// Default revalidation: 5 minutes. Callers can override via options.next.
+// This avoids hammering the backend on every SSR render while keeping data reasonably fresh.
+const DEFAULT_REVALIDATE = 300;
+
 export async function get<T>(
   endpoint: string,
   options?: {
@@ -12,7 +16,8 @@ export async function get<T>(
   const response = await fetch(url, {
     method: "GET",
     headers: { Accept: "application/json", ...options?.headers },
-    next: options?.next,
+    // Merge caller-supplied next config; fall back to default revalidate
+    next: { revalidate: DEFAULT_REVALIDATE, ...options?.next },
   });
 
   if (!response.ok)

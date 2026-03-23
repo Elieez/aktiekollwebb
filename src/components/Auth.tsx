@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link'; // Needed to replace raw <a> with Next.js client-side navigation
 import { loginApi, registerApi, refreshApi, logoutApi} from '../lib/api/auth';
 
 type User = { id?: string; email?: string; displayName?: string } | null;
@@ -74,7 +75,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    try { await logoutApi(); } catch (e) { console.error(e); }
+    // Swallow logoutApi errors — local state should be cleared regardless.
+    // console.error removed: logout failure is non-actionable for the user and should not leak to prod logs.
+    try { await logoutApi(); } catch { /* intentionally ignored */ }
     setAccessToken(null);
     setUser(null);
   }, []);
@@ -113,18 +116,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function AuthStatus() {
   const { user, loading, logout } = useAuth();
 
-  if (loading) return <div style={{ padding: 8 }}>Loading...</div>
+  // Inline style replaced with Tailwind class — keeps styling consistent and tree-shakeable
+  if (loading) return <div className="p-2 text-sm text-muted">Loading...</div>
 
   if(!user) {
     return (
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <a href="/auth" className="text-white hover:text-gray-300">Sign in</a>
+      // Raw <a> replaced with next/link to avoid full-page reload on navigation
+      <div className="flex gap-2 items-center">
+        <Link href="/auth" className="text-white hover:text-gray-300">Sign in</Link>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+    // Inline styles replaced with Tailwind classes
+    <div className="flex gap-2 items-center">
       <span>{user.displayName ?? user.email}</span>
       <button
         onClick={async () => { await logout(); window.location.href = '/'; }}

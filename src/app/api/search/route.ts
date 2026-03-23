@@ -22,8 +22,12 @@ export async function GET(req: Request) {
       description: company.name,
     }));
 
-    return NextResponse.json(mapped);
+    // Cache search results for 1 hour at the CDN/browser level — company list is stable
+    return NextResponse.json(mapped, {
+      headers: { 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=600' },
+    });
   } catch (err) {
+    // Server-side error logging is appropriate here; do not expose internals to client
     console.error('company search failed', err);
     return NextResponse.json([]);
   }
