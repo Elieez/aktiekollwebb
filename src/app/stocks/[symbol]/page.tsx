@@ -30,9 +30,17 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
+// Allow only valid ticker characters: letters, digits, dots, hyphens (max 20 chars)
+const SYMBOL_RE = /^[A-Za-z0-9.\-]{1,20}$/;
+
 export default async function StockPage({ params }: PageProps) {
   const { symbol } = await params;
-  const cleanSymbol = symbol.toUpperCase().replace('.ST', ''); 
+
+  if (!SYMBOL_RE.test(symbol)) {
+    return notFound();
+  }
+
+  const cleanSymbol = symbol.toUpperCase().replace('.ST', '');
   const yahooSymbol = symbol.includes('.') ? symbol : `${symbol}.ST`;
 
   try {
