@@ -157,8 +157,8 @@ export default function TradesList({
             {headers.map((h) => (
               <th
                 key={h.label}
-                className={`px-4 py-2.5 font-display text-[11px] font-semibold uppercase tracking-widest text-[#666]
-                  ${h.align === "right" ? "text-right" : "text-left"} ${h.hideClass}`}
+                className={`px-2 py-2.5 sm:px-4 font-display text-[11px] font-semibold uppercase tracking-widest text-[#666]
+                  ${h.align === "right" ? "text-left sm:text-right" : "text-left"} ${h.hideClass}`}
                 >
                   {h.label}
                 </th>
@@ -173,22 +173,22 @@ export default function TradesList({
                   key={idx}
                   className="cursor-pointer border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-bg3">
                   {variant === 'home' && (
-                    <td className="px-4 py-3">
+                    <td className="px-2 py-3 sm:px-4">
                       <div className="flex flex-col">
                         <span className="text-[13px] font-medium text-ink">{t.companyName}</span>
                       </div>
                     </td>
                   )}
 
-                  <td className={`px-4 py-3 text-[13px] text-muted ${variant === 'home' ? 'hidden sm:table-cell' : ''}`}>{t.insiderName}</td>
+                  <td className={`px-2 py-3 text-[13px] text-muted sm:px-4 ${variant === 'home' ? 'hidden sm:table-cell' : ''}`}>{t.insiderName}</td>
 
-                  <td className="hidden px-4 py-3 max-w-50 xl:table-cell">
+                  <td className="hidden px-2 py-3 max-w-50 sm:px-4 xl:table-cell">
                     <div className="truncate text-[12px] text-[#666]" title={t.position || '-'}>
                       {mapPosition(t.position)}
                     </div>
                   </td>
 
-                  <td className="px-4 py-3">
+                  <td className="px-2 py-3 sm:px-4">
                     <span
                       className={`inline-flex items-center gap-1 rounded-[5px] px-2 py-0.75 font-mono text-[11px] font-medium ${colors.badge}`}
                     >
@@ -199,13 +199,13 @@ export default function TradesList({
 
                   {variant === 'stock' && (
                     <>
-                      <td className="hidden px-4 py-3 text-right md:table-cell">
+                      <td className="hidden px-2 py-3 text-right sm:px-4 md:table-cell">
                         <span className="font-mono text-[12px] text-[#D1D5DB]">
                           {formatNumber(t.shares)}
                         </span>
                         <span className="ml-1 text-[11px] text-[#666]">st</span>
                       </td>
-                      <td className="hidden px-4 py-3 text-right md:table-cell">
+                      <td className="hidden px-2 py-3 text-right sm:px-4 md:table-cell">
                         <span className="font-mono text-[12px] text-[#D1D5DB]">
                           {formatCurrency(t.price, true)}
                         </span>
@@ -213,11 +213,11 @@ export default function TradesList({
                     </>
                   )}
 
-                  <td className="px-4 py-3 text-right font-mono text-[13px] text-[#FFFFFF]">
+                  <td className="px-2 py-3 text-left font-mono text-[13px] text-[#FFFFFF] sm:px-4 sm:text-right">
                     {formatCurrency(t.shares * t.price)}
                   </td>
 
-                  <td className="hidden px-4 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666] sm:table-cell">
+                  <td className="hidden px-2 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666] sm:table-cell sm:px-4">
                     {formatDate(t.publishingDate)}
                   </td>
                 </tr>
