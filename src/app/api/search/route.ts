@@ -22,7 +22,9 @@ export async function GET(req: Request) {
       description: company.name,
     }));
 
-    return NextResponse.json(mapped);
+    return NextResponse.json(mapped, {
+      headers: { 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=600' },
+    });
   } catch (err) {
     console.error('company search failed', err);
     return NextResponse.json([]);

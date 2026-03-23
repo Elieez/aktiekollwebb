@@ -64,8 +64,14 @@ export default function AuthPage() {
       await register(regEmail, regPassword, regName);
       await login(regEmail, regPassword);
       router.push("/");
-    } catch (err) {
-      setRegErrors(err as string[]);
+    } catch (err: unknown) {
+      if (Array.isArray(err) && err.every((e) => typeof e === "string")) {
+        setRegErrors(err as string[]);
+      } else if (err instanceof Error) {
+        setRegErrors([err.message]);
+      } else {
+        setRegErrors(["An unexpected error occurred"]);
+      }
     } finally {
       setRegLoading(false);
     }

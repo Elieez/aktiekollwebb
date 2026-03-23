@@ -5,7 +5,7 @@ import { InsiderTrade } from "@/lib/types/InsiderTrade";
 import { 
   getInsiderTrades,
   getInsiderTradesByCompanyName,
-} from "@/lib/api/insider-trades";
+} from "@/lib/actions/insider-trades";
 
 interface TradesListProps {
   trades: InsiderTrade[];

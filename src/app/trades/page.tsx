@@ -1,8 +1,8 @@
 import Page from "@/components/Page";
 import Section from "@/components/Section";
 import TradesCount from "@/components/TradesCount";
-import TradesList from "../../components/TradesList";
-import BigTradesList from "../../components/BigTradesList";
+import TradesList from "@/components/TradesList";
+import BigTradesList from "@/components/BigTradesList";
 import Hero from "@/components/Hero";
 
 import {

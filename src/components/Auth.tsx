@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { loginApi, registerApi, refreshApi, logoutApi} from '../lib/api/auth';
 
 type User = { id?: string; email?: string; displayName?: string } | null;
@@ -74,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    try { await logoutApi(); } catch (e) { console.error(e); }
+    try { await logoutApi(); } catch { }
     setAccessToken(null);
     setUser(null);
   }, []);
@@ -119,13 +120,13 @@ export function AuthStatus() {
 
   if (!user) {
     return (
-      <a 
+      <Link
         href="/auth"
         className="rounded-lg border border-white/[0.07] bg-bg2 px-3 py-1.5 font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted
         hover:bg-bg3 hover:text-ink hover:border-white/12 transition-colors"
         >
           Sign in
-        </a>
+        </Link>
     );
   }
 
