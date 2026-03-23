@@ -30,7 +30,7 @@ export default async function TradesPage() {
     <Page className="min-h-screen bg-bg text-ink antialiased">
       <Hero stats={stats} />
       <div>
-        <div className="mx-auto grid max-w-380 grid-cols-[1fr_340px] gap-6 px-8 py-8">
+        <div className="mx-auto grid max-w-380 grid-cols-1 gap-6 px-4 py-6 sm:px-8 sm:py-8 lg:grid-cols-[1fr_340px]">
           <Section>
             <TradesList trades={trades} enablePagination/>
           </Section>

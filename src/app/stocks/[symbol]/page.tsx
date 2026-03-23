@@ -98,7 +98,7 @@ export default async function StockPage({ params }: PageProps) {
 
     return (
       <Page>
-        <div className="max-w-5xl mx-auto px-8 py-8 space-y-6">
+        <div className="max-w-5xl mx-auto px-4 py-6 space-y-6 sm:px-8 sm:py-8">
           {/* Stock header */}
           <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
             <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -138,17 +138,17 @@ export default async function StockPage({ params }: PageProps) {
             {/* Chart + Pie */}
             <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
               {chartData.length > 0 ? (
-                <div className="flex items-stretch gap-0">
+                <div className="flex flex-col md:flex-row md:items-stretch gap-0">
 
                   {/* Chart */}
-                  <div className={`${hasTransactions ? 'flex-1' : 'w-full'} h-120 p-4
-                                  border-r border-border`}>
+                  <div className={`${hasTransactions ? 'md:flex-1' : 'w-full'} h-72 sm:h-96 md:h-120 p-4
+                                  border-b md:border-b-0 md:border-r border-border`}>
                     <StockChart data={chartData} trades={trades} />
                   </div>
 
                   {/* Pie */}
                   {hasTransactions && (
-                    <div className="w-52 shrink-0 flex items-center justify-center border border-border">
+                    <div className="md:w-52 shrink-0 flex items-center justify-center py-6 md:py-0 border-border">
                       <PieChart data={companyTradeCounts} />
                     </div>
                   )}

@@ -117,23 +117,23 @@ export default function TradesList({
     });
   };
 
-    const headers = variant === 'stock' 
+    const headers = variant === 'stock'
   ? [
-      { label: "Insider", align: "left" },
-      { label: "Roll", align: "left" },
-      { label: "Typ", align: "left" },
-      { label: "Antal", align: "right" },
-      { label: "Pris/aktie", align: "right" },
-      { label: "Totalt värde", align: "right" },
-      { label: "Datum", align: "right" }
+      { label: "Insider", align: "left", hideClass: "" },
+      { label: "Roll", align: "left", hideClass: "hidden xl:table-cell" },
+      { label: "Typ", align: "left", hideClass: "" },
+      { label: "Antal", align: "right", hideClass: "hidden md:table-cell" },
+      { label: "Pris/aktie", align: "right", hideClass: "hidden md:table-cell" },
+      { label: "Totalt värde", align: "right", hideClass: "" },
+      { label: "Datum", align: "right", hideClass: "hidden sm:table-cell" }
     ]
   : [
-      { label: "Bolag", align: "left" },
-      { label: "Insider", align: "left" },
-      { label: "Roll", align: "left" },
-      { label: "Typ", align: "left" },
-      { label: "Totalt värde", align: "right" },
-      { label: "Datum", align: "right" }
+      { label: "Bolag", align: "left", hideClass: "" },
+      { label: "Insider", align: "left", hideClass: "hidden sm:table-cell" },
+      { label: "Roll", align: "left", hideClass: "hidden xl:table-cell" },
+      { label: "Typ", align: "left", hideClass: "" },
+      { label: "Totalt värde", align: "right", hideClass: "" },
+      { label: "Datum", align: "right", hideClass: "hidden sm:table-cell" }
     ];
 
     const defaultTitle = variant === 'stock' 
@@ -158,7 +158,7 @@ export default function TradesList({
               <th
                 key={h.label}
                 className={`px-4 py-2.5 font-display text-[11px] font-semibold uppercase tracking-widest text-[#666]
-                  ${h.align === "right" ? "text-right" : "text-left"}`}
+                  ${h.align === "right" ? "text-right" : "text-left"} ${h.hideClass}`}
                 >
                   {h.label}
                 </th>
@@ -180,9 +180,9 @@ export default function TradesList({
                     </td>
                   )}
 
-                  <td className="px-4 py-3 text-[13px] text-muted">{t.insiderName}</td>
+                  <td className={`px-4 py-3 text-[13px] text-muted ${variant === 'home' ? 'hidden sm:table-cell' : ''}`}>{t.insiderName}</td>
 
-                  <td className="px-4 py-3 max-w-50">
+                  <td className="hidden px-4 py-3 max-w-50 xl:table-cell">
                     <div className="truncate text-[12px] text-[#666]" title={t.position || '-'}>
                       {mapPosition(t.position)}
                     </div>
@@ -199,13 +199,13 @@ export default function TradesList({
 
                   {variant === 'stock' && (
                     <>
-                      <td className="px-4 py-3 text-right">
+                      <td className="hidden px-4 py-3 text-right md:table-cell">
                         <span className="font-mono text-[12px] text-[#D1D5DB]">
                           {formatNumber(t.shares)}
                         </span>
                         <span className="ml-1 text-[11px] text-[#666]">st</span>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="hidden px-4 py-3 text-right md:table-cell">
                         <span className="font-mono text-[12px] text-[#D1D5DB]">
                           {formatCurrency(t.price, true)}
                         </span>
@@ -217,7 +217,7 @@ export default function TradesList({
                     {formatCurrency(t.shares * t.price)}
                   </td>
 
-                  <td className="px-4 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666]">
+                  <td className="hidden px-4 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666] sm:table-cell">
                     {formatDate(t.publishingDate)}
                   </td>
                 </tr>

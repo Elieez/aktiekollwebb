@@ -5,8 +5,8 @@ import { AuthStatus } from "./Auth";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 flex h-15 items-center gap-6 border-b border-white/[0.07]
-                       bg-[#0b0d0f]/90 px-8 backdrop-blur-2xl">
+    <header className="sticky top-0 z-50 flex h-15 items-center gap-3 border-b border-white/[0.07]
+                       bg-[#0b0d0f]/90 px-4 backdrop-blur-2xl sm:gap-6 sm:px-8">
         {/* Left: Logo & Title */}
         <div className="shrink-0 font-display text-lg font-bold tracking-tight text-[#f0ede8]">
           <Link href="/">
