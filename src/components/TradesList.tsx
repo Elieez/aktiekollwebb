@@ -2,10 +2,15 @@
 
 import { useState, useTransition } from "react";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
-import { 
+// Import from server actions, not the API layer directly.
+// The API functions use next: { revalidate } (server-only) and rely on
+// NEXT_PUBLIC_API_URL being reachable from the server. Calling them straight
+// from a "use client" component bypasses both — the server action boundary
+// ensures this code always executes on the server.
+import {
   getInsiderTrades,
   getInsiderTradesByCompanyName,
-} from "@/lib/api/insider-trades";
+} from "@/lib/actions/insider-trades";
 
 interface TradesListProps {
   trades: InsiderTrade[];
