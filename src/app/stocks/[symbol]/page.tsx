@@ -12,9 +12,7 @@ import {
   getInsiderTradesByCompanyName,
 } from "@/lib/api/insider-trades";
 
-const yahooFinance = new YahooFinance({
-  suppressNotices: ['yahooSurvey'],
-});
+const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
 interface PageProps {
   params: Promise<{ symbol: string }>;
@@ -68,7 +66,7 @@ export default async function StockPage({ params }: PageProps) {
 
     console.log(`[Stock Page] Cleaned company name: "${companyName}" from "${rawCompanyName}"`);
 
-    const trades = await getInsiderTradesByCompanyName(companyName);
+    const trades = await getInsiderTradesByCompanyName(companyName, 0, 10);
 
     const chartData = (chartRes && Array.isArray(chartRes.quotes) && chartRes.quotes.length > 0)
       ? (chartRes.quotes as ChartQuote[]).map((q) => ({
@@ -88,56 +86,89 @@ export default async function StockPage({ params }: PageProps) {
     const companyTradeCounts = [buyCount, sellCount];
     const hasTransactions = trades.length > 0;
 
+    const priceChange = quote.regularMarketChangePercent;
+    const isPositive = typeof priceChange === 'number' && priceChange > 0;
+    const isNegative = typeof priceChange === 'number' && priceChange < 0;
+
+
     return (
       <Page>
-        <Section className="max-w-5xl mx-auto p-8 space-y-8">
-          <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{companyName}</h1>
-              <p className="text-xl font-medium text-gray-500">({cleanSymbol})</p>
-            </div>
-            <div className="mt-4 sm:mt-0 text-right">
-              <p className="text-4xl font-semibold text-gray-900">
-                {quote.regularMarketPrice} 
-                <span className="text-xl font-medium text-gray-600">{quote.currency}</span>
-              </p>
-              {typeof quote.regularMarketChangePercent === 'number' && (
-                <p className={`mt-1 text-lg font-medium ${
-                  quote.regularMarketChangePercent > 0 
-                    ? 'text-green-500' 
-                    : 'text-red-500'
-                }`}>
-                  {quote.regularMarketChangePercent.toFixed(2)}%
+        <div className="max-w-5xl mx-auto px-8 py-8 space-y-6">
+          {/* Stock header */}
+          <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
+            <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm_items-center justify-between gap-4">
+              {/* Left: name + ticker */}
+              <div>
+                <h1 className="font-display text-2xl font-bold text-ink tracking-tight">
+                  {companyName}
+                </h1>
+                <p className="font-mono text-[14px] text-[#666] mt-0.5">
+                  {cleanSymbol} · Stockholmsbörsen
                 </p>
-              )}
-            </div>
-          </header>
-          <div className="border-b border-gray-200 my-4 -mx-8" />
-          
-          {chartData.length > 0 ? (
-            <div className="mx-auto max-w-4xl flex items-center space-x-6">
-              <div className={`${hasTransactions ? 'flex-1' : 'w-full'} border border-gray-300 stock-chart-container h-96`}>
-                <StockChart data={chartData} trades={trades} />
               </div>
-              {hasTransactions && (
-                <div className="w-60">
-                  <PieChart data={companyTradeCounts} />
+
+              {/* Right: price + change */}
+              <div className="text-right">
+                <p className="font-display text-3xl font-semibold text-ink leading-none">
+                  {quote.regularMarketPrice?.toLocaleString('sv-SE')} 
+                  <span className="font-mono text-base font-normal text-[#666] ml-1">
+                    {quote.currency}
+                  </span>
+                </p>
+                {typeof priceChange === 'number' && (
+                  <p className={`font-mono text-[14px] mt-1 ${
+                    isPositive ? 'text-buy' 
+                    : isNegative ? 'text-sell'
+                    : 'text-muted' 
+                  }`}
+                  >
+                    {isPositive ? '▲' : isNegative ? '▼' : ''}
+                    {' '}{priceChange.toFixed(2)}%
+                  </p>
+                )}
+              </div>
+            </div>
+            </Section>
+
+            {/* Chart + Pie */}
+            <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
+              {chartData.length > 0 ? (
+                <div className="flex items-stretch gap-0">
+
+                  {/* Chart */}
+                  <div className={`${hasTransactions ? 'flex-1' : 'w-full'} h-120 p-4
+                                  border-r border-border`}>
+                    <StockChart data={chartData} trades={trades} />
+                  </div>
+
+                  {/* Pie */}
+                  {hasTransactions && (
+                    <div className="w-52 shrink-0 flex items-center justify-center border border-border">
+                      <PieChart data={companyTradeCounts} />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="h-80 flex flex-col items-center justify-center gap-2 text-center">
+                  <p className="font-display text-[13px] font-medium text-muted">
+                    Graf ej tillgänglig
+                  </p>
+                  <p className="text-[12px] text-faint">
+                    Historisk data hittades inte
+                  </p>
                 </div>
               )}
-            </div>
-          ) : (
-            <div className="text-center text-gray-500 py-8 border border-gray-300 rounded h-96 flex items-center justify-center">
-              <div>
-                <p className="font-medium">Chart Unavailable</p>
-                <p className="text-sm mt-2">Historical data not found</p>
-              </div>
-            </div>
-          )}
-          
-          <div className="pt-8">
-            <TradesList trades={trades} enablePagination companyName={companyName}/>
-          </div>
-        </Section>
+            </Section>
+            <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
+              <TradesList 
+              trades={trades} 
+              enablePagination 
+              companyName={companyName} 
+              variant="stock"
+              title={`Transaktioner - ${companyName}`} 
+              />
+          </Section>
+        </div>
       </Page>
     );
   } catch (error: any) {

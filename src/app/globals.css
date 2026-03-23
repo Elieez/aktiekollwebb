@@ -1,68 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Backgrounds */
+  --color-bg:          #0b0d0f;
+  --color-bg2:         #111316;
+  --color-bg3:         #181b1f;
+  --color-bg4:         #1f2228;
+
+  /* Text */
+  --color-ink:         #f0ede8;
+  --color-muted:       #8a8a8a;
+  --color-faint:       #555555;
+
+  /* Accent */
+  --color-accent:      #c8f04d;
+  --color-accent-dim:  rgba(200, 240, 77, 0.12);
+
+  /* Buy / Sell */
+  --color-buy:         #4deba8;
+  --color-buy-dim:     rgba(77, 235, 168, 0.10);
+  --color-sell:        #f06b4d;
+  --color-sell-dim:    rgba(240, 107, 77, 0.10);
+
+  /* Rank colours */
+  --color-gold:        #f0c94d;
+  --color-silver:      #9ba3b0;
+  --color-bronze:      #a07050;
+
+  /* Borders */
+  --color-border:      rgba(255, 255, 255, 0.07);
+  --color-border-soft: rgba(255, 255, 255, 0.12);
+
+  /* Fonts */
+  --font-display:      'Syne', sans-serif;
+  --font-mono:         'DM Mono', monospace;
+  --font-body:         'DM Sans', sans-serif;
+}
+
+/* ── Font utilities ──────────────────────────────────────────
+   @utility registrerar font-display och font-mono som
+   riktiga Tailwind-klasser (className="font-display" osv.)
+──────────────────────────────────────────────────────────── */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility font-mono {
+  font-family: var(--font-mono);
+}
+
+/* ── Base ────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), 'Inter', sans-serif;
-}
-
-.container {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
   min-height: 100vh;
-  color: #ffffff;
-  padding: 2rem;
+  -webkit-font-smoothing: antialiased;
 }
 
-.header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 2rem;
-  margin-bottom: 3rem;
+/* ── Dark scrollbar (oförändrad från din befintliga css) ─── */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 8px;
 }
-
-.title {
-  font-size: 2rem;
-  color: #171717;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-.main-content {
-  display: grid;
-  gap: 2rem;
-}
-
-.trades-list {
-  background: #1a1a1a;
-  border-radius: 12px;
-  padding: 2rem;
-  border: 1px solid #2a2a2a;
-}
-
-.list-title {
-  color: #00ff88;
-  margin: 0 0 2rem 0;
-  font-size: 1.5rem;
-}
-
-.trade-item {
-  background: #2a2a2a;
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.08);
   border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border: 1px solid #3a3a3a;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+.dark-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
 }
 
-.trade-item p,
-.trade-item div {
-  margin: 0.25rem 0;
+/* ── Ticker animation ────────────────────────────────────── */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-animate {
+  animation: ticker 30s linear infinite;
 }
 
+/* ── Entrance animation ──────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up       { animation: fadeUp 0.5s ease both; }
+.fade-up-delay { animation: fadeUp 0.5s ease 0.08s both; }
+
+/* ── Responsive (oförändrad) ─────────────────────────────── */
 @media (max-width: 768px) {
   .header {
     grid-template-columns: 1fr;

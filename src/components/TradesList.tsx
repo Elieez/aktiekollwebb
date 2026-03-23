@@ -11,28 +11,34 @@ interface TradesListProps {
   trades: InsiderTrade[];
   enablePagination?: boolean;
   companyName?: string;
+  variant?: 'home' | 'stock';
+  title?: string;
 }
 
 const getTransactionTypeColor = (type: string) => {
   switch (type) {
     case 'Förvärv':
-      return 'text-green-600 bg-green-100';
+      return { badge: 'bg-[rgba(77,235,168,0.1)] text-[#4deba8]', dot: 'bg-green-600' };
     case 'Avyttring':
-      return 'text-red-600 bg-red-100';
+      return { badge: 'bg-[rgba(240,107,77,0.1)] text-[#f06b4d]', dot: 'bg-red-600' };
     case 'Teckning':
-      return 'text-blue-600 bg-blue-100';
+      return { badge: 'bg-[rgba(10,100,188,0.1)] text-[#0a64bc]', dot: 'bg-blue-600' };
     case 'Tilldelning':
-      return 'text-purple-600 bg-purple-100';
+      return { badge: 'bg-[rgba(255,238,140,0.1)] text-[#ffee8c]', dot: 'bg-yellow-600' };
     default:
-      return 'text-gray-600 bg-gray-100';
+      return { badge: 'bg-[rgba(128,128,128,0.1)] text-[#808080]', dot: 'bg-gray-600' };
   }
 };
 
-const formatCurrency = (amount: number) => {
+const formatCurrency = (amount: number, showDecimals: boolean = false) => {
+
+  const hasDecimals = amount % 1 !== 0;
+
   return new Intl.NumberFormat('sv-SE', {
     style: 'currency',
     currency: 'SEK',
-    maximumFractionDigits: 0,
+    minimumFractionDigits: showDecimals && hasDecimals ? 2 : 0,
+    maximumFractionDigits: showDecimals && hasDecimals ? 2 : 0,
   }).format(amount);
 };
 
@@ -43,7 +49,7 @@ const formatNumber = (num: number) => {
 const mapPosition = (position: string) => {
   if (
     position ===
-    'Annan medlem i bolagets administrations-, lednings- eller kontrollorgan'
+    'Annan medlem i bolagets administrations-, lednings- eller kontrollorgan'
   ) {
     return 'Övrig medlem i ledning';
   }
@@ -75,20 +81,33 @@ const formatDate = (dateString: string) => {
 
   return `${dayMonth} ${time}`;
 };
-
-export default function TradesList({ trades, enablePagination = false, companyName }: TradesListProps) {
-  const pageSize = 10;
+ 
+export default function TradesList({ 
+  trades, 
+  enablePagination = false, 
+  companyName,
+  variant = 'home',
+  title 
+}: TradesListProps) {
+  const pageSize = companyName ? 10 : 15;
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
   const [isPending, startTransition] = useTransition();
-  const [hasMore, setHasMore] = useState(trades.length === pageSize);
+  const [hasMore, setHasMore] = useState(trades.length >= pageSize);
   
   const loadMore = () => {
     startTransition(async () => {
       const nextPage = page + 1;
-      const more = companyName
-        ? await getInsiderTradesByCompanyName(companyName, page * pageSize, pageSize)
-        : await getInsiderTrades(nextPage, pageSize);
+
+      let more: InsiderTrade[] = [];
+
+      if (companyName) {
+        const skip = (nextPage - 1) * pageSize;
+        more = await getInsiderTradesByCompanyName(companyName, skip, pageSize);
+      } else {
+        more = await getInsiderTrades(nextPage, pageSize);
+      }
+      
       setItems(prev => [...prev, ...more]);
       setPage(nextPage);
 
@@ -98,68 +117,141 @@ export default function TradesList({ trades, enablePagination = false, companyNa
     });
   };
 
+    const headers = variant === 'stock' 
+  ? [
+      { label: "Insider", align: "left" },
+      { label: "Roll", align: "left" },
+      { label: "Typ", align: "left" },
+      { label: "Antal", align: "right" },
+      { label: "Pris/aktie", align: "right" },
+      { label: "Totalt värde", align: "right" },
+      { label: "Datum", align: "right" }
+    ]
+  : [
+      { label: "Bolag", align: "left" },
+      { label: "Insider", align: "left" },
+      { label: "Roll", align: "left" },
+      { label: "Typ", align: "left" },
+      { label: "Totalt värde", align: "right" },
+      { label: "Datum", align: "right" }
+    ];
+
+    const defaultTitle = variant === 'stock' 
+      ? 'Insideraffärer' 
+      : 'Senaste insideraffärer';
+
   return (
     <div>
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">Senaste Transaktioner</h2>
-        <p className="text-sm text-gray-600 mt-1">Senaste insider trading aktivitet</p>
+      {/* Section header */}
+      <div className="mb-4 px-1">
+        <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
+          {title || defaultTitle}
+        </h2>
       </div>
 
-      <div className="overflow-hidden">
-        {items.length === 0 && (
-          <p className="p-6 text-center text-gray-500">Inga Transaktioner</p>
-        )}
-        {items.map((trade, index) => (
-          <div
-            key={`${trade.publishingDate}-${trade.insiderName}-${trade.transactionType}-${trade.shares}-${trade.price}-${index}`}
-            className="p-6 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="font-semibold text-gray-900">{trade.companyName}</h3>
-                  <span
-                    className={`text-sm font-medium px-2 py-1 rounded-full ${getTransactionTypeColor(trade.transactionType)}`}>
-                    {trade.transactionType}
-                  </span>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <p className="text-gray-700">{trade.insiderName}</p>
-                  <p className="text-sm text-gray-500">{mapPosition(trade.position)}</p>
-                </div>
+      {/* Table */}
+      <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-bg2 mt-2">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="border-b border-white/[0.07] bg-bg3">
+            {headers.map((h) => (
+              <th
+                key={h.label}
+                className={`px-4 py-2.5 font-display text-[11px] font-semibold uppercase tracking-widest text-[#666]
+                  ${h.align === "right" ? "text-right" : "text-left"}`}
+                >
+                  {h.label}
+                </th>
+            ))}
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((t, idx) => {
+              const colors = getTransactionTypeColor(t.transactionType);
+              return (
+                <tr 
+                  key={idx}
+                  className="cursor-pointer border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-bg3">
+                  {variant === 'home' && (
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span className="text-[13px] font-medium text-ink">{t.companyName}</span>
+                      </div>
+                    </td>
+                  )}
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-500">Aktier</span>
-                    <p className="font-medium text-gray-900">{formatNumber(trade.shares)}</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Pris/Aktie</span>
-                    <p className="font-medium text-gray-900">{trade.price.toFixed(2)} SEK</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Total Värde</span>
-                    <p className="font-medium text-gray-900">{formatCurrency(trade.shares * trade.price)}</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-500">Datum</span>
-                    <p className="font-medium text-gray-900">{formatDate(trade.publishingDate)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
+                  <td className="px-4 py-3 text-[13px] text-muted">{t.insiderName}</td>
+
+                  <td className="px-4 py-3 max-w-50">
+                    <div className="truncate text-[12px] text-[#666]" title={t.position || '-'}>
+                      {mapPosition(t.position)}
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-3">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-[5px] px-2 py-0.75 font-mono text-[11px] font-medium ${colors.badge}`}
+                    >
+                      <span className={`inline-block h-1.25 w-1.25 rounded-full ${colors.dot}`}/>
+                      {t.transactionType}
+                    </span>
+                  </td>
+
+                  {variant === 'stock' && (
+                    <>
+                      <td className="px-4 py-3 text-right">
+                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                          {formatNumber(t.shares)}
+                        </span>
+                        <span className="ml-1 text-[11px] text-[#666]">st</span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                          {formatCurrency(t.price, true)}
+                        </span>
+                      </td>
+                    </>
+                  )}
+
+                  <td className="px-4 py-3 text-right font-mono text-[13px] text-[#FFFFFF]">
+                    {formatCurrency(t.shares * t.price)}
+                  </td>
+
+                  <td className="px-4 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666]">
+                    {formatDate(t.publishingDate)}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+        
       </div>
       {enablePagination && hasMore && (
         <div className="p-6 text-center">
           <button
             onClick={loadMore}
             disabled={isPending}
-            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-300 cursor-pointer"
+            className="
+              w-full
+              rounded-xl
+              border border-white/8
+              bg-bg2
+              px-4 py-2.5
+              font-display text-[12px] font-medium uppercase tracking-[0.06em]
+              text-muted
+              transition-all duration-200
+
+              hover:bg-bg3
+              hover:text-ink
+              hover:border-white/12
+              cursor-pointer
+
+              disabled:opacity-40
+              disabled:cursor-not-allowed
+            "
           >
-            {isPending ? "Laddar..." : "Visa Mer"}
+            {isPending ? "Laddar..." : "Visa mer"}
           </button>
         </div>
       )}

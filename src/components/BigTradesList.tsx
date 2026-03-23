@@ -38,65 +38,55 @@ const formatDate = (dateString: string) => {
   return `${dayMonth} ${time}`;
 };
 
-const getTransactionTypeColor = (type: string) => {
-  switch (type) {
-    case 'Förvärv':
-      return 'text-green-600 bg-green-50';
-    case 'Avyttring':
-      return 'text-red-600 bg-red-50';
-    case 'Teckning':
-      return 'text-blue-600 bg-blue-50';
-    case 'Tilldelning':
-      return 'text-purple-600 bg-purple-50';
-    default:
-      return 'text-gray-600 bg-gray-50';
-  }
+const rankStyle: Record<number, string> = {
+  0: "text-[#f0c94d]",   // gold
+  1: "text-[#9ba3b0]",   // silver
+  2: "text-[#a07050]",   // bronze
 };
 
 export default function BigTradesList({ trades }: TopTradesProps) {
   return (
     <div>
-      <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-900">Topp 10 Transaktioner</h2>
-        <p className="text-sm text-gray-600 mt-1">Största köp & sälj transaktioner</p>
+      <div className="mb-3.5 flex items-center justify-between">
+        <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
+          Topp 10 - Största affärer</h2>
       </div>
 
-      <div className="p-6">
-        <div className="space-y-4">
+      <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-bg2">
           {trades.map((trade, index) => (
             <div
-              key={`${trade.publishingDate}-${trade.insiderName}-${trade.transactionType}-${trade.shares}-${trade.price}-${index}`}
-              className="flex items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors duration-150"
-            >
-              <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                <span className="text-sm font-semibold text-gray-600">{index + 1}</span>
-              </div>
+              key={index}
+              className="flex cursor-pointer items-center gap-2.5 border-b border-white/[0.07] px-4 py-2.75 transition-colors 
+              last:border-b-0 hover:bg-bg3">
               
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-gray-900 truncate">{trade.companyName}</h4>
-                  <span
-                    className={`text-xs font-medium ${getTransactionTypeColor(
-                      trade.transactionType
-                    )}`}
-                  >
-                    {trade.transactionType}
-                  </span>
+              <span
+                className={`w-4.5 shrink-0 text-center font-mono text-[12px] ${
+                  rankStyle[index] ?? "text-[#666]" 
+                }`}
+              >
+                {index + 1}
+              </span>
+              
+              <div className="min-w-0 flex-1">
+                <div className="turncate text-[13px] font-medium text-ink">{trade.companyName}</div>
+                <div className="turncate text-[13px] text-[#666]">{trade.insiderName}</div>
+              </div>
+                
+              <div className="shrink-0 text-right">
+                <div
+                  className={`font-mono text-[13px] ${
+                    trade.transactionType === "Förvärv" ? "text-buy" : "text-sell"
+                  }`}
+                >
+                  {formatCurrency(trade.price * trade.shares)}
                 </div>
-                <p className="text-sm text-gray-600 truncate">{trade.insiderName}</p>
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm font-semibold text-gray-900">
-                      {formatCurrency(trade.shares * trade.price)} 
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {formatDate(trade.publishingDate)}
-                    </p>
-                  </div>
+                <div className="mt-px font-mono text-[12px] text-[#666]">
+                  {trade.transactionType === "Förvärv" ? "KÖP" : "SÄLJ"} · {formatDate(trade.publishingDate)}
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
   );
 }

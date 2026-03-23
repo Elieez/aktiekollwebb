@@ -1,11 +1,18 @@
 const backendUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export async function get<T>(endpoint: string, headers? : HeadersInit): Promise<T> {
+export async function get<T>(
+  endpoint: string,
+  options?: {
+    headers?: HeadersInit;
+    next?: NextFetchRequestConfig;
+  }
+): Promise<T> {
   const url = `${backendUrl}/${endpoint}`;
 
   const response = await fetch(url, {
     method: "GET",
-    headers: { Accept: "application/json", ...headers }
+    headers: { Accept: "application/json", ...options?.headers },
+    next: options?.next,
   });
 
   if (!response.ok)
