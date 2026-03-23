@@ -71,8 +71,6 @@ export default async function StockPage({ params }: PageProps) {
     const rawCompanyName = quote.longName || quote.shortName || cleanSymbol;
     const companyName = cleanCompanyName(rawCompanyName);
 
-    console.log(`[Stock Page] Cleaned company name: "${companyName}" from "${rawCompanyName}"`);
-
     const trades = await getInsiderTradesByCompanyName(companyName, 0, 10);
 
     const chartData = (chartRes && Array.isArray(chartRes.quotes) && chartRes.quotes.length > 0)
@@ -103,7 +101,7 @@ export default async function StockPage({ params }: PageProps) {
         <div className="max-w-5xl mx-auto px-8 py-8 space-y-6">
           {/* Stock header */}
           <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
-            <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm_items-center justify-between gap-4">
+            <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               {/* Left: name + ticker */}
               <div>
                 <h1 className="font-display text-2xl font-bold text-ink tracking-tight">
@@ -178,8 +176,9 @@ export default async function StockPage({ params }: PageProps) {
         </div>
       </Page>
     );
-  } catch (error: any) {
-    console.error("Stock page error:", error.message);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Stock page error:", message);
     return notFound();
   }
 }

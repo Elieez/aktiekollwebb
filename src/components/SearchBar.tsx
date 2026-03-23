@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
 
 type Result = { symbol: string; description: string };
 
@@ -159,8 +158,8 @@ export default function CompanySearch() {
                   
                   ${
                   i === highlight
-                  ? "bg-bg3" 
-                  : "hover:bg-[181b1f]"
+                  ? "bg-bg3"
+                  : "hover:bg-bg3"
                 }`}
                 onMouseEnter={() => setHighlight(i)}
                 onMouseDown={(e) => e.preventDefault()}

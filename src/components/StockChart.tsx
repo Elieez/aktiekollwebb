@@ -183,13 +183,12 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
 
     tradesByTime.forEach((list, time) => {
       // marker uses the same series (no text)
-      const color = getTradeColor(list[0].transactionType);
       markers.push({
         time: time as UTCTimestamp,
         position: 'inBar',
         color: getTradeColor(list[0].transactionType),
         shape: 'circle',
-        text: '', // <--- no text
+        text: '',
       } as SeriesMarker<UTCTimestamp>);
 
       tradeLookup.set(time, list);

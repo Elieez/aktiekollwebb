@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="sv" className={inter.variable}>
       <body className="font-sans bg-bg text-ink">
         <AuthProvider>
           <Header />

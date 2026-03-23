@@ -68,8 +68,8 @@ export default function BigTradesList({ trades }: TopTradesProps) {
               </span>
               
               <div className="min-w-0 flex-1">
-                <div className="turncate text-[13px] font-medium text-ink">{trade.companyName}</div>
-                <div className="turncate text-[13px] text-[#666]">{trade.insiderName}</div>
+                <div className="truncate text-[13px] font-medium text-ink">{trade.companyName}</div>
+                <div className="truncate text-[13px] text-[#666]">{trade.insiderName}</div>
               </div>
                 
               <div className="shrink-0 text-right">

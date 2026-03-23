@@ -1,5 +1,7 @@
 const backendUrl = process.env.NEXT_PUBLIC_API_URL;
 
+const DEFAULT_REVALIDATE = 300;
+
 export async function get<T>(
   endpoint: string,
   options?: {
@@ -12,7 +14,9 @@ export async function get<T>(
   const response = await fetch(url, {
     method: "GET",
     headers: { Accept: "application/json", ...options?.headers },
-    next: options?.next,
+    ...(typeof window === "undefined" && {
+      next: { revalidate: DEFAULT_REVALIDATE, ...options?.next },
+    }),
   });
 
   if (!response.ok)
