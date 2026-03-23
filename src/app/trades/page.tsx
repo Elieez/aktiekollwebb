@@ -29,28 +29,32 @@ export default async function TradesPage() {
       <Hero stats={stats} />
       <div>
         <div className="mx-auto grid max-w-380 grid-cols-1 gap-6 px-4 py-6 sm:px-8 sm:py-8 lg:grid-cols-[1fr_340px]">
-          {/* Top 10 — first on mobile, right column top on desktop */}
-          <Section className="order-1 lg:order-none lg:col-start-2 lg:row-start-1">
-            <BigTradesList trades={bigTrades} />
-          </Section>
-
-          {/* Recent trades — second on mobile, left column spanning both rows on desktop */}
-          <Section className="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2">
+          {/* Recent trades — order 2 on mobile, left column on desktop */}
+          <Section className="order-2 lg:order-none">
             <TradesList trades={trades} enablePagination/>
           </Section>
 
-          {/* Top 3 — third on mobile, right column bottom on desktop */}
-          <Section className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 flex flex-col gap-3">
-            <div className="mb-2">
-              <span className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
-                Denna månad
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <TradesCount companies={tradesCountBuy} title="▲ Mest köpta" variant="buy" />
-              <TradesCount companies={tradesCountSell} title="▼ Mest sålda" variant="sell" />
-            </div>
-          </Section>
+          {/* Sidebar wrapper — transparent to grid on mobile (children join flow with order),
+              flex column on desktop (right column) */}
+          <div className="contents lg:flex lg:flex-col lg:gap-6">
+            {/* Top 10 — first on mobile */}
+            <Section className="order-1">
+              <BigTradesList trades={bigTrades} />
+            </Section>
+
+            {/* Top 3 — third on mobile */}
+            <Section className="order-3 flex flex-col gap-3">
+              <div className="mb-2">
+                <span className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
+                  Denna månad
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <TradesCount companies={tradesCountBuy} title="▲ Mest köpta" variant="buy" />
+                <TradesCount companies={tradesCountSell} title="▼ Mest sålda" variant="sell" />
+              </div>
+            </Section>
+          </div>
         </div>
       </div>
     </Page>
