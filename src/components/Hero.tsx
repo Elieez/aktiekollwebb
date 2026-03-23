@@ -18,10 +18,10 @@ export default function Hero({ stats }: HeroProps) {
     { val: "218",    label: "Aktiva bolag" },
   ];
     return (
-    <div className="mx-auto flex max-w-380 animate-fadeUp items-end justify-between gap-6 border-b border-white/[0.07] px-8 pt-14 pb-10">
+    <div className="mx-auto flex max-w-380 animate-fadeUp flex-col gap-6 border-b border-white/[0.07] px-4 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10 lg:flex-row lg:items-end lg:justify-between">
       {/* Copy */}
       <div>
-        <h1 className="mb-2.5 font-display text-[clamp(28px,4vw,44px)] font-bold leading-[1.1] tracking-[-0.03em] text-ink">
+        <h1 className="mb-2.5 font-display text-[clamp(24px,4vw,44px)] font-bold leading-[1.1] tracking-[-0.03em] text-ink">
           Spåra <em className="not-italic text-accent">insiderhandel</em>
           <br />
           på Stockholmsbörsen
@@ -31,15 +31,15 @@ export default function Hero({ stats }: HeroProps) {
           styrelsemedlemmar. Komplett öppenhet.
         </p>
       </div>
- 
+
       {/* Stats */}
-      <div className="flex shrink-0 gap-8">
+      <div className="flex shrink-0 gap-6 sm:gap-8 lg:justify-end">
         {statItems.map((s) => (
-          <div key={s.label} className="text-right">
-            <span className="block font-display text-2xl font-semibold text-ink">
+          <div key={s.label} className="lg:text-right">
+            <span className="block font-display text-xl font-semibold text-ink sm:text-2xl">
               {s.val}
             </span>
-            <span className="text-[12px] uppercase tracking-widest text-[#666]">
+            <span className="text-[11px] uppercase tracking-widest text-[#666] sm:text-[12px]">
               {s.label}
             </span>
           </div>

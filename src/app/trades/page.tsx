@@ -24,24 +24,29 @@ export default async function TradesPage() {
   const tradesCountSell = await getCompanyTradesCountSell();
   const stats = await getInsiderTradesStats();
 
-  const spacing = "space-y-6";
-
   return (
     <Page className="min-h-screen bg-bg text-ink antialiased">
       <Hero stats={stats} />
       <div>
-        <div className="mx-auto grid max-w-380 grid-cols-[1fr_340px] gap-6 px-8 py-8">
-          <Section>
+        <div className="mx-auto grid max-w-380 grid-cols-1 gap-6 px-4 py-6 sm:px-8 sm:py-8 lg:grid-cols-[1fr_340px]">
+          {/* Recent trades — order 2 on mobile, left column on desktop */}
+          <Section className="order-2 lg:order-0">
             <TradesList trades={trades} enablePagination/>
           </Section>
 
-          <Section className="flex flex-col gap-6">
-            <BigTradesList trades={bigTrades} />
+          {/* Sidebar wrapper — transparent to grid on mobile (children join flow with order),
+              flex column on desktop (right column) */}
+          <div className="contents lg:flex lg:flex-col lg:gap-6">
+            {/* Top 10 — first on mobile */}
+            <Section className="order-1">
+              <BigTradesList trades={bigTrades} />
+            </Section>
 
-            <Section className="flex flex-col gap-3">
+            {/* Top 3 — third on mobile */}
+            <Section className="order-3 flex flex-col gap-3">
               <div className="mb-2">
                 <span className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
-                  Denna månad  
+                  Denna månad
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -49,7 +54,7 @@ export default async function TradesPage() {
                 <TradesCount companies={tradesCountSell} title="▼ Mest sålda" variant="sell" />
               </div>
             </Section>
-          </Section>
+          </div>
         </div>
       </div>
     </Page>
