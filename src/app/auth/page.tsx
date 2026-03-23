@@ -8,7 +8,7 @@ export default function AuthPage() {
   const router = useRouter();
   const { login, register } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
-  
+
   const switchToLogin = () => {
     setIsLogin(true);
     setRegErrors([]);
@@ -18,7 +18,6 @@ export default function AuthPage() {
     setIsLogin(false);
     setLoginError(null);
   };
-
 
   // login state
   const [loginEmail, setLoginEmail] = useState("");
@@ -40,20 +39,20 @@ export default function AuthPage() {
     setLoginLoading(true);
 
     try {
-    await login(loginEmail, loginPassword);
-    router.push("/");
-  } catch (err: unknown) {
-    if (typeof err === "string") {
-      setLoginError(err);
-    } else if (err instanceof Error) {
-      setLoginError(err.message);
-    } else {
-      setLoginError("Invalid email or password");
+      await login(loginEmail, loginPassword);
+      router.push("/");
+    } catch (err: unknown) {
+      if (typeof err === "string") {
+        setLoginError(err);
+      } else if (err instanceof Error) {
+        setLoginError(err.message);
+      } else {
+        setLoginError("Invalid email or password");
+      }
+    } finally {
+      setLoginLoading(false);
     }
-  } finally {
-    setLoginLoading(false);
-  }
-};
+  };
 
   const onRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,91 +73,118 @@ export default function AuthPage() {
 
   return (
     <div className="h-dvh w-full overflow-hidden grid grid-cols-1 lg:grid-cols-2">
-      {/* Left: Image Section */}
-      <div className="hidden lg:flex relative h-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900">
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
-          <div className="max-w-lg text-center space-y-6">
-            <h1 className="text-5xl font-bold">AktieKoll</h1>
-            <p className="text-xl text-blue-100">
-              Track insider trading activity and gain valuable market insights
+      {/* Left: Branding Panel */}
+      <div className="hidden lg:flex flex-col justify-between h-full bg-bg2 border-r border-white/[0.07] p-12">
+        {/* Logo */}
+        <div className="font-display text-2xl font-bold tracking-tight text-ink">
+          Aktie<span className="text-accent">Koll</span>
+        </div>
+
+        {/* Feature list */}
+        <div className="space-y-8">
+          <div>
+            <h2 className="font-display text-3xl font-bold text-ink leading-tight mb-3">
+              Track insider trading.<br />Stay ahead.
+            </h2>
+            <p className="text-muted text-sm leading-relaxed max-w-sm">
+              Monitor insider transactions as they happen and gain an edge with
+              real-time market intelligence.
             </p>
-            <div className="mt-8 space-y-4 text-left">
-              <div className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+          </div>
+
+          <div className="space-y-5">
+            {[
+              {
+                title: "Real-time Insider Trades",
+                desc: "Monitor insider transactions as they happen",
+              },
+              {
+                title: "Detailed Analytics",
+                desc: "Comprehensive charts and data-driven insights",
+              },
+              {
+                title: "Company Profiles",
+                desc: "Deep dive into individual stock performance",
+              },
+            ].map((item) => (
+              <div key={item.title} className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-dim">
+                  <svg
+                    className="h-3 w-3 text-accent"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
                 <div>
-                  <h3 className="font-semibold">Real-time Insider Trades</h3>
-                  <p className="text-sm text-blue-200">Monitor insider transactions as they happen</p>
+                  <p className="text-sm font-medium text-ink">{item.title}</p>
+                  <p className="text-xs text-muted mt-0.5">{item.desc}</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <h3 className="font-semibold">Detailed Analytics</h3>
-                  <p className="text-sm text-blue-200">Get comprehensive charts and insights</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <svg className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <h3 className="font-semibold">Company Profiles</h3>
-                  <p className="text-sm text-blue-200">Deep dive into individual stock performance</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-        {/* Abstract pattern overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/30 to-transparent" />
+
+        {/* Footer note */}
+        <p className="text-xs text-faint">
+          Swedish insider data &mdash; updated continuously
+        </p>
       </div>
 
       {/* Right: Auth Forms */}
-      <div className="flex flex-col justify-center bg-gray-50 p-8 lg:p-12 h-full overflow-y-auto">
+      <div className="flex flex-col justify-center bg-bg p-8 lg:p-12 h-full overflow-y-auto dark-scrollbar">
         <div className="max-w-md w-full mx-auto">
-          {/* Logo for mobile */}
-          <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">AktieKoll</h1>
+          {/* Mobile logo */}
+          <div className="lg:hidden mb-8">
+            <span className="font-display text-2xl font-bold tracking-tight text-ink">
+              Aktie<span className="text-accent">Koll</span>
+            </span>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-4 mb-8 border-b border-gray-200">
+          <div className="flex gap-1 mb-8 border-b border-white/[0.07]">
             <button
               onClick={switchToLogin}
-              className={`pb-3 px-1 font-semibold transition-colors relative cursor-pointer ${
+              className={`pb-3 px-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] transition-colors relative cursor-pointer ${
                 isLogin
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-ink border-b-2 border-accent"
+                  : "text-faint hover:text-muted"
               }`}
             >
               Sign In
             </button>
-              <button
+            <button
               onClick={switchToRegister}
-              className={`pb-3 px-1 font-semibold transition-colors relative cursor-pointer ${
+              className={`pb-3 px-3 font-display text-[13px] font-semibold uppercase tracking-[0.06em] transition-colors relative cursor-pointer ${
                 !isLogin
-                  ? "text-blue-600 border-b-2 border-blue-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-ink border-b-2 border-accent"
+                  : "text-faint hover:text-muted"
               }`}
             >
               Create Account
             </button>
           </div>
 
-          {/* Login Form */}
           {isLogin ? (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome back</h2>
-              <p className="text-gray-600 mb-6">Sign in to continue to your dashboard</p>
+            /* Login Form */
+            <div className="fade-up">
+              <h2 className="font-display text-2xl font-bold text-ink mb-1">
+                Welcome back
+              </h2>
+              <p className="text-muted text-sm mb-7">
+                Sign in to continue to your dashboard
+              </p>
 
-              <form onSubmit={onLogin} className="space-y-5">
+              <form onSubmit={onLogin} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted mb-2">
                     Email address
                   </label>
                   <input
@@ -166,13 +192,13 @@ export default function AuthPage() {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.07] bg-bg2 text-ink placeholder:text-faint focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition text-sm"
                     placeholder="you@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted mb-2">
                     Password
                   </label>
                   <input
@@ -180,13 +206,13 @@ export default function AuthPage() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.07] bg-bg2 text-ink placeholder:text-faint focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition text-sm"
                     placeholder="••••••••"
                   />
                 </div>
 
                 {loginError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  <div className="bg-sell-dim border border-sell/20 text-sell px-4 py-3 rounded-xl text-sm">
                     {loginError}
                   </div>
                 )}
@@ -194,13 +220,13 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={loginLoading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm cursor-pointer"
+                  className="w-full mt-2 bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed text-bg font-display text-[13px] font-bold uppercase tracking-[0.06em] py-3 rounded-xl transition-colors cursor-pointer"
                 >
-                  {loginLoading ? "Signing in..." : "Sign in"}
+                  {loginLoading ? "Signing in…" : "Sign in"}
                 </button>
 
-                <div className="text-center">
-                  <a href="#" className="text-sm text-blue-600 hover:underline">
+                <div className="text-center pt-1">
+                  <a href="#" className="text-xs text-faint hover:text-muted transition-colors">
                     Forgot your password?
                   </a>
                 </div>
@@ -208,13 +234,17 @@ export default function AuthPage() {
             </div>
           ) : (
             /* Register Form */
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Create account</h2>
-              <p className="text-gray-600 mb-6">Start tracking insider trades today</p>
+            <div className="fade-up">
+              <h2 className="font-display text-2xl font-bold text-ink mb-1">
+                Create account
+              </h2>
+              <p className="text-muted text-sm mb-7">
+                Start tracking insider trades today
+              </p>
 
-              <form onSubmit={onRegister} className="space-y-5">
+              <form onSubmit={onRegister} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted mb-2">
                     Email address
                   </label>
                   <input
@@ -222,26 +252,29 @@ export default function AuthPage() {
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.07] bg-bg2 text-ink placeholder:text-faint focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition text-sm"
                     placeholder="you@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Display name <span className="text-gray-400">(optional)</span>
+                  <label className="block font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted mb-2">
+                    Display name{" "}
+                    <span className="normal-case tracking-normal font-normal text-faint">
+                      (optional)
+                    </span>
                   </label>
                   <input
                     type="text"
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.07] bg-bg2 text-ink placeholder:text-faint focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition text-sm"
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted mb-2">
                     Password
                   </label>
                   <input
@@ -249,13 +282,13 @@ export default function AuthPage() {
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
                     required
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-xl border border-white/[0.07] bg-bg2 text-ink placeholder:text-faint focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition text-sm"
                     placeholder="••••••••"
                   />
                 </div>
 
                 {regErrors.length > 0 && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm space-y-1">
+                  <div className="bg-sell-dim border border-sell/20 text-sell px-4 py-3 rounded-xl text-sm space-y-1">
                     {regErrors.map((err, i) => (
                       <p key={i}>{err}</p>
                     ))}
@@ -265,18 +298,18 @@ export default function AuthPage() {
                 <button
                   type="submit"
                   disabled={regLoading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 rounded-lg transition-colors shadow-sm cursor-pointer"
+                  className="w-full mt-2 bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed text-bg font-display text-[13px] font-bold uppercase tracking-[0.06em] py-3 rounded-xl transition-colors cursor-pointer"
                 >
-                  {regLoading ? "Creating account..." : "Create account"}
+                  {regLoading ? "Creating account…" : "Create account"}
                 </button>
 
-                <p className="text-xs text-gray-500 text-center">
+                <p className="text-xs text-faint text-center pt-1">
                   By creating an account you agree to our{" "}
-                  <a href="#" className="text-blue-600 hover:underline">
+                  <a href="#" className="text-muted hover:text-ink transition-colors">
                     Terms of Service
                   </a>{" "}
                   and{" "}
-                  <a href="#" className="text-blue-600 hover:underline">
+                  <a href="#" className="text-muted hover:text-ink transition-colors">
                     Privacy Policy
                   </a>
                 </p>

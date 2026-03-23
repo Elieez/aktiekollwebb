@@ -113,22 +113,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function AuthStatus() {
   const { user, loading, logout } = useAuth();
 
-  if (loading) return <div style={{ padding: 8 }}>Loading...</div>
+  if (loading) return (
+    <div className="h-4 w-16 rounded-md bg-white/6 animate-pulse" />
+  );
 
-  if(!user) {
+  if (!user) {
     return (
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <a href="/auth" className="text-white hover:text-gray-300">Sign in</a>
-      </div>
+      <a 
+        href="/auth"
+        className="rounded-lg border border-white/[0.07] bg-bg2 px-3 py-1.5 font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted
+        hover:bg-bg3 hover:text-ink hover:border-white/12 transition-colors"
+        >
+          Sign in
+        </a>
     );
   }
 
   return (
-    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-      <span>{user.displayName ?? user.email}</span>
+    <div className="flex items-center gap-3">
+      <span className="font-display text-[13px] font-medium text-ink">
+        {user.displayName ?? user.email}
+      </span>
       <button
         onClick={async () => { await logout(); window.location.href = '/'; }}
-        className="text-white hover:text-gray-300"
+        className="rounded-lg border border-white/[0.07] bg-bg2 px-3 py-1.5 font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted
+        hover:bg-bg3 hover:text-sell hover:border-white/12 transition-colors cursor-pointer"
       >
         Logout
       </button>
