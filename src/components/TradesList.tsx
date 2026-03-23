@@ -200,13 +200,13 @@ export default function TradesList({
                   {variant === 'stock' && (
                     <>
                       <td className="px-4 py-3 text-right">
-                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                        <span className="font-mono text-[12px] text-[#D1D5DB]">
                           {formatNumber(t.shares)}
                         </span>
                         <span className="ml-1 text-[11px] text-[#666]">st</span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                        <span className="font-mono text-[12px] text-[#D1D5DB]">
                           {formatCurrency(t.price, true)}
                         </span>
                       </td>

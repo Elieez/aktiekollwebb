@@ -203,6 +203,13 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       (line as S).setMarkers?.(markers);
     }
 
+    const makeRow = (text: string, color: string, extraStyle?: string) => {
+      const div = document.createElement('div');
+      div.style.cssText = `color:${color};${extraStyle ?? ''}`;
+      div.textContent = text;
+      return div;
+    }
+
     // crosshair tooltip: show aggregated trades for hovered time (first 3 + +N)
     const handleMove = (param: MouseEventParams) => {
       if (!tooltip) return;
@@ -216,16 +223,20 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
 
       if (tradesAtTime.length > 0) {
         const date = new Date((time as number) * 1000);
-        let html = `<div style="color:#f0ede8;font-weight:600;margin-bottom:4px">${date.toLocaleDateString('sv-SE')}</div>`;
-        html += `<div style="color:#8a8a8a">${tradesAtTime.length} transaktion(er)</div>`;
-        tradesAtTime.slice(0, 3).forEach((t) => {
-          const col = getTradeColor(t.transactionType);
-          html += `<div style="color:${col};margin-top:4px">${t.transactionType} ${t.price ?? '--'} SEK</div>`;
-        });
-        if (tradesAtTime.length > 3) 
-          html += `<div style="color:#555;margin-top:4px">+${tradesAtTime.length - 3} till</small></div>`;
-
-        tooltip.innerHTML = html;
+        tooltip.replaceChildren(
+          makeRow(date.toLocaleDateString('sv-SE'), '#f0ede8', 'font-weight:600;margin-bottom:4px'),
+          makeRow(`${tradesAtTime.length} transaktion(er)`, '#8a8a8a'),
+          ...tradesAtTime.slice(0, 3).map((t) =>
+            makeRow(
+              `${t.transactionType} ${t.price ?? '--'} SEK`,
+              getTradeColor(t.transactionType),
+              'margin-top:4px',
+            )
+          ),
+          ...(tradesAtTime.length > 3
+            ? [makeRow(`+${tradesAtTime.length - 3} till`, '#555', 'margin-top:4px')]
+            : []),
+        );
         tooltip.style.display = 'block';
         const x = param.point.x ?? 0;
         const y = param.point.y ?? 0;
@@ -243,10 +254,10 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       }
 
       const d = new Date((param.time as number) * 1000);
-      tooltip.innerHTML = `
-      <div style="color:#8a8a8a;margin-bottom:2px">${d.toLocaleDateString('sv-SE')}</div>
-      <div style="color:#f0ede8">${price.toLocaleString('sv-SE')} • SEK</div>
-      `;
+      tooltip.replaceChildren(
+        makeRow(d.toLocaleDateString('sv-SE'), '#8a8a8a', 'margin-bottom:2px'),
+        makeRow(`${price.toLocaleString('sv-SE')} • SEK`, '#f0ede8'),
+      );
       tooltip.style.display = 'block';
       const x = param.point.x ?? 0;
       const y = param.point.y ?? 0;
