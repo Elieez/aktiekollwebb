@@ -80,7 +80,7 @@ export default async function StockPage({ params }: PageProps) {
         }))
       : [];
 
-    const query = `days=365&top=&companyName=${encodeURIComponent(companyName)}`;
+    const query = `days=365&top=&symbol=${encodeURIComponent(cleanSymbol)}`;
 
     const companyTradeCountsBuy = await getCompanyTradesCountBuy(query);
     const companyTradeCountsSell = await getCompanyTradesCountSell(query);
