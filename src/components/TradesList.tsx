@@ -4,13 +4,13 @@ import { useState, useTransition } from "react";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
 import { 
   getInsiderTrades,
-  getInsiderTradesByCompanyName,
+  getInsiderTradesBySymbol,
 } from "@/lib/actions/insider-trades";
 
 interface TradesListProps {
   trades: InsiderTrade[];
   enablePagination?: boolean;
-  companyName?: string;
+  symbol?: string;
   variant?: 'home' | 'stock';
   title?: string;
 }
@@ -85,11 +85,11 @@ const formatDate = (dateString: string) => {
 export default function TradesList({ 
   trades, 
   enablePagination = false, 
-  companyName,
+  symbol,
   variant = 'home',
   title 
 }: TradesListProps) {
-  const pageSize = companyName ? 10 : 15;
+  const pageSize = symbol ? 10 : 15;
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
   const [isPending, startTransition] = useTransition();
@@ -101,9 +101,9 @@ export default function TradesList({
 
       let more: InsiderTrade[] = [];
 
-      if (companyName) {
+      if (symbol) {
         const skip = (nextPage - 1) * pageSize;
-        more = await getInsiderTradesByCompanyName(companyName, skip, pageSize);
+        more = await getInsiderTradesBySymbol(symbol, skip, pageSize);
       } else {
         more = await getInsiderTrades(nextPage, pageSize);
       }

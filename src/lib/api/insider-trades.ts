@@ -30,9 +30,9 @@ export async function getCompanyTradesCountSell(queryParams?: string) {
   });
 }
 
-export async function getInsiderTradesByCompanyName(companyName: string, skip: number = 0, take: number = 10) {
-  const encoded = encodeURIComponent(companyName);
-  return await get<InsiderTrade[]>(`insidertrades/company?name=${encoded}&skip=${skip}&take=${take}`, {
+export async function getInsiderTradesBySymbol(symbol: string, skip: number = 0, take: number = 10) {
+  const encoded = encodeURIComponent(symbol);
+  return await get<InsiderTrade[]>(`insidertrades/company?symbol=${encoded}&skip=${skip}&take=${take}`, {
     next: { revalidate: 3600 }
   });
 }

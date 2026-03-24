@@ -2,7 +2,7 @@
 
 import {
   getInsiderTrades,
-  getInsiderTradesByCompanyName,
+  getInsiderTradesBySymbol,
 } from "@/lib/api/insider-trades";
 
-export { getInsiderTrades, getInsiderTradesByCompanyName };
+export { getInsiderTrades, getInsiderTradesBySymbol };
