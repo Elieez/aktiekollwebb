@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import {
   getCompanyTradesCountBuy,
   getCompanyTradesCountSell,
-  getInsiderTradesByCompanyName,
+  getInsiderTradesBySymbol,
 } from "@/lib/api/insider-trades";
 
 const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
@@ -71,7 +71,7 @@ export default async function StockPage({ params }: PageProps) {
     const rawCompanyName = quote.longName || quote.shortName || cleanSymbol;
     const companyName = cleanCompanyName(rawCompanyName);
 
-    const trades = await getInsiderTradesByCompanyName(companyName, 0, 10);
+    const trades = await getInsiderTradesBySymbol(cleanSymbol, 0, 10);
 
     const chartData = (chartRes && Array.isArray(chartRes.quotes) && chartRes.quotes.length > 0)
       ? (chartRes.quotes as ChartQuote[]).map((q) => ({
@@ -168,7 +168,7 @@ export default async function StockPage({ params }: PageProps) {
               <TradesList 
               trades={trades} 
               enablePagination 
-              companyName={companyName} 
+              symbol={cleanSymbol} 
               variant="stock"
               title={`Transaktioner - ${companyName}`} 
               />
