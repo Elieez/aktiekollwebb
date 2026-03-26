@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { resetPasswordApi } from "@/lib/api/auth";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const router  = useRouter();
     const params  = useSearchParams();
     const email   = params.get("email") ?? "";
@@ -91,5 +91,13 @@ export default function ResetPasswordPage() {
                 </form>
             </div>
         </main>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-bg p-6" />}>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }

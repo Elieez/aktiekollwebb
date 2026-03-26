@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/Auth";
 import { confirmAccountDeletionApi } from "@/lib/api/auth";
 
-export default function DeleteConfirmPage() {
+function DeleteConfirmContent() {
     const router      = useRouter();
     const params      = useSearchParams();
     const { accessToken, logout } = useAuth();
@@ -98,5 +98,13 @@ export default function DeleteConfirmPage() {
                 </form>
             </div>
         </main>
+    );
+}
+
+export default function DeleteConfirmPage() {
+    return (
+        <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-bg p-6" />}>
+            <DeleteConfirmContent />
+        </Suspense>
     );
 }
