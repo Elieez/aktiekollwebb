@@ -100,9 +100,12 @@ export default function AuthPage() {
         <div className="h-dvh w-full overflow-hidden grid grid-cols-1 lg:grid-cols-2">
             {/* Left: Branding Panel */}
             <div className="hidden lg:flex flex-col justify-between h-full bg-bg2 border-r border-white/[0.07] p-12">
-                <div className="font-display text-2xl font-bold tracking-tight text-ink">
+                <Link
+                    href="/"
+                    className="font-display text-2xl font-bold tracking-tight text-ink hover:opacity-80 transition-opacity"
+                >
                     Aktie<span className="text-accent">Koll</span>
-                </div>
+                </Link>
                 <div className="space-y-8">
                     <div>
                         <h2 className="font-display text-3xl font-bold text-ink leading-tight mb-3">
@@ -140,9 +143,12 @@ export default function AuthPage() {
             <div className="flex flex-col justify-center bg-bg p-8 lg:p-12 h-full overflow-y-auto dark-scrollbar">
                 <div className="max-w-md w-full mx-auto">
                     <div className="lg:hidden mb-8">
-                        <span className="font-display text-2xl font-bold tracking-tight text-ink">
+                        <Link
+                            href="/"
+                            className="font-display text-2xl font-bold tracking-tight text-ink hover:opacity-80 transition-opacity"
+                        >
                             Aktie<span className="text-accent">Koll</span>
-                        </span>
+                        </Link>
                     </div>
 
                     {/* Tabs */}
