@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+// Extract origin (protocol + host + port only)
+const API_ORIGIN = API_URL ? new URL(API_URL).origin : "";
+
 const securityHeaders = [
   // Prevent clickjacking
   { key: "X-Frame-Options", value: "DENY" },
@@ -34,7 +39,7 @@ const securityHeaders = [
       // data: for SVG icons, blob: for chart canvas
       "img-src 'self' data: blob:",
       // Allow XHR/fetch to self and backend API
-      `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL ?? ""}`,
+      `connect-src 'self' ${API_ORIGIN}`,
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
