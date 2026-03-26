@@ -1,18 +1,19 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/Auth";
 
-export default function OAuthCallbackPage() {
-    const router       = useRouter();
-    const params       = useSearchParams();
+function OAuthCallbackContent() {
+    const router = useRouter();
+    const params = useSearchParams();
     const { setAccessToken } = useAuth();
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const token = params.get("token");
-        const err   = params.get("error");
+        const err = params.get("error");
 
         if (err) {
             setError("Google-inloggningen misslyckades. Försök igen.");
@@ -21,7 +22,6 @@ export default function OAuthCallbackPage() {
 
         if (token) {
             setAccessToken(token);
-            // Remove token from URL immediately, then navigate home
             window.history.replaceState({}, document.title, "/");
             router.replace("/");
         } else {
@@ -55,5 +55,17 @@ export default function OAuthCallbackPage() {
                 <p className="text-muted text-sm">Loggar in…</p>
             </div>
         </main>
+    );
+}
+
+export default function OAuthCallbackPage() {
+    return (
+        <Suspense fallback={
+            <main className="flex min-h-screen items-center justify-center bg-bg">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
+            </main>
+        }>
+            <OAuthCallbackContent />
+        </Suspense>
     );
 }
