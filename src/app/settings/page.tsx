@@ -1,9 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/Auth";
 import { requestAccountDeletionApi } from "@/lib/api/auth";
+import {
+    getNotificationPreferences,
+    updateNotificationPreferences,
+    type NotificationPreferences,
+} from "@/lib/api/follows";
 
 // ─────────────────────────────────────────────────────────────
 // Deletion Modal (3-step within modal)
@@ -175,8 +180,41 @@ function DeleteAccountModal({
 
 export default function SettingsPage() {
     const router = useRouter();
-    const { user, accessToken, loading } = useAuth();
+    const { user, accessToken, loading, fetchWithAuth } = useAuth();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    // Notification preferences state
+    const [prefs, setPrefs] = useState<NotificationPreferences>({
+        emailEnabled: true,
+        discordEnabled: false,
+        discordWebhookUrl: null,
+    });
+    const [prefsSaving, setPrefsSaving] = useState(false);
+    const [prefsSaved, setPrefsSaved] = useState(false);
+    const [prefsError, setPrefsError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!user || !accessToken) return;
+        getNotificationPreferences(fetchWithAuth)
+            .then(setPrefs)
+            .catch(() => { /* use defaults */ });
+    }, [user, accessToken, fetchWithAuth]);
+
+    const handleSavePrefs = async () => {
+        setPrefsSaving(true);
+        setPrefsError(null);
+        setPrefsSaved(false);
+        try {
+            const updated = await updateNotificationPreferences(prefs, fetchWithAuth);
+            setPrefs(updated);
+            setPrefsSaved(true);
+            setTimeout(() => setPrefsSaved(false), 3000);
+        } catch {
+            setPrefsError("Kunde inte spara inställningar. Försök igen.");
+        } finally {
+            setPrefsSaving(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -218,6 +256,103 @@ export default function SettingsPage() {
                                 <p className="text-xs text-faint mt-0.5">Inloggad via Google</p>
                             )}
                         </div>
+                    </div>
+                </section>
+
+                {/* Notification preferences */}
+                <section className="rounded-2xl border border-white/[0.07] bg-bg2 p-6 space-y-5">
+                    <h2 className="font-display text-sm font-semibold uppercase tracking-wider text-muted">Notifikationer</h2>
+
+                    {/* Email toggle */}
+                    <div className="rounded-xl border border-white/[0.07] bg-bg p-4 flex items-center justify-between gap-4">
+                        <div>
+                            <p className="text-sm font-medium text-ink">E-postnotifikationer</p>
+                            <p className="text-xs text-muted mt-0.5">
+                                Få ett mejl när insiderhandel sker i bevakade bolag (max 3 bolag).
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setPrefs(p => ({ ...p, emailEnabled: !p.emailEnabled }))}
+                            role="switch"
+                            aria-checked={prefs.emailEnabled}
+                            className={[
+                                "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent",
+                                "transition-colors duration-200 cursor-pointer focus:outline-none",
+                                prefs.emailEnabled ? "bg-accent" : "bg-bg4"
+                            ].join(" ")}
+                        >
+                            <span className={[
+                                "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow",
+                                "transform transition-transform duration-200",
+                                prefs.emailEnabled ? "translate-x-5" : "translate-x-0"
+                            ].join(" ")} />
+                        </button>
+                    </div>
+
+                    {/* Discord section */}
+                    <div className="rounded-xl border border-white/[0.07] bg-bg p-4 space-y-4">
+                        <div className="flex items-center justify-between gap-4">
+                            <div>
+                                <p className="text-sm font-medium text-ink">Discord-notifikationer</p>
+                                <p className="text-xs text-muted mt-0.5">
+                                    Få notifikationer direkt i Discord via en webhook.
+                                </p>
+                            </div>
+                            <button
+                                onClick={() => setPrefs(p => ({ ...p, discordEnabled: !p.discordEnabled }))}
+                                role="switch"
+                                aria-checked={prefs.discordEnabled}
+                                className={[
+                                    "relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent",
+                                    "transition-colors duration-200 cursor-pointer focus:outline-none",
+                                    prefs.discordEnabled ? "bg-accent" : "bg-bg4"
+                                ].join(" ")}
+                            >
+                                <span className={[
+                                    "pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow",
+                                    "transform transition-transform duration-200",
+                                    prefs.discordEnabled ? "translate-x-5" : "translate-x-0"
+                                ].join(" ")} />
+                            </button>
+                        </div>
+
+                        {prefs.discordEnabled && (
+                            <div className="space-y-2">
+                                <label className="text-xs font-medium text-muted" htmlFor="discord-webhook">
+                                    Webhook-URL
+                                </label>
+                                <input
+                                    id="discord-webhook"
+                                    type="url"
+                                    value={prefs.discordWebhookUrl ?? ''}
+                                    onChange={(e) => setPrefs(p => ({ ...p, discordWebhookUrl: e.target.value || null }))}
+                                    placeholder="https://discord.com/api/webhooks/..."
+                                    className="w-full px-4 py-3 rounded-xl border border-white/[0.07] bg-bg2 text-ink placeholder:text-faint focus:outline-none focus:ring-1 focus:ring-accent/40 focus:border-accent/40 transition text-sm"
+                                />
+                                <p className="text-xs text-faint">
+                                    Skapa en webhook i Discord: Serverinställningar → Integrationer → Webhooks
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {prefsError && (
+                        <div className="rounded-xl border border-sell/20 bg-bg px-3 py-2 text-xs text-sell">
+                            {prefsError}
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleSavePrefs}
+                            disabled={prefsSaving}
+                            className="rounded-xl bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed px-5 py-2.5 text-sm font-bold text-bg transition-colors cursor-pointer"
+                        >
+                            {prefsSaving ? 'Sparar…' : 'Spara inställningar'}
+                        </button>
+                        {prefsSaved && (
+                            <span className="text-xs text-accent">Sparat!</span>
+                        )}
                     </div>
                 </section>
 

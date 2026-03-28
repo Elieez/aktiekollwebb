@@ -1,7 +1,8 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { Settings, LogOut } from 'lucide-react';
 import { loginApi, registerApi, refreshApi, logoutApi, resendVerificationApi } from '../lib/api/auth';
 
 type User = {
@@ -193,9 +194,22 @@ export function EmailVerificationBanner() {
 
 export function AuthStatus() {
     const { user, loading, logout } = useAuth();
+    const [open, setOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!open) return;
+        function handleOutsideClick(e: MouseEvent) {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+                setOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, [open]);
 
     if (loading) return (
-        <div className="h-4 w-16 rounded-md bg-white/6 animate-pulse" />
+        <div className="h-8 w-8 rounded-full bg-white/6 animate-pulse" />
     );
 
     if (!user) {
@@ -210,26 +224,70 @@ export function AuthStatus() {
         );
     }
 
+    const displayName = user.displayName ?? user.googleName ?? user.email ?? '?';
+    const initial = displayName[0].toUpperCase();
+
+    const handleLogout = async () => {
+        setOpen(false);
+        await logout();
+        window.location.href = '/';
+    };
+
     return (
-        <div className="flex items-center gap-3">
-            {user.googleAvatar && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    src={user.googleAvatar}
-                    alt={user.displayName ?? user.email ?? 'avatar'}
-                    className="h-7 w-7 rounded-full object-cover border border-white/10"
-                />
-            )}
-            <span className="font-display text-[13px] font-medium text-ink">
-                {user.displayName ?? user.googleName ?? user.email}
-            </span>
+        <div className="relative" ref={containerRef}>
             <button
-                onClick={async () => { await logout(); window.location.href = '/'; }}
-                className="rounded-lg border border-white/[0.07] bg-bg2 px-3 py-1.5 font-display text-[12px] font-semibold uppercase tracking-[0.06em] text-muted
-                hover:bg-bg3 hover:text-sell hover:border-white/12 transition-colors cursor-pointer"
+                onClick={() => setOpen(o => !o)}
+                aria-label="Kontomeny"
+                aria-expanded={open}
+                className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden border border-white/10 cursor-pointer hover:border-white/20 transition-colors"
             >
-                Logga ut
+                {user.googleAvatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={user.googleAvatar}
+                        alt={displayName}
+                        className="h-full w-full object-cover"
+                    />
+                ) : (
+                    <span className="flex h-full w-full items-center justify-center bg-bg4 font-display text-sm font-bold text-ink">
+                        {initial}
+                    </span>
+                )}
             </button>
+
+            {open && (
+                <div className="absolute right-0 top-full mt-2 z-50 w-52 overflow-hidden rounded-xl border border-white/[0.07] bg-bg2 shadow-xl">
+                    {/* User info */}
+                    <div className="border-b border-white/[0.07] px-3 py-2.5">
+                        <p className="truncate text-xs font-medium text-ink">{displayName}</p>
+                        {user.email && displayName !== user.email && (
+                            <p className="truncate text-xs text-faint">{user.email}</p>
+                        )}
+                    </div>
+
+                    {/* Settings link */}
+                    <Link
+                        href="/settings"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted hover:text-ink hover:bg-bg3 transition-colors"
+                    >
+                        <Settings className="h-4 w-4 shrink-0" />
+                        Inställningar
+                    </Link>
+
+                    {/* Separator */}
+                    <div className="my-0.5 border-t border-white/[0.07]" />
+
+                    {/* Logout */}
+                    <button
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-sm text-muted hover:text-sell hover:bg-bg3 transition-colors cursor-pointer"
+                    >
+                        <LogOut className="h-4 w-4 shrink-0" />
+                        Logga ut
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

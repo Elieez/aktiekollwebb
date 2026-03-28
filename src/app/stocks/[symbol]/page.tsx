@@ -4,6 +4,7 @@ import StockChart from "@/components/StockChart";
 import TradesList from "@/components/TradesList";
 import PieChart from "@/components/PieChart";
 import Section from "@/components/Section";
+import FollowButton from "@/components/FollowButton";
 import { cleanCompanyName } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import {
@@ -11,6 +12,7 @@ import {
   getCompanyTradesCountSell,
   getInsiderTradesBySymbol,
 } from "@/lib/api/insider-trades";
+import { getCompanyByCode } from "@/lib/api/companies";
 
 const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
@@ -73,6 +75,10 @@ export default async function StockPage({ params }: PageProps) {
 
     const trades = await getInsiderTradesBySymbol(cleanSymbol, 0, 10);
 
+    // Fetch company from our DB to get integer ID for the follow button
+    const companyData = await getCompanyByCode(cleanSymbol).catch(() => null);
+    const companyDbId = companyData?.id ?? 0;
+
     const chartData = (chartRes && Array.isArray(chartRes.quotes) && chartRes.quotes.length > 0)
       ? (chartRes.quotes as ChartQuote[]).map((q) => ({
           date: q.date ? new Date(q.date).toISOString().split('T')[0] : '',
@@ -112,25 +118,28 @@ export default async function StockPage({ params }: PageProps) {
                 </p>
               </div>
 
-              {/* Right: price + change */}
-              <div className="text-right">
-                <p className="font-display text-3xl font-semibold text-ink leading-none">
-                  {quote.regularMarketPrice?.toLocaleString('sv-SE')} 
-                  <span className="font-mono text-base font-normal text-[#666] ml-1">
-                    {quote.currency}
-                  </span>
-                </p>
-                {typeof priceChange === 'number' && (
-                  <p className={`font-mono text-[14px] mt-1 ${
-                    isPositive ? 'text-buy' 
-                    : isNegative ? 'text-sell'
-                    : 'text-muted' 
-                  }`}
-                  >
-                    {isPositive ? '▲' : isNegative ? '▼' : ''}
-                    {' '}{priceChange.toFixed(2)}%
+              {/* Right: price + change + follow */}
+              <div className="flex items-start gap-3">
+                <div className="text-right">
+                  <p className="font-display text-3xl font-semibold text-ink leading-none">
+                    {quote.regularMarketPrice?.toLocaleString('sv-SE')}
+                    <span className="font-mono text-base font-normal text-[#666] ml-1">
+                      {quote.currency}
+                    </span>
                   </p>
-                )}
+                  {typeof priceChange === 'number' && (
+                    <p className={`font-mono text-[14px] mt-1 ${
+                      isPositive ? 'text-buy'
+                      : isNegative ? 'text-sell'
+                      : 'text-muted'
+                    }`}
+                    >
+                      {isPositive ? '▲' : isNegative ? '▼' : ''}
+                      {' '}{priceChange.toFixed(2)}%
+                    </p>
+                  )}
+                </div>
+                <FollowButton companyId={companyDbId} companyName={companyName} />
               </div>
             </div>
             </Section>
