@@ -297,8 +297,8 @@ export default function AuthPage() {
 
                                         <p className="text-xs text-faint text-center pt-1">
                                             Genom att skapa ett konto godkänner du våra{" "}
-                                            <a href="#" className="text-muted hover:text-ink transition-colors">Användarvillkor</a>{" "}och{" "}
-                                            <a href="#" className="text-muted hover:text-ink transition-colors">Integritetspolicy</a>
+                                            <Link href="/anvandarvillkor" target="_blank" className="text-muted hover:text-ink transition-colors underline underline-offset-2">Användarvillkor</Link>{" "}och{" "}
+                                            <Link href="/integritetspolicy" target="_blank" className="text-muted hover:text-ink transition-colors underline underline-offset-2">Integritetspolicy</Link>
                                         </p>
                                     </form>
                                 </>

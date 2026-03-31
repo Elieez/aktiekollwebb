@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
 import { 
   getInsiderTrades,
@@ -89,6 +90,7 @@ export default function TradesList({
   variant = 'home',
   title 
 }: TradesListProps) {
+  const router = useRouter();
   const pageSize = symbol ? 10 : 15;
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
@@ -168,10 +170,19 @@ export default function TradesList({
           <tbody>
             {items.map((t, idx) => {
               const colors = getTransactionTypeColor(t.transactionType);
+              const rawSymbol = t.symbol;
+              const canNavigate = !!rawSymbol && rawSymbol !== 'UNRESOLVED';
+              const handleRowClick = canNavigate
+                ? () => {
+                    const base = rawSymbol.replace(/\.ST$/i, '');
+                    router.push(`/stocks/${base}.ST`);
+                  }
+                : undefined;
               return (
-                <tr 
+                <tr
                   key={idx}
-                  className="cursor-pointer border-b border-white/[0.07] transition-colors last:border-b-0 hover:bg-bg3">
+                  onClick={handleRowClick}
+                  className={`border-b border-white/[0.07] transition-colors last:border-b-0 ${canNavigate ? 'cursor-pointer hover:bg-bg3' : 'cursor-default'}`}>
                   {variant === 'home' && (
                     <td className="px-2 py-3 sm:px-4">
                       <div className="flex flex-col">

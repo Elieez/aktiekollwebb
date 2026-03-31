@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Settings, LogOut, User as UserIcon } from 'lucide-react'
+import { Settings, LogOut, User as UserIcon, Bell } from 'lucide-react'
 import { loginApi, registerApi, refreshApi, logoutApi, resendVerificationApi } from '../lib/api/auth';
 
 type User = {
@@ -272,6 +272,16 @@ export function AuthStatus() {
                     >
                         <Settings className="h-4 w-4 shrink-0" />
                         Inställningar
+                    </Link>
+
+                    {/* Watchlist link */}
+                    <Link
+                        href="/bevakningslista"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted hover:text-ink hover:bg-bg3 transition-colors"
+                    >
+                        <Bell className="h-4 w-4 shrink-0" />
+                        Bevakningslista
                     </Link>
 
                     {/* Separator */}
