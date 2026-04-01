@@ -95,14 +95,14 @@ export default function CompanySearch() {
     <div ref={wrapperRef} className="relative max-w-120 flex-1">
       {/* Icon */}
       <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
           width="14"
           height="14"
           viewBox="0 0 16 16"
           fill="none"
         >
-          <circle cx="6.5" cy="6.5" r="5" stroke="white" strokeWidth="1.5" />
-          <path d="M10.5 10.5L14 14" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         </svg>
 
       {/* Input */}

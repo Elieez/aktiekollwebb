@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/components/ThemeProvider";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
 import { 
   getInsiderTrades,
@@ -16,18 +17,27 @@ interface TradesListProps {
   title?: string;
 }
 
-const getTransactionTypeColor = (type: string) => {
+const getTransactionTypeColor = (type: string, isLight: boolean) => {
   switch (type) {
     case 'Förvärv':
-      return { badge: 'bg-[rgba(77,235,168,0.1)] text-[#4deba8]', dot: 'bg-green-600' };
+      return {
+        badge: isLight ? 'bg-[rgba(22,163,74,0.15)] text-[#15803d]' : 'bg-[rgba(77,235,168,0.1)] text-[#4deba8]',
+        dot: isLight ? 'bg-[#16a34a]' : 'bg-green-600',
+      };
     case 'Avyttring':
-      return { badge: 'bg-[rgba(240,107,77,0.1)] text-[#f06b4d]', dot: 'bg-red-600' };
+      return {
+        badge: isLight ? 'bg-[rgba(196,57,24,0.12)] text-[#c43918]' : 'bg-[rgba(240,107,77,0.1)] text-[#f06b4d]',
+        dot: 'bg-red-600',
+      };
     case 'Teckning':
       return { badge: 'bg-[rgba(10,100,188,0.1)] text-[#0a64bc]', dot: 'bg-blue-600' };
     case 'Tilldelning':
-      return { badge: 'bg-[rgba(255,238,140,0.1)] text-[#ffee8c]', dot: 'bg-yellow-600' };
+      return {
+        badge: isLight ? 'bg-[rgba(120,100,0,0.12)] text-[#786400]' : 'bg-[rgba(255,238,140,0.1)] text-[#ffee8c]',
+        dot: 'bg-yellow-600',
+      };
     default:
-      return { badge: 'bg-[rgba(128,128,128,0.1)] text-[#808080]', dot: 'bg-gray-600' };
+      return { badge: 'bg-[rgba(128,128,128,0.1)] text-muted', dot: 'bg-gray-600' };
   }
 };
 
@@ -91,6 +101,8 @@ export default function TradesList({
   title 
 }: TradesListProps) {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const pageSize = symbol ? 10 : 15;
   const [items, setItems] = useState(trades);
   const [page, setPage] = useState(1);
@@ -169,7 +181,7 @@ export default function TradesList({
           </thead>
           <tbody>
             {items.map((t, idx) => {
-              const colors = getTransactionTypeColor(t.transactionType);
+              const colors = getTransactionTypeColor(t.transactionType, isLight);
               const rawSymbol = t.symbol;
               const canNavigate = !!rawSymbol && rawSymbol !== 'UNRESOLVED';
               const handleRowClick = canNavigate
@@ -211,20 +223,20 @@ export default function TradesList({
                   {variant === 'stock' && (
                     <>
                       <td className="hidden px-2 py-3 text-right sm:px-4 md:table-cell">
-                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                        <span className="font-mono text-[13px] text-ink">
                           {formatNumber(t.shares)}
                         </span>
                         <span className="ml-1 text-[12px] text-[#666]">st</span>
                       </td>
                       <td className="hidden px-2 py-3 text-right sm:px-4 md:table-cell">
-                        <span className="font-mono text-[13px] text-[#D1D5DB]">
+                        <span className="font-mono text-[13px] text-ink">
                           {formatCurrency(t.price, true)}
                         </span>
                       </td>
                     </>
                   )}
 
-                  <td className="px-2 py-3 text-left font-mono text-[13px] text-[#FFFFFF] sm:px-4 sm:text-right">
+                  <td className="px-2 py-3 text-left font-mono text-[13px] text-ink sm:px-4 sm:text-right">
                     {formatCurrency(t.shares * t.price)}
                   </td>
 

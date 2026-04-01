@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Sun, Moon } from "lucide-react";
 import { AuthStatus, EmailVerificationBanner } from "./Auth";
 import CompanySearch from "@/components/SearchBar";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function Header() {
   const pathname = usePathname();
+  const { theme, toggle } = useTheme();
 
   if (pathname.startsWith("/auth")) return null;
 
@@ -28,8 +31,15 @@ export default function Header() {
           <CompanySearch />
         </div>
 
-        {/* Right: Auth */}
+        {/* Right: Theme toggle + Auth */}
         <div className="ml-auto flex shrink-0 items-center gap-3">
+          <button
+            onClick={toggle}
+            aria-label={theme === "dark" ? "Byt till ljust läge" : "Byt till mörkt läge"}
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.07] text-muted hover:text-ink transition-colors cursor-pointer"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
           <AuthStatus />
         </div>
 
