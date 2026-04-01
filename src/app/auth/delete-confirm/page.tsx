@@ -20,7 +20,7 @@ function DeleteConfirmContent() {
             <main className="flex min-h-screen items-center justify-center bg-bg p-6">
                 <div className="text-center space-y-3">
                     <p className="text-muted">Ogiltig bekräftelänk.</p>
-                    <a href="/settings" className="text-sm text-accent hover:text-accent/80 transition-colors">
+                    <a href="/installningar" className="text-sm text-accent hover:text-accent/80 transition-colors">
                         Gå till inställningar
                     </a>
                 </div>
@@ -91,7 +91,7 @@ function DeleteConfirmContent() {
                     </button>
 
                     <div className="text-center">
-                        <a href="/settings" className="text-xs text-faint hover:text-muted transition-colors">
+                        <a href="/installningar" className="text-xs text-faint hover:text-muted transition-colors">
                             Avbryt — behåll mitt konto
                         </a>
                     </div>

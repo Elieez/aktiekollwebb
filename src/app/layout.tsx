@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="sv" className={inter.variable} suppressHydrationWarning>
       <head>
         {/* Prevent flash of wrong theme before React hydrates */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})()` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&window.matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.classList.add('light');}catch(e){}})()` }} />
       </head>
       <body className="font-sans bg-bg text-ink flex flex-col min-h-screen">
         <ThemeProvider>

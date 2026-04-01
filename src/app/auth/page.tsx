@@ -99,36 +99,74 @@ export default function AuthPage() {
     return (
         <div className="h-dvh w-full overflow-hidden grid grid-cols-1 lg:grid-cols-2">
             {/* Left: Branding Panel */}
-            <div className="hidden lg:flex flex-col justify-between h-full bg-bg2 border-r border-white/[0.07] p-12">
+            <div className="hidden lg:flex flex-col justify-between h-full bg-bg2 border-r border-border p-12 overflow-hidden relative">
+
+                {/* Background decoration */}
+                <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                    {/* Large accent circle — top right */}
+                    <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-accent opacity-[0.06]" />
+                    {/* Small accent circle — bottom left */}
+                    <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-accent opacity-[0.04]" />
+                    {/* Subtle grid lines */}
+                    <svg className="absolute inset-0 h-full w-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                </div>
+
+                {/* Logo */}
                 <Link
                     href="/"
-                    className="font-display text-2xl font-bold tracking-tight text-ink hover:opacity-80 transition-opacity"
+                    className="relative font-display text-2xl font-bold tracking-tight text-ink hover:opacity-80 transition-opacity"
                 >
                     Aktie<span className="text-accent">Koll</span>
                 </Link>
-                <div className="space-y-8">
-                    <div>
-                        <h2 className="font-display text-3xl font-bold text-ink leading-tight mb-3">
-                            Spåra insiders.<br />Håll dig steget före.
+
+                {/* Main content */}
+                <div className="relative space-y-10">
+                    <div className="space-y-4">
+                        <p className="font-display text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                            Offentlig insynsdata · Finansinspektionen
+                        </p>
+                        <h2 className="font-display text-4xl font-bold text-ink leading-tight">
+                            Se vad insiders<br />gör med sina<br />
+                            <span className="text-accent">egna aktier</span>
                         </h2>
                         <p className="text-muted text-sm leading-relaxed max-w-sm">
-                            Bevaka insidertransaktioner i realtid och få ett
-                            övertag med aktuell marknadsintelligens.
+                            Chefer och styrelseledamöter måste enligt lag rapportera
+                            alla aktieaffärer i det egna bolaget. Vi visar dem i realtid.
                         </p>
                     </div>
-                    <div className="space-y-5">
+
+                    {/* Feature rows */}
+                    <div className="space-y-4">
                         {[
-                            { title: "Insidertransaktioner i realtid",   desc: "Bevaka affärer när de sker" },
-                            { title: "Detaljerade analyser",              desc: "Utförliga diagram och datainsikter" },
-                            { title: "Företagsprofiler",                  desc: "Djupdyk i enskilda aktier" },
+                            {
+                                stat: "100%",
+                                title: "Offentlig data",
+                                desc: "Direkt från Finansinspektionens register",
+                            },
+                            {
+                                stat: "Realtid",
+                                title: "Löpande uppdateringar",
+                                desc: "Nya transaktioner visas när de rapporteras",
+                            },
+                            {
+                                stat: "Gratis",
+                                title: "Kom igång utan kostnad",
+                                desc: "Skapa konto och börja bevaka direkt",
+                            },
                         ].map((item) => (
-                            <div key={item.title} className="flex items-start gap-3">
-                                <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-dim">
-                                    <svg className="h-3 w-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                                    </svg>
+                            <div key={item.title} className="flex items-center gap-4">
+                                <div className="w-16 shrink-0 font-display text-sm font-bold text-accent">
+                                    {item.stat}
                                 </div>
-                                <div>
+                                <div className="h-px flex-1 bg-border" />
+                                <div className="text-right">
                                     <p className="text-sm font-medium text-ink">{item.title}</p>
                                     <p className="text-xs text-muted mt-0.5">{item.desc}</p>
                                 </div>
@@ -136,7 +174,11 @@ export default function AuthPage() {
                         ))}
                     </div>
                 </div>
-                <p className="text-xs text-faint">Svensk insiderdata &mdash; uppdateras kontinuerligt</p>
+
+                {/* Bottom */}
+                <p className="relative text-xs text-faint">
+                    Svensk insiderdata &mdash; uppdateras kontinuerligt
+                </p>
             </div>
 
             {/* Right: Auth Forms */}

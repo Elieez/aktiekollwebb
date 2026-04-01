@@ -23,7 +23,7 @@ export default function TradesCount({ companies, title, variant }: TradesCountPr
         <div className={`font-display text-[11px] font-semibold uppercase tracking-widest ${titleColor}`}>
           {title}
         </div>
-        <div className="mt-px text-[12px] text-[#666]">Top 3 bolag</div>
+        <div className="mt-px text-[12px] text-[#666]">Topp 3 bolag</div>
       </div>
 
       {/* Rows */}

@@ -15,7 +15,7 @@ export default function Footer() {
                     <Link href="/" className="hover:text-ink transition-colors">Hem</Link>
                     <Link href="/om" className="hover:text-ink transition-colors">Om tjänsten</Link>
                     <Link href="/bevakningslista" className="hover:text-ink transition-colors">Bevakningslista</Link>
-                    <Link href="/settings" className="hover:text-ink transition-colors">Inställningar</Link>
+                    <Link href="/installningar" className="hover:text-ink transition-colors">Inställningar</Link>
                     <Link href="/anvandarvillkor" className="hover:text-ink transition-colors">Användarvillkor</Link>
                     <Link href="/integritetspolicy" className="hover:text-ink transition-colors">Integritetspolicy</Link>
                 </div>

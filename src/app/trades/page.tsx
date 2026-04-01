@@ -14,7 +14,7 @@ import {
 } from "@/lib/api/insider-trades";
 
 export const metadata = {
-  title: "Insider Trades & Big Trades",
+  title: "Insideraffärer – AktieKoll",
 };
 
 export default async function TradesPage() {

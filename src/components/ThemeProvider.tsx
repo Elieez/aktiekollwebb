@@ -16,10 +16,14 @@ export function useTheme() {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setTheme] = useState<Theme>("dark");
 
-    // Sync initial value from localStorage on mount
+    // Sync initial value from localStorage, fall back to browser preference
     useEffect(() => {
         const stored = localStorage.getItem("theme");
-        if (stored === "light") setTheme("light");
+        if (stored === "light" || stored === "dark") {
+            setTheme(stored);
+        } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+            setTheme("light");
+        }
     }, []);
 
     // Apply class + persist whenever theme changes

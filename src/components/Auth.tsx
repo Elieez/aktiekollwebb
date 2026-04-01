@@ -266,7 +266,7 @@ export function AuthStatus() {
 
                     {/* Settings link */}
                     <Link
-                        href="/settings"
+                        href="/installningar"
                         onClick={() => setOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted hover:text-ink hover:bg-bg3 transition-colors"
                     >
