@@ -13,9 +13,32 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aktiekoll.se";
+
 export const metadata: Metadata = {
-  title: "AktieKoll",
-  description: "Insyns transaktioner på aktiemarknaden i Sverige",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "AktieKoll – Spåra insiderhandel på Stockholmsbörsen",
+    template: "%s – AktieKoll",
+  },
+  description:
+    "Följ insidertransaktioner i realtid. Se vad bolagsledare och styrelsemedlemmar köper och säljer i sina egna bolag – direkt från Finansinspektionen.",
+  openGraph: {
+    type: "website",
+    locale: "sv_SE",
+    url: SITE_URL,
+    siteName: "AktieKoll",
+    title: "AktieKoll – Spåra insiderhandel på Stockholmsbörsen",
+    description:
+      "Följ insidertransaktioner i realtid. Se vad bolagsledare köper och säljer – direkt från Finansinspektionen.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AktieKoll – Spåra insiderhandel på Stockholmsbörsen",
+    description:
+      "Följ insidertransaktioner i realtid. Se vad bolagsledare köper och säljer – direkt från Finansinspektionen.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({

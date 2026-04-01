@@ -49,7 +49,6 @@ export default async function StockPage({ params }: PageProps) {
     const quote = await yahooFinance.quote(yahooSymbol);
 
     if (!quote || !quote.regularMarketPrice) {
-      console.error(`No valid quote for ${yahooSymbol}`);
       return notFound();
     }
 
@@ -65,8 +64,7 @@ export default async function StockPage({ params }: PageProps) {
         period2: end,
         interval: "1d",
       });
-    } catch (chartError) {
-      console.warn(`Chart fetch failed:`, chartError);
+    } catch {
       chartRes = null;
     }
 
@@ -184,9 +182,7 @@ export default async function StockPage({ params }: PageProps) {
         </div>
       </Page>
     );
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error("Stock page error:", message);
+  } catch {
     return notFound();
   }
 }

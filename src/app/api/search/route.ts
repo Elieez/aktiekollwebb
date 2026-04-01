@@ -25,8 +25,7 @@ export async function GET(req: Request) {
     return NextResponse.json(mapped, {
       headers: { 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=600' },
     });
-  } catch (err) {
-    console.error('company search failed', err);
+  } catch {
     return NextResponse.json([]);
   }
 }

@@ -19,11 +19,10 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), payment=()",
   },
-  // Enforce HTTPS for 1 year (enable once TLS is confirmed on prod)
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=31536000; includeSubDomains",
-  },
+  // Enforce HTTPS for 1 year — only in production where TLS is active
+  ...(process.env.NODE_ENV === "production"
+    ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]
+    : []),
   // Content Security Policy
   // Note: 'unsafe-inline' for scripts is required by Next.js inline bootstrapping.
   // Use nonce-based CSP via middleware for stricter enforcement if needed.
