@@ -1,4 +1,5 @@
 export interface TradeStats{
     totalTransactions: number,
-    totalValue: number
+    totalValue: number,
+    uniqueCompanies: number
 }

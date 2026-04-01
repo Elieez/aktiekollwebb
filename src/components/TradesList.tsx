@@ -157,21 +157,21 @@ export default function TradesList({
   return (
     <div>
       {/* Section header */}
-      <div className="mb-4 px-1">
+      <div className="mb-4 px-1 flex items-center justify-between">
         <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
           {title || defaultTitle}
         </h2>
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-bg2 mt-2">
+      <div className="overflow-hidden rounded-xl border border-border bg-bg2 card-shadow">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b border-white/[0.07] bg-bg3">
+            <tr className="border-b border-border bg-bg3">
             {headers.map((h) => (
               <th
                 key={h.label}
-                className={`px-2 py-2.5 sm:px-4 font-display text-[11px] font-semibold uppercase tracking-widest text-[#666]
+                className={`px-3 py-3 sm:px-4 font-display text-[11px] font-semibold uppercase tracking-widest text-faint
                   ${h.align === "right" ? "text-left sm:text-right" : "text-left"} ${h.hideClass}`}
                 >
                   {h.label}
@@ -194,41 +194,39 @@ export default function TradesList({
                 <tr
                   key={idx}
                   onClick={handleRowClick}
-                  className={`border-b border-white/[0.07] transition-colors last:border-b-0 ${canNavigate ? 'cursor-pointer hover:bg-bg3' : 'cursor-default'}`}>
+                  className={`border-b border-border transition-colors duration-100 last:border-b-0 ${canNavigate ? 'cursor-pointer hover:bg-bg3' : 'cursor-default'}`}>
                   {variant === 'home' && (
-                    <td className="px-2 py-3 sm:px-4">
-                      <div className="flex flex-col">
-                        <span className="text-[13px] font-medium text-ink">{t.companyName}</span>
-                      </div>
+                    <td className="px-3 py-3.5 sm:px-4">
+                      <span className="text-[13px] font-medium text-ink leading-none">{t.companyName}</span>
                     </td>
                   )}
 
-                  <td className={`px-2 py-3 text-[13px] text-muted sm:px-4 ${variant === 'home' ? 'hidden sm:table-cell' : ''}`}>{t.insiderName}</td>
+                  <td className={`px-3 py-3.5 text-[13px] text-muted sm:px-4 ${variant === 'home' ? 'hidden sm:table-cell' : ''}`}>{t.insiderName}</td>
 
-                  <td className="hidden px-2 py-3 max-w-50 sm:px-4 xl:table-cell">
-                    <div className="truncate text-[12px] text-[#666]" title={t.position || '-'}>
+                  <td className="hidden px-3 py-3.5 max-w-50 sm:px-4 xl:table-cell">
+                    <div className="truncate text-[12px] text-faint" title={t.position || '-'}>
                       {mapPosition(t.position)}
                     </div>
                   </td>
 
-                  <td className="px-2 py-3 sm:px-4">
+                  <td className="px-3 py-3.5 sm:px-4">
                     <span
-                      className={`inline-flex items-center gap-1 rounded-[5px] px-2 py-0.75 font-mono text-[11px] font-medium ${colors.badge}`}
+                      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[11px] font-semibold ${colors.badge}`}
                     >
-                      <span className={`inline-block h-1.25 w-1.25 rounded-full ${colors.dot}`}/>
+                      <span className={`inline-block h-1.5 w-1.5 rounded-full ${colors.dot}`}/>
                       {t.transactionType}
                     </span>
                   </td>
 
                   {variant === 'stock' && (
                     <>
-                      <td className="hidden px-2 py-3 text-right sm:px-4 md:table-cell">
+                      <td className="hidden px-3 py-3.5 text-right sm:px-4 md:table-cell">
                         <span className="font-mono text-[13px] text-ink">
                           {formatNumber(t.shares)}
                         </span>
-                        <span className="ml-1 text-[12px] text-[#666]">st</span>
+                        <span className="ml-1 text-[12px] text-faint">st</span>
                       </td>
-                      <td className="hidden px-2 py-3 text-right sm:px-4 md:table-cell">
+                      <td className="hidden px-3 py-3.5 text-right sm:px-4 md:table-cell">
                         <span className="font-mono text-[13px] text-ink">
                           {formatCurrency(t.price, true)}
                         </span>
@@ -236,11 +234,11 @@ export default function TradesList({
                     </>
                   )}
 
-                  <td className="px-2 py-3 text-left font-mono text-[13px] text-ink sm:px-4 sm:text-right">
+                  <td className="px-3 py-3.5 text-left font-mono text-[13px] font-medium text-ink sm:px-4 sm:text-right">
                     {formatCurrency(t.shares * t.price)}
                   </td>
 
-                  <td className="hidden px-2 py-3 text-right font-mono text-[12px] whitespace-nowrap text-[#666] sm:table-cell sm:px-4">
+                  <td className="hidden px-3 py-3.5 text-right font-mono text-[12px] whitespace-nowrap text-faint sm:table-cell sm:px-4">
                     {formatDate(t.publishingDate)}
                   </td>
                 </tr>

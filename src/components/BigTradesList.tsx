@@ -19,76 +19,64 @@ const formatDate = (dateString: string) => {
   const yesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
 
-  const time = date.toLocaleTimeString('sv-SE', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  if (date >= today && date < new Date(today.getTime() + 86400000)) {
-    return `Idag ${time}`;
-  }
-
-  if (date >= yesterday && date < today) {
-    return `Igår ${time}`;
-  }
-
-  const dayMonth = date
-    .toLocaleDateString('sv-SE', { month: 'short', day: '2-digit' })
-    .replace(/\//g, ' ');
-
-  return `${dayMonth} ${time}`;
+  const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+  if (date >= today) return `Idag ${time}`;
+  if (date >= yesterday) return `Igår ${time}`;
+  return date.toLocaleDateString('sv-SE', { month: 'short', day: '2-digit' }).replace(/\//g, ' ');
 };
 
 const rankStyle: Record<number, string> = {
-  0: "text-[#f0c94d]",   // gold
-  1: "text-[#9ba3b0]",   // silver
-  2: "text-[#a07050]",   // bronze
+  0: "text-gold",
+  1: "text-silver",
+  2: "text-bronze",
 };
 
 export default function BigTradesList({ trades }: TopTradesProps) {
   return (
     <div>
-      <div className="mb-3.5 flex items-center justify-between">
+      <div className="mb-4 px-1">
         <h2 className="font-display text-[13px] font-semibold uppercase tracking-[0.06em] text-muted">
-          Topp 10 - Största affärer</h2>
+          Topp 10 · Största affärer
+        </h2>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-white/[0.07] bg-bg2">
-          {trades.map((trade, index) => (
+      <div className="overflow-hidden rounded-xl border border-border bg-bg2 card-shadow">
+        {trades.map((trade, index) => {
+          const isBuy = trade.transactionType === "Förvärv";
+          return (
             <div
               key={index}
-              className="flex cursor-pointer items-center gap-2.5 border-b border-white/[0.07] px-4 py-2.75 transition-colors 
-              last:border-b-0 hover:bg-bg3">
-              
-              <span
-                className={`w-4.5 shrink-0 text-center font-mono text-[12px] ${
-                  rankStyle[index] ?? "text-[#666]" 
-                }`}
-              >
+              className="flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-100 last:border-b-0 hover:bg-bg3 cursor-pointer"
+            >
+              {/* Rank */}
+              <span className={`w-5 shrink-0 text-center font-mono text-[12px] font-semibold ${rankStyle[index] ?? "text-faint"}`}>
                 {index + 1}
               </span>
-              
+
+              {/* Name + insider */}
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[13px] font-medium text-ink" title={trade.companyName || '-'}>
+                <div className="truncate text-[13px] font-medium text-ink leading-none mb-0.5" title={trade.companyName || '-'}>
                   {trade.companyName}
                 </div>
-                <div className="truncate text-[13px] text-[#666]">{trade.insiderName}</div>
+                <div className="truncate text-[12px] text-faint">{trade.insiderName}</div>
               </div>
-                
+
+              {/* Value + type */}
               <div className="shrink-0 text-right">
-                <div
-                  className={`font-mono text-[13px] ${
-                    trade.transactionType === "Förvärv" ? "text-buy" : "text-sell"
-                  }`}
-                >
+                <div className={`font-mono text-[13px] font-semibold ${isBuy ? "text-buy" : "text-sell"}`}>
                   {formatCurrency(trade.price * trade.shares)}
                 </div>
-                <div className="mt-px font-mono text-[12px] text-[#666]">
-                  {trade.transactionType === "Förvärv" ? "KÖP" : "SÄLJ"} · {formatDate(trade.publishingDate)}
+                <div className="mt-0.5 flex items-center justify-end gap-1.5">
+                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${isBuy ? "bg-buy" : "bg-sell"}`} />
+                  <span className="font-mono text-[11px] text-faint">
+                    {isBuy ? "KÖP" : "SÄLJ"} · {formatDate(trade.publishingDate)}
+                  </span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
+    </div>
   );
 }

@@ -16,8 +16,8 @@ export default function Header() {
   return (
     <>
       <EmailVerificationBanner />
-      <header className="sticky top-0 z-50 flex h-15 items-center border-b border-white/[0.07]
-                   bg-bg/60 px-4 backdrop-blur-md sm:px-8">
+      <header className="sticky top-0 z-50 flex h-14 items-center border-b border-border
+                   bg-bg/80 px-4 backdrop-blur-md backdrop-saturate-150 sm:px-8">
   
         {/* Left: Logo */}
         <div className="shrink-0 font-display text-lg font-bold tracking-tight text-ink">

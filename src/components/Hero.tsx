@@ -15,7 +15,7 @@ export default function Hero({ stats }: HeroProps) {
   const statItems = [
     { val: stats.totalTransactions.toLocaleString("sv-SE"), label: "Transaktioner i år" },
     { val: formatValue(stats.totalValue) + " kr",           label: "Handelsvärde i år" },
-    { val: "218",    label: "Aktiva bolag" },
+    { val: stats.uniqueCompanies,    label: "Aktiva bolag" },
   ];
     return (
     <div className="mx-auto flex max-w-380 animate-fadeUp flex-col gap-6 border-b border-border px-4 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10 lg:flex-row lg:items-end lg:justify-between">
