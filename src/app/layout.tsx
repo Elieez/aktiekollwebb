@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/Auth";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -28,11 +29,12 @@ export default function RootLayout({
         {/* Prevent flash of wrong theme before React hydrates */}
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})()` }} />
       </head>
-      <body className="font-sans bg-bg text-ink">
+      <body className="font-sans bg-bg text-ink flex flex-col min-h-screen">
         <ThemeProvider>
           <AuthProvider>
             <Header />
-            {children}
+            <div className="flex-1">{children}</div>
+            <Footer />
           </AuthProvider>
         </ThemeProvider>
       </body>

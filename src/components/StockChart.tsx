@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from '@/components/ThemeProvider';
 import type { InsiderTrade } from '@/lib/types/InsiderTrade';
 import {
   createChart,
@@ -50,52 +51,56 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Line'> | null>(null);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const { theme } = useTheme();
+  const themeRef = useRef(theme);
+  themeRef.current = theme;
 
-  // create chart once
+  // create chart once — read initial theme directly from DOM to avoid FOUC
   useEffect(() => {
     if (!containerRef.current) return;
+    const isLight = document.documentElement.classList.contains('light');
 
     const chart = createChart(containerRef.current, {
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight || 300,
-      layout: { 
+      layout: {
         background: { color: 'transparent' },
-        textColor: '#8a8a8a',
+        textColor: isLight ? '#6b6560' : '#8a8a8a',
         fontFamily: "'DM Mono', monospace",
-        fontSize: 11, 
+        fontSize: 11,
       },
-      rightPriceScale: { 
+      rightPriceScale: {
         borderVisible: false,
-        textColor: '#555555' 
+        textColor: isLight ? '#6b6560' : '#555555',
       },
       leftPriceScale: { visible: false },
-      timeScale: { 
+      timeScale: {
         borderVisible: false,
-        timeVisible: true, 
-        secondsVisible: false, 
+        timeVisible: true,
+        secondsVisible: false,
         rightOffset: 3,
         fixLeftEdge: false,
         fixRightEdge: false,
       },
       crosshair: {
-         mode:
-          CrosshairMode.Normal,
-          vertLine: { color: 'rgba(255,255,255,0.12)', width: 1, style: 0 },
-          horzLine: { color: 'rgba(255,255,255,0.12)', width: 1, style: 0 },
-        },
-      grid: { 
-        vertLines: { visible: false }, 
-        horzLines: { color: 'rgba(255,255,255,0.04)' },
-      }
+        mode: CrosshairMode.Normal,
+        vertLine: { color: isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.12)', width: 1, style: 0 },
+        horzLine: { color: isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.12)', width: 1, style: 0 },
+      },
+      grid: {
+        vertLines: { visible: false },
+        horzLines: { color: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)' },
+      },
     });
     chartRef.current = chart;
 
-    const lineSeries = chart.addSeries(LineSeries, { 
-      color: '#c8f04d', 
-      lineWidth: 2 });
+    const lineSeries = chart.addSeries(LineSeries, {
+      color: isLight ? '#16a34a' : '#c8f04d',
+      lineWidth: 2,
+    });
     seriesRef.current = lineSeries;
 
-    // simple tooltip element (used by crosshair handler)
+    // tooltip element — styles updated dynamically on theme change
     const tooltip = document.createElement('div');
     tooltip.style.cssText = `
       position: absolute;
@@ -104,12 +109,14 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       border-radius: 8px;
       font-size: 12px;
       font-family: 'DM Mono', monospace;
-      background: #181b1f;
-      color: #f0ede8;
+      background: ${isLight ? '#ffffff' : '#181b1f'};
+      color: ${isLight ? '#1a1816' : '#f0ede8'};
+      border: ${isLight ? '1px solid rgba(0,0,0,0.08)' : 'none'};
+      box-shadow: ${isLight ? '0 2px 12px rgba(0,0,0,0.12)' : 'none'};
       pointer-events: none;
       z-index: 1000;
       white-space: nowrap;
-      line-height:1.6;
+      line-height: 1.6;
     `;
     containerRef.current.appendChild(tooltip);
     tooltipRef.current = tooltip;
@@ -129,6 +136,37 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
       if (tooltip && tooltip.parentElement) tooltip.parentElement.removeChild(tooltip);
     };
   }, []);
+
+  // update chart colours when theme toggles
+  useEffect(() => {
+    const chart = chartRef.current;
+    const line  = seriesRef.current;
+    const tooltip = tooltipRef.current;
+    if (!chart || !line) return;
+
+    const isLight = theme === 'light';
+
+    chart.applyOptions({
+      layout: { textColor: isLight ? '#6b6560' : '#8a8a8a' },
+      rightPriceScale: { textColor: isLight ? '#6b6560' : '#555555' },
+      crosshair: {
+        vertLine: { color: isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.12)' },
+        horzLine: { color: isLight ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.12)' },
+      },
+      grid: {
+        horzLines: { color: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)' },
+      },
+    });
+
+    line.applyOptions({ color: isLight ? '#16a34a' : '#c8f04d' });
+
+    if (tooltip) {
+      tooltip.style.background    = isLight ? '#ffffff' : '#181b1f';
+      tooltip.style.color         = isLight ? '#1a1816' : '#f0ede8';
+      tooltip.style.border        = isLight ? '1px solid rgba(0,0,0,0.08)' : 'none';
+      tooltip.style.boxShadow     = isLight ? '0 2px 12px rgba(0,0,0,0.12)' : 'none';
+    }
+  }, [theme]);
 
   // update data & markers
   useEffect(() => {
@@ -217,14 +255,19 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
         return;
       }
 
+      const light = themeRef.current === 'light';
+      const textPrimary  = light ? '#1a1816' : '#f0ede8';
+      const textSecondary = light ? '#6b6560' : '#8a8a8a';
+      const textDim      = light ? '#a09890' : '#555';
+
       const time = param.time as UTCTimestamp;
       const tradesAtTime = tradeLookup.get(time) ?? [];
 
       if (tradesAtTime.length > 0) {
         const date = new Date((time as number) * 1000);
         tooltip.replaceChildren(
-          makeRow(date.toLocaleDateString('sv-SE'), '#f0ede8', 'font-weight:600;margin-bottom:4px'),
-          makeRow(`${tradesAtTime.length} transaktion(er)`, '#8a8a8a'),
+          makeRow(date.toLocaleDateString('sv-SE'), textPrimary, 'font-weight:600;margin-bottom:4px'),
+          makeRow(`${tradesAtTime.length} transaktion(er)`, textSecondary),
           ...tradesAtTime.slice(0, 3).map((t) =>
             makeRow(
               `${t.transactionType} ${t.price ?? '--'} SEK`,
@@ -233,7 +276,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
             )
           ),
           ...(tradesAtTime.length > 3
-            ? [makeRow(`+${tradesAtTime.length - 3} till`, '#555', 'margin-top:4px')]
+            ? [makeRow(`+${tradesAtTime.length - 3} till`, textDim, 'margin-top:4px')]
             : []),
         );
         tooltip.style.display = 'block';
@@ -254,8 +297,8 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
 
       const d = new Date((param.time as number) * 1000);
       tooltip.replaceChildren(
-        makeRow(d.toLocaleDateString('sv-SE'), '#8a8a8a', 'margin-bottom:2px'),
-        makeRow(`${price.toLocaleString('sv-SE')} • SEK`, '#f0ede8'),
+        makeRow(d.toLocaleDateString('sv-SE'), textSecondary, 'margin-bottom:2px'),
+        makeRow(`${price.toLocaleString('sv-SE')} • SEK`, textPrimary),
       );
       tooltip.style.display = 'block';
       const x = param.point.x ?? 0;

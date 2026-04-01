@@ -18,17 +18,20 @@ export default function Hero({ stats }: HeroProps) {
     { val: "218",    label: "Aktiva bolag" },
   ];
     return (
-    <div className="mx-auto flex max-w-380 animate-fadeUp flex-col gap-6 border-b border-white/[0.07] px-4 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10 lg:flex-row lg:items-end lg:justify-between">
+    <div className="mx-auto flex max-w-380 animate-fadeUp flex-col gap-6 border-b border-border px-4 pt-10 pb-8 sm:px-8 sm:pt-14 sm:pb-10 lg:flex-row lg:items-end lg:justify-between">
       {/* Copy */}
       <div>
-        <h1 className="mb-2.5 font-display text-[clamp(24px,4vw,44px)] font-bold leading-[1.1] tracking-[-0.03em] text-ink">
-          Spåra <em className="not-italic text-accent">insiderhandel</em>
-          <br />
-          på Stockholmsbörsen
+        <p className="mb-3 font-display text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+          Offentlig insynsdata · Finansinspektionen
+        </p>
+        <h1 className="mb-3 font-display text-[clamp(24px,4vw,44px)] font-bold leading-[1.1] tracking-[-0.03em] text-ink">
+          Se vad bolagsledare<br />
+          <em className="not-italic text-accent">köper och säljer</em> i sina egna bolag
         </h1>
-        <p className="max-w-100 text-sm leading-7 text-muted">
-          Realtidsdata om köp och säljtransaktioner gjorda av bolagsledningar och
-          styrelsemedlemmar. Komplett öppenhet.
+        <p className="max-w-xl text-sm leading-7 text-muted">
+          Enligt lag måste chefer, styrelseledamöter och andra insynspersoner rapportera
+          alla aktieaffärer i det egna bolaget till Finansinspektionen.
+          AktieKoll samlar och visar dessa transaktioner i realtid — helt gratis.
         </p>
       </div>
 

@@ -77,7 +77,7 @@ export default function BevakningslistaPage() {
                         </Link>
                     </div>
                 ) : (
-                    <section className="rounded-2xl border border-white/[0.07] bg-bg2 divide-y divide-white/[0.07] overflow-hidden">
+                    <section className="rounded-2xl border border-border bg-bg2 divide-y divide-border overflow-hidden">
                         {companies.map(company => (
                             <div
                                 key={company.companyId}
