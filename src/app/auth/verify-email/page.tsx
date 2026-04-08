@@ -65,7 +65,7 @@ function VerifyEmailContent() {
                         </div>
                         <h1 className="font-display text-xl font-bold text-ink">Verifiering misslyckades</h1>
                         <p className="text-muted text-sm">{message}</p>
-                        <Link href="/auth" className="inline-block mt-2 text-sm text-accent hover:text-accent/80 transition-colors font-medium">
+                        <Link href="/auth" className="inline-block mt-2 text-sm text-accent hover:text-accent/80 transition-colors font-medium cursor-pointer">
                             Tillbaka till inloggning
                         </Link>
                     </>

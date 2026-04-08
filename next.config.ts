@@ -35,8 +35,8 @@ const securityHeaders = [
       // Inline styles are used by Next.js and Tailwind
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
-      // data: for SVG icons, blob: for chart canvas
-      "img-src 'self' data: blob:",
+      // data: for SVG icons, blob: for chart canvas, googleusercontent for Google avatars
+      "img-src 'self' data: blob: https://lh3.googleusercontent.com",
       // Allow XHR/fetch to self and backend API
       `connect-src 'self' ${API_ORIGIN}`,
       "frame-ancestors 'none'",

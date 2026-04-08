@@ -70,7 +70,7 @@ export async function getFollowedCompanies(
 export async function getNotificationPreferences(
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 ): Promise<NotificationPreferences> {
-    const res = await fetchWithAuth(`${API_BASE}/notifications/preferences`);
+    const res = await fetchWithAuth(`${API_BASE}/notification/preferences`);
     const data = await handleJson(res);
     if (!res.ok) throw data;
     return data as NotificationPreferences;
@@ -79,13 +79,16 @@ export async function getNotificationPreferences(
 export async function updateNotificationPreferences(
     prefs: NotificationPreferences,
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
-): Promise<NotificationPreferences> {
-    const res = await fetchWithAuth(`${API_BASE}/notifications/preferences`, {
+): Promise<void> {
+    // Backend requires a non-null string for discordWebhookUrl even when Discord is disabled
+    const payload = { ...prefs, discordWebhookUrl: prefs.discordWebhookUrl ?? "" };
+    const res = await fetchWithAuth(`${API_BASE}/notification/preferences`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(prefs),
+        body: JSON.stringify(payload),
     });
-    const data = await handleJson(res);
-    if (!res.ok) throw data;
-    return data as NotificationPreferences;
+    if (!res.ok) {
+        const data = await handleJson(res);
+        throw data;
+    }
 }

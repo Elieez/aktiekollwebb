@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Bell, BellRing } from "lucide-react";
+import Link from "next/link";
 import { useAuth } from "@/components/Auth";
 import { followCompany, unfollowCompany, getFollowStatus } from "@/lib/api/follows";
 
@@ -81,11 +82,15 @@ export default function FollowButton({ companyId, companyName }: FollowButtonPro
         } catch (err: unknown) {
             // Roll back optimistic update
             setIsFollowing(!nextState);
-            const msg = err && typeof err === 'object' && 'error' in err
+            const raw = err && typeof err === 'object' && 'error' in err
                 ? String((err as { error: string }).error)
                 : 'Något gick fel.';
+            // Normalise the backend's unverified-email message
+            const msg = raw.toLowerCase().includes('verifiera')
+                ? '__unverified__'
+                : raw;
             setError(msg);
-            setTimeout(() => setError(null), 3000);
+            setTimeout(() => setError(null), 4000);
         } finally {
             setLoading(false);
         }
@@ -119,8 +124,15 @@ export default function FollowButton({ companyId, companyName }: FollowButtonPro
             </button>
 
             {error && (
-                <div className="absolute right-0 top-full mt-2 z-10 w-52 rounded-xl border border-sell/20 bg-bg2 px-3 py-2 text-xs text-sell shadow-lg whitespace-nowrap">
-                    {error}
+                <div className="absolute right-0 top-full mt-2 z-10 w-60 rounded-xl border border-sell/20 bg-bg2 px-3 py-2.5 text-xs text-sell shadow-lg">
+                    {error === '__unverified__' ? (
+                        <>
+                            Du behöver verifiera din e-postadress innan du kan bevaka bolag.{" "}
+                            <Link href="/auth" className="underline underline-offset-2 text-sell/80 hover:text-sell transition-colors">
+                                Logga in och skicka nytt mejl
+                            </Link>
+                        </>
+                    ) : error}
                 </div>
             )}
         </div>

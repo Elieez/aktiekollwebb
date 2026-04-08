@@ -193,24 +193,35 @@ export default function SettingsPage() {
     const [prefsSaved, setPrefsSaved] = useState(false);
     const [prefsError, setPrefsError] = useState<string | null>(null);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (!user || !accessToken) return;
         getNotificationPreferences(fetchWithAuth)
             .then(setPrefs)
             .catch(() => { /* use defaults */ });
-    }, [user, accessToken, fetchWithAuth]);
+    // fetchWithAuth changes reference on every token refresh — depend only on identity signals
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user, accessToken]);
 
     const handleSavePrefs = async () => {
         setPrefsSaving(true);
         setPrefsError(null);
         setPrefsSaved(false);
         try {
-            const updated = await updateNotificationPreferences(prefs, fetchWithAuth);
-            setPrefs(updated);
+            await updateNotificationPreferences(prefs, fetchWithAuth);
+            // Re-fetch to confirm what the server actually saved
+            const confirmed = await getNotificationPreferences(fetchWithAuth);
+            setPrefs(confirmed);
             setPrefsSaved(true);
             setTimeout(() => setPrefsSaved(false), 3000);
-        } catch {
-            setPrefsError("Kunde inte spara inställningar. Försök igen.");
+        } catch (err: unknown) {
+            const e = err as Record<string, unknown>;
+            const apiMsg =
+                typeof err === "string" ? err
+                : typeof e?.message === "string" ? e.message
+                : typeof e?.error === "string" ? e.error
+                : null;
+            setPrefsError(apiMsg ?? "Kunde inte spara inställningar. Försök igen.");
         } finally {
             setPrefsSaving(false);
         }
