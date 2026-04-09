@@ -78,18 +78,6 @@ resolved, and saved    insider trade data      edge (5 min–6 hrs)      the bro
 
 ---
 
-## Developer Setup
-
-This project is the dedicated frontend for the AktieKoll backend. It can be run locally for technical review:
-
-- **Prerequisites:** Node.js
-- **Configuration:** Copy `.env.local` and set the required variables:
-  - `NEXT_PUBLIC_API_URL` — base URL of the backend API
-  - `NEXT_PUBLIC_SITE_URL` — public site URL (used for metadata, default: `https://aktiekoll.se`)
-- **Run:** `npm run dev`
-
----
-
 ## Project Structure
 
 Follows the **Next.js App Router** convention:
