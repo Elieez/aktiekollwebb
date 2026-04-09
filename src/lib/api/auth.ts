@@ -47,9 +47,9 @@ export async function logoutApi() {
     });
 }
 
-export async function verifyEmailApi(userId: string, token: string) {
+export async function verifyEmailApi(code: string) {
     const res = await fetch(
-        `${API_BASE}/auth/verify-email?userId=${encodeURIComponent(userId)}&token=${encodeURIComponent(token)}`,
+        `${API_BASE}/auth/verify-email?code=${encodeURIComponent(code)}`,
         { credentials: 'include' }
     );
     const data = await handleJson(res);

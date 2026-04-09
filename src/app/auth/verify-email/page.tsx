@@ -11,25 +11,24 @@ function VerifyEmailContent() {
     const [message, setMessage] = useState("");
 
     useEffect(() => {
-        const userId = params.get("userId");
-        const token  = params.get("token");
+    const code = params.get("code");
 
-        if (!userId || !token) {
+    if (!code) {
+        setStatus("error");
+        setMessage("Ogiltig verifieringslänk.");
+        return;
+    }
+
+    verifyEmailApi(code)
+        .then(() => {
+            setStatus("success");
+            setMessage("Din e-postadress har verifierats! Du kan nu logga in.");
+        })
+        .catch(() => {
             setStatus("error");
-            setMessage("Ogiltig verifieringslänk.");
-            return;
-        }
-
-        verifyEmailApi(userId, token)
-            .then(() => {
-                setStatus("success");
-                setMessage("Din e-postadress har verifierats! Du kan nu logga in.");
-            })
-            .catch(() => {
-                setStatus("error");
-                setMessage("Länken är ogiltig eller har löpt ut. Begär en ny verifieringslänk när du är inloggad.");
-            });
-    }, [params]);
+            setMessage("Länken är ogiltig eller har löpt ut. Begär en ny verifieringslänk när du är inloggad.");
+        });
+}, [params]);
 
     return (
         <main className="flex min-h-screen items-center justify-center bg-bg p-6">
