@@ -103,7 +103,7 @@ export default async function StockPage({ params }: PageProps) {
       <Page>
         <div className="max-w-5xl mx-auto px-4 py-6 space-y-6 sm:px-8 sm:py-8">
           {/* Stock header */}
-          <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
+          <Section className="bg-bg2 border border-border rounded-xl">
             <div className="px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               {/* Left: name + ticker */}
               <div>

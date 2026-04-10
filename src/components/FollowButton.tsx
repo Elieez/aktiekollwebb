@@ -128,9 +128,6 @@ export default function FollowButton({ companyId, companyName }: FollowButtonPro
                     {error === '__unverified__' ? (
                         <>
                             Du behöver verifiera din e-postadress innan du kan bevaka bolag.{" "}
-                            <Link href="/auth" className="underline underline-offset-2 text-sell/80 hover:text-sell transition-colors">
-                                Logga in och skicka nytt mejl
-                            </Link>
                         </>
                     ) : error}
                 </div>
