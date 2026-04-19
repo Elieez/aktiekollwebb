@@ -5,12 +5,10 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useAuth } from "@/components/Auth";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
-
 function GoogleButton() {
     return (
         <a
-            href={`${API_BASE}/auth/google`}
+            href="/api/auth/google"
             className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/[0.07] bg-bg2
             px-4 py-3 text-sm font-medium text-ink hover:bg-bg3 hover:border-white/12 transition-colors"
         >

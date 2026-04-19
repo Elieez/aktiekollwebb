@@ -1,5 +1,3 @@
-const backendUrl = process.env.NEXT_PUBLIC_API_URL;
-
 const DEFAULT_REVALIDATE = 300;
 
 export async function get<T>(
@@ -9,7 +7,7 @@ export async function get<T>(
     next?: NextFetchRequestConfig;
   }
 ): Promise<T> {
-  const url = `${backendUrl}/${endpoint}`;
+  const url = `/api/${endpoint}`;
 
   const response = await fetch(url, {
     method: "GET",

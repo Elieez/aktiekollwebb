@@ -1,4 +1,3 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export type FollowedCompany = {
     companyId: number;
@@ -28,7 +27,7 @@ export async function followCompany(
     companyId: number,
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 ): Promise<FollowStatus> {
-    const res = await fetchWithAuth(`${API_BASE}/follow/${companyId}`, {
+    const res = await fetchWithAuth(`/api/follow/${companyId}`, {
         method: 'POST',
     });
     const data = await handleJson(res);
@@ -40,7 +39,7 @@ export async function unfollowCompany(
     companyId: number,
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 ): Promise<FollowStatus> {
-    const res = await fetchWithAuth(`${API_BASE}/follow/${companyId}`, {
+    const res = await fetchWithAuth(`/api/follow/${companyId}`, {
         method: 'DELETE',
     });
     const data = await handleJson(res);
@@ -52,7 +51,7 @@ export async function getFollowStatus(
     companyId: number,
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 ): Promise<FollowStatus> {
-    const res = await fetchWithAuth(`${API_BASE}/follow/${companyId}`);
+    const res = await fetchWithAuth(`/api/follow/${companyId}`);
     const data = await handleJson(res);
     if (!res.ok) throw data;
     return data as FollowStatus;
@@ -61,7 +60,7 @@ export async function getFollowStatus(
 export async function getFollowedCompanies(
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 ): Promise<FollowedCompany[]> {
-    const res = await fetchWithAuth(`${API_BASE}/follow`);
+    const res = await fetchWithAuth(`/api/follow`);
     const data = await handleJson(res);
     if (!res.ok) throw data;
     return data as FollowedCompany[];
@@ -70,7 +69,7 @@ export async function getFollowedCompanies(
 export async function getNotificationPreferences(
     fetchWithAuth: (input: RequestInfo, init?: RequestInit) => Promise<Response>
 ): Promise<NotificationPreferences> {
-    const res = await fetchWithAuth(`${API_BASE}/notification/preferences`);
+    const res = await fetchWithAuth(`/api/notification/preferences`);
     const data = await handleJson(res);
     if (!res.ok) throw data;
     return data as NotificationPreferences;
@@ -82,7 +81,7 @@ export async function updateNotificationPreferences(
 ): Promise<void> {
     // Backend requires a non-null string for discordWebhookUrl even when Discord is disabled
     const payload = { ...prefs, discordWebhookUrl: prefs.discordWebhookUrl ?? "" };
-    const res = await fetchWithAuth(`${API_BASE}/notification/preferences`, {
+    const res = await fetchWithAuth(`/api/notification/preferences`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
