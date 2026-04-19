@@ -1,6 +1,9 @@
 export type AuthResponse = { accessToken: string; expiresAt: string | number };
 export type MeResponse = { id?: string; email?: string; displayName?: string };
 
+const API_BASE = typeof window === 'undefined'
+  ? (process.env.BACKEND_URL ?? process.env.NEXT_PUBLIC_API_URL ?? '')
+  : '/api';
 
 async function handleJson(res: Response) {
     const text = await res.text();
@@ -8,7 +11,7 @@ async function handleJson(res: Response) {
 }
 
 export async function loginApi(email: string, password: string): Promise<AuthResponse> {
-    const res = await fetch(`/api/auth/login`, {
+    const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -19,7 +22,7 @@ export async function loginApi(email: string, password: string): Promise<AuthRes
 }
 
 export async function registerApi(email: string, password: string, displayName?: string) {
-    const res = await fetch(`/api/auth/register`, {
+    const res = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -31,7 +34,7 @@ export async function registerApi(email: string, password: string, displayName?:
 }
 
 export async function refreshApi(): Promise<AuthResponse> {
-    const res = await fetch(`/api/auth/refresh`, {
+    const res = await fetch(`${API_BASE}/auth/refresh`, {
         method: 'POST',
         credentials: 'include',
     });
@@ -40,7 +43,7 @@ export async function refreshApi(): Promise<AuthResponse> {
 }
 
 export async function logoutApi() {
-    await fetch(`/api/auth/logout`, {
+    await fetch(`${API_BASE}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
     });
@@ -48,7 +51,7 @@ export async function logoutApi() {
 
 export async function verifyEmailApi(code: string) {
     const res = await fetch(
-        `/api/auth/verify-email?code=${encodeURIComponent(code)}`,
+        `${API_BASE}/auth/verify-email?code=${encodeURIComponent(code)}`,
         { credentials: 'include' }
     );
     const data = await handleJson(res);
@@ -57,7 +60,7 @@ export async function verifyEmailApi(code: string) {
 }
 
 export async function resendVerificationApi(accessToken: string) {
-    const res = await fetch(`/api/auth/resend-verification`, {
+    const res = await fetch(`${API_BASE}/auth/resend-verification`, {
         method: 'POST',
         credentials: 'include',
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -68,7 +71,7 @@ export async function resendVerificationApi(accessToken: string) {
 }
 
 export async function forgotPasswordApi(email: string) {
-    const res = await fetch(`/api/auth/forgot-password`, {
+    const res = await fetch(`${API_BASE}/auth/forgot-password`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -79,7 +82,7 @@ export async function forgotPasswordApi(email: string) {
 }
 
 export async function resetPasswordApi(email: string, token: string, newPassword: string) {
-    const res = await fetch(`/api/auth/reset-password`, {
+    const res = await fetch(`${API_BASE}/auth/reset-password`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -91,7 +94,7 @@ export async function resetPasswordApi(email: string, token: string, newPassword
 }
 
 export async function requestAccountDeletionApi(accessToken: string) {
-    const res = await fetch(`/api/auth/account/delete/request`, {
+    const res = await fetch(`${API_BASE}/auth/account/delete/request`, {
         method: 'POST',
         credentials: 'include',
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -102,7 +105,7 @@ export async function requestAccountDeletionApi(accessToken: string) {
 }
 
 export async function confirmAccountDeletionApi(accessToken: string, token: string, password?: string) {
-    const res = await fetch(`/api/auth/account/delete/confirm`, {
+    const res = await fetch(`${API_BASE}/auth/account/delete/confirm`, {
         method: 'POST',
         credentials: 'include',
         headers: {
