@@ -1,7 +1,7 @@
 export type AuthResponse = { accessToken: string; expiresAt: string | number };
 export type MeResponse = { id?: string; email?: string; displayName?: string };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
+const API_BASE = '/api';
 
 async function handleJson(res: Response) {
     const text = await res.text();
