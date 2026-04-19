@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
 
-// Extract origin (protocol + host + port only)
-const API_ORIGIN = API_URL ? new URL(API_URL).origin : "";
+// Strip trailing /api so the rewrite destination is the bare server root
+// e.g. "http://localhost:8080/api" → "http://localhost:8080"
+const backendBase = rawApiUrl.replace(/\/api$/, "");
 
 const securityHeaders = [
   // Prevent clickjacking
@@ -38,7 +39,7 @@ const securityHeaders = [
       // data: for SVG icons, blob: for chart canvas, googleusercontent for Google avatars
       "img-src 'self' data: blob: https://lh3.googleusercontent.com",
       // Allow XHR/fetch to self and backend API
-      `connect-src 'self' ${API_ORIGIN}`,
+      "connect-src 'self'",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
@@ -55,6 +56,14 @@ const nextConfig: NextConfig = {
         // Apply to all routes
         source: "/(.*)",
         headers: securityHeaders,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${backendBase}/api/:path*`,
       },
     ];
   },
