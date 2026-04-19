@@ -62,8 +62,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
-        destination: `${backendBase}/api/:path*`,
+        // Proxy all /api/* to the backend, except Google OAuth paths which
+        // require direct browser navigation and must not loop through the proxy.
+        source: "/api/:all((?!auth/google(?:/|$)).*)",
+        destination: `${backendBase}/api/:all`,
       },
     ];
   },
