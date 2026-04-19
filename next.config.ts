@@ -1,11 +1,5 @@
 import type { NextConfig } from "next";
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-
-// Strip trailing /api so the rewrite destination is the bare server root
-// e.g. "http://localhost:8080/api" → "http://localhost:8080"
-const backendBase = rawApiUrl.replace(/\/api$/, "");
-
 const securityHeaders = [
   // Prevent clickjacking
   { key: "X-Frame-Options", value: "DENY" },
@@ -56,16 +50,6 @@ const nextConfig: NextConfig = {
         // Apply to all routes
         source: "/(.*)",
         headers: securityHeaders,
-      },
-    ];
-  },
-  async rewrites() {
-    return [
-      {
-        // Proxy all /api/* to the backend, except Google OAuth paths which
-        // require direct browser navigation and must not loop through the proxy.
-        source: "/api/:all((?!auth/google(?:/|$)).*)",
-        destination: `${backendBase}/api/:all`,
       },
     ];
   },
