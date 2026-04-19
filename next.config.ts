@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+// Extract origin (protocol + host + port only)
+const API_ORIGIN = API_URL ? new URL(API_URL).origin : "";
+
 const securityHeaders = [
   // Prevent clickjacking
   { key: "X-Frame-Options", value: "DENY" },
@@ -33,7 +38,7 @@ const securityHeaders = [
       // data: for SVG icons, blob: for chart canvas, googleusercontent for Google avatars
       "img-src 'self' data: blob: https://lh3.googleusercontent.com",
       // Allow XHR/fetch to self and backend API
-      "connect-src 'self'",
+      `connect-src 'self' ${API_ORIGIN}`,
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
