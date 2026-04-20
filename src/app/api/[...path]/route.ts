@@ -17,6 +17,9 @@ async function proxy(req: NextRequest, path: string[]): Promise<NextResponse> {
       reqHeaders.set(key, value);
     }
   });
+  // Forward the original host so the backend builds correct OAuth redirect_uri
+  const host = req.headers.get('host');
+  if (host) reqHeaders.set('x-forwarded-host', host);
 
   const hasBody = req.method !== 'GET' && req.method !== 'HEAD';
 
