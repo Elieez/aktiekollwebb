@@ -13,6 +13,8 @@ import {
   getInsiderTradesStats,
 } from "@/lib/api/insider-trades";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: "Insideraffärer",
   description: "Se de senaste insidertransaktionerna på Stockholmsbörsen. Realtidsdata om köp och sälj av bolagsledningar — direkt från Finansinspektionen.",
