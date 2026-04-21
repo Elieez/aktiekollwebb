@@ -2,8 +2,9 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Settings, LogOut, User as UserIcon, Bell } from 'lucide-react'
+import { Settings, LogOut, User as UserIcon, Bell, Sun, Moon } from 'lucide-react'
 import { loginApi, registerApi, refreshApi, logoutApi, resendVerificationApi } from '../lib/api/auth';
+import { useTheme } from '@/components/ThemeProvider';
 
 type User = {
     id?: string;
@@ -194,6 +195,7 @@ export function EmailVerificationBanner() {
 
 export function AuthStatus() {
     const { user, loading, logout } = useAuth();
+    const { theme, toggle } = useTheme();
     const [open, setOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -263,6 +265,15 @@ export function AuthStatus() {
                             <p className="truncate text-xs text-faint">{user.email}</p>
                         )}
                     </div>
+
+                    {/* Theme toggle — mobile only */}
+                    <button
+                        onClick={toggle}
+                        className="sm:hidden flex w-full items-center gap-2.5 px-3 py-2.5 text-sm text-muted hover:text-ink hover:bg-bg3 transition-colors cursor-pointer"
+                    >
+                        {theme === "dark" ? <Sun className="h-4 w-4 shrink-0" /> : <Moon className="h-4 w-4 shrink-0" />}
+                        {theme === "dark" ? "Ljust läge" : "Mörkt läge"}
+                    </button>
 
                     {/* Settings link */}
                     <Link
