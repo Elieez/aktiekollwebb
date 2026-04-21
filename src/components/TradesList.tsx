@@ -67,6 +67,16 @@ const mapPosition = (position: string) => {
   return position;
 };
 
+const typeAbbr = (type: string) => {
+  switch (type) {
+    case 'Förvärv':   return 'KÖP';
+    case 'Avyttring': return 'SÄLJ';
+    case 'Teckning':  return 'TEC';
+    case 'Tilldelning': return 'TIL';
+    default:          return type.slice(0, 3).toUpperCase();
+  }
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   const now = new Date();
@@ -172,7 +182,7 @@ export default function TradesList({
               <th
                 key={h.label}
                 className={`px-3 py-3 sm:px-4 font-display text-[11px] font-semibold uppercase tracking-widest text-faint
-                  ${h.align === "right" ? "text-left sm:text-right" : "text-left"} ${h.hideClass}`}
+                  ${h.align === "right" ? "text-right" : "text-left"} ${h.hideClass}`}
                 >
                   {h.label}
                 </th>
@@ -210,9 +220,13 @@ export default function TradesList({
                   </td>
 
                   <td className="px-3 py-3.5 sm:px-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[11px] font-semibold ${colors.badge}`}
-                    >
+                    {/* Mobile: abbreviated label */}
+                    <span className={`sm:hidden inline-flex items-center gap-1 rounded-md px-1.5 py-1 font-mono text-[10px] font-semibold ${colors.badge}`}>
+                      <span className={`inline-block h-1.5 w-1.5 rounded-full shrink-0 ${colors.dot}`}/>
+                      {typeAbbr(t.transactionType)}
+                    </span>
+                    {/* Desktop: full badge */}
+                    <span className={`hidden sm:inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-[11px] font-semibold ${colors.badge}`}>
                       <span className={`inline-block h-1.5 w-1.5 rounded-full ${colors.dot}`}/>
                       {t.transactionType}
                     </span>
@@ -234,8 +248,13 @@ export default function TradesList({
                     </>
                   )}
 
-                  <td className="px-3 py-3.5 text-left font-mono text-[13px] font-medium text-ink sm:px-4 sm:text-right">
-                    {formatCurrency(t.shares * t.price)}
+                  <td className="px-3 py-3.5 sm:px-4">
+                    <div className="font-mono text-[13px] font-medium text-ink text-right whitespace-nowrap">
+                      {formatCurrency(t.shares * t.price)}
+                    </div>
+                    <div suppressHydrationWarning className="mt-0.5 font-mono text-[11px] text-faint text-right whitespace-nowrap sm:hidden">
+                      {formatDate(t.publishingDate)}
+                    </div>
                   </td>
 
                   <td suppressHydrationWarning className="hidden px-3 py-3.5 text-right font-mono text-[12px] whitespace-nowrap text-faint sm:table-cell sm:px-4">

@@ -13,7 +13,7 @@ export default function IntegritetspolicyPage() {
                         ← Tillbaka
                     </Link>
                     <h1 className="font-display text-3xl font-bold text-ink mt-4">Integritetspolicy</h1>
-                    <p className="text-faint text-sm mt-1">Senast uppdaterad: mars 2026</p>
+                    <p className="text-faint text-sm mt-1">Senast uppdaterad: april 2026</p>
                 </div>
 
                 <div className="space-y-6 text-sm text-muted leading-relaxed">
@@ -36,6 +36,14 @@ export default function IntegritetspolicyPage() {
                             <li><span className="text-ink font-medium">Bevakningslista</span> – vilka bolag du valt att bevaka.</li>
                             <li><span className="text-ink font-medium">Notifikationsinställningar</span> – dina preferenser för e-post och Discord.</li>
                         </ul>
+                        <p className="pt-1">Vi samlar även in anonymiserad besöksdata via Vercel Analytics och Vercel Speed Insights:</p>
+                        <ul className="list-disc list-inside space-y-1 pl-2">
+                            <li><span className="text-ink font-medium">Sidvisningar och navigeringsmönster</span> – vilka sidor som besöks.</li>
+                            <li><span className="text-ink font-medium">Enhet, operativsystem och webbläsare</span> – för att förstå hur tjänsten används.</li>
+                            <li><span className="text-ink font-medium">Ungefärligt land</span> – härlett från IP-adress. IP-adressen sparas inte.</li>
+                            <li><span className="text-ink font-medium">Prestandamätningar</span> – laddningstider och Core Web Vitals för att förbättra tjänstens hastighet.</li>
+                        </ul>
+                        <p>Dessa verktyg använder inga cookies och skapar inga individuella användarprofiler.</p>
                     </section>
 
                     <section className="space-y-2">
@@ -44,6 +52,7 @@ export default function IntegritetspolicyPage() {
                         <ul className="list-disc list-inside space-y-1 pl-2">
                             <li>tillhandahålla och förbättra tjänsten (berättigat intresse / avtal),</li>
                             <li>skicka notifikationer om insidertransaktioner du valt att bevaka (samtycke),</li>
+                            <li>förstå hur tjänsten används och mäta prestanda via anonym analysdata (berättigat intresse),</li>
                             <li>skydda tjänsten mot missbruk (berättigat intresse).</li>
                         </ul>
                     </section>
@@ -61,9 +70,12 @@ export default function IntegritetspolicyPage() {
                         <h2 className="font-display text-base font-semibold text-ink">5. Delning med tredje part</h2>
                         <p>
                             Vi säljer aldrig dina personuppgifter. Vi delar uppgifter med tredje part endast i den
-                            utsträckning det krävs för att driva tjänsten, exempelvis hosting-leverantörer och
-                            e-posttjänster, vilka behandlar data enligt GDPR och våra instruktioner.
+                            utsträckning det krävs för att driva tjänsten. Nedan framgår de leverantörer vi använder:
                         </p>
+                        <ul className="list-disc list-inside space-y-1 pl-2">
+                            <li><span className="text-ink font-medium">Vercel</span> – hosting, driftsättning samt analys- och prestandaverktyg (Vercel Analytics och Speed Insights). Vercel behandlar anonymiserad besöks- och prestandadata. Uppgifterna överförs till och lagras av Vercel i enlighet med GDPR och tillämpliga standardavtalsklausuler.</li>
+                            <li><span className="text-ink font-medium">E-posttjänst</span> – för utskick av notifikationer och verifieringsmejl.</li>
+                        </ul>
                         <p>
                             Om du väljer att använda Discord-notifikationer skickas information till din angivna
                             Discord-webhook. AktieKoll ansvarar inte för Discords hantering av dessa uppgifter.
