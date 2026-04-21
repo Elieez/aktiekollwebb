@@ -13,16 +13,22 @@ import {
   getInsiderTradesStats,
 } from "@/lib/api/insider-trades";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
-  title: "Insideraffärer – AktieKoll",
+  title: "Insideraffärer",
+  description: "Se de senaste insidertransaktionerna på Stockholmsbörsen. Realtidsdata om köp och sälj av bolagsledningar — direkt från Finansinspektionen.",
+  alternates: { canonical: "/" },
 };
 
 export default async function TradesPage() {
-  const trades = await getInsiderTrades(1, 15);
-  const bigTrades = await getBigInsiderTrades();
-  const tradesCountBuy = await getCompanyTradesCountBuy();
-  const tradesCountSell = await getCompanyTradesCountSell();
-  const stats = await getInsiderTradesStats();
+  const [trades, bigTrades, tradesCountBuy, tradesCountSell, stats] = await Promise.all([
+    getInsiderTrades(1, 15),
+    getBigInsiderTrades(),
+    getCompanyTradesCountBuy(),
+    getCompanyTradesCountSell(),
+    getInsiderTradesStats(),
+  ]);
 
   return (
     <Page className="min-h-screen bg-bg text-ink antialiased">

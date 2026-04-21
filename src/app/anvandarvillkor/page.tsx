@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-    title: "Användarvillkor – AktieKoll",
+    title: "Användarvillkor",
 };
 
 export default function AnvandarvillkorPage() {

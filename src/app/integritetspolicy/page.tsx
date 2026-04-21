@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-    title: "Integritetspolicy – AktieKoll",
+    title: "Integritetspolicy",
 };
 
 export default function IntegritetspolicyPage() {

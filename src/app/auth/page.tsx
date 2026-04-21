@@ -189,9 +189,7 @@ export default function AuthPage() {
                 </div>
 
                 {/* Bottom */}
-                <p className="relative text-xs text-faint">
-                     {/* Alltid gratis &mdash; ingen kortinfo krävs */}
-                </p>
+                <p className="relative text-xs text-faint"></p>
             </div>
 
             {/* Right: Auth Forms */}
