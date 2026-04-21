@@ -7,6 +7,9 @@ import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/Auth";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
+
 const syne = Syne({
   subsets: ["latin"],
   variable: "--font-syne",
@@ -75,6 +78,8 @@ export default function RootLayout({
             <Footer />
           </AuthProvider>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
