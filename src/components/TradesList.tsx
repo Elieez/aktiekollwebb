@@ -238,7 +238,7 @@ export default function TradesList({
                     {formatCurrency(t.shares * t.price)}
                   </td>
 
-                  <td className="hidden px-3 py-3.5 text-right font-mono text-[12px] whitespace-nowrap text-faint sm:table-cell sm:px-4">
+                  <td suppressHydrationWarning className="hidden px-3 py-3.5 text-right font-mono text-[12px] whitespace-nowrap text-faint sm:table-cell sm:px-4">
                     {formatDate(t.publishingDate)}
                   </td>
                 </tr>
