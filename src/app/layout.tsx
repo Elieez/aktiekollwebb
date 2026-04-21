@@ -1,16 +1,31 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Syne, DM_Sans, DM_Mono } from "next/font/google";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/Auth";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
-const inter = Inter({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-syne",
   display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+  weight: ["300", "400", "500"],
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-dm-mono",
+  display: "swap",
+  weight: ["400", "500"],
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aktiekoll.se";
@@ -47,12 +62,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" className={inter.variable} suppressHydrationWarning>
+    <html lang="sv" className={`${syne.variable} ${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Prevent flash of wrong theme before React hydrates */}
         <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&window.matchMedia('(prefers-color-scheme: light)').matches))document.documentElement.classList.add('light');}catch(e){}})()` }} />
       </head>
-      <body className="font-sans bg-bg text-ink flex flex-col min-h-screen">
+      <body className="bg-bg text-ink flex flex-col min-h-screen">
         <ThemeProvider>
           <AuthProvider>
             <Header />

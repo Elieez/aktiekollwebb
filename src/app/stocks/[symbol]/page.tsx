@@ -27,8 +27,11 @@ interface ChartQuote {
 
 export async function generateMetadata({ params }: PageProps) {
   const { symbol } = await params;
+  const upper = symbol.toUpperCase().replace('.ST', '');
   return {
-    title: `${symbol.toUpperCase()} Aktie Information`,
+    title: `${upper} – Insiderhandel & Aktiedata`,
+    description: `Se insidertransaktioner, kursutveckling och handelsaktivitet för ${upper} på Stockholmsbörsen.`,
+    alternates: { canonical: `/stocks/${symbol}` },
   };
 }
 
@@ -45,35 +48,28 @@ export default async function StockPage({ params }: PageProps) {
   const yahooSymbol = symbol.includes('.') ? symbol : `${symbol}.ST`;
 
   try {
-    // Clean - no validation options needed in v3
-    const quote = await yahooFinance.quote(yahooSymbol);
+    const end = new Date();
+    const start = new Date();
+    start.setFullYear(end.getFullYear() - 1);
+    const query = `days=365&symbol=${encodeURIComponent(cleanSymbol)}`;
+
+    const [quote, chartRes, trades, companyData, companyTradeCountsBuy, companyTradeCountsSell] =
+      await Promise.all([
+        yahooFinance.quote(yahooSymbol),
+        yahooFinance.chart(yahooSymbol, { period1: start, period2: end, interval: "1d" }).catch(() => null),
+        getInsiderTradesBySymbol(cleanSymbol, 0, 10),
+        getCompanyByCode(cleanSymbol).catch(() => null),
+        getCompanyTradesCountBuy(query),
+        getCompanyTradesCountSell(query),
+      ]);
 
     if (!quote || !quote.regularMarketPrice) {
       return notFound();
     }
 
-    const end = new Date();
-    const start = new Date();
-    start.setFullYear(end.getFullYear() - 1);
-
-    let chartRes;
-    try {
-      // Clean - no validation options
-      chartRes = await yahooFinance.chart(yahooSymbol, {
-        period1: start,
-        period2: end,
-        interval: "1d",
-      });
-    } catch {
-      chartRes = null;
-    }
-
     const rawCompanyName = quote.longName || quote.shortName || cleanSymbol;
     const companyName = cleanCompanyName(rawCompanyName);
 
-    const trades = await getInsiderTradesBySymbol(cleanSymbol, 0, 10);
-
-    const companyData = await getCompanyByCode(cleanSymbol).catch(() => null);
     const companyDbId = companyData?.id ?? 0;
 
     const chartData = (chartRes && Array.isArray(chartRes.quotes) && chartRes.quotes.length > 0)
@@ -82,11 +78,6 @@ export default async function StockPage({ params }: PageProps) {
           close: q.close,
         }))
       : [];
-
-    const query = `days=365&symbol=${encodeURIComponent(cleanSymbol)}`;
-
-    const companyTradeCountsBuy = await getCompanyTradesCountBuy(query);
-    const companyTradeCountsSell = await getCompanyTradesCountSell(query);
 
     const buyCount = companyTradeCountsBuy[0]?.transactionCount || 0;
     const sellCount = companyTradeCountsSell[0]?.transactionCount || 0;
