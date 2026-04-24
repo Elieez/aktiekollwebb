@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CompanyTradeCount } from "@/lib/types/CompanyTradeCount";
 
 interface TradesCountProps {
@@ -23,23 +24,42 @@ export default function TradesCount({ companies, title, variant }: TradesCountPr
       </div>
 
       {/* Rows */}
-      {companies.map((company, i) => (
-        <div
-          key={i}
-          className="flex cursor-pointer items-center gap-2.5 border-b border-border px-3.5 py-3 transition-colors duration-100 last:border-b-0 hover:bg-bg3"
-        >
-          <span className="w-3.5 shrink-0 font-mono text-[11px] text-faint">{i + 1}</span>
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-[12px] font-medium text-ink leading-none mb-1" title={company.companyName || '-'}>
-              {company.companyName}
+      {companies.map((company, i) => {
+        const canNavigate = !!company.symbol && company.symbol !== "UNRESOLVED";
+        const href = canNavigate
+          ? `/stocks/${company.symbol!.replace(/\.ST$/i, "")}.ST`
+          : undefined;
+
+        const rowClass =
+          "flex items-center gap-2.5 border-b border-border px-3.5 py-3 transition-colors duration-100 last:border-b-0 hover:bg-bg3" +
+          (canNavigate ? " cursor-pointer" : "");
+
+        const inner = (
+          <>
+            <span className="w-3.5 shrink-0 font-mono text-[11px] text-faint">{i + 1}</span>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[12px] font-medium text-ink leading-none mb-1" title={company.companyName || "-"}>
+                {company.companyName}
+              </div>
+              <div
+                className={`h-0.5 rounded-full transition-all duration-500 ${barColor} opacity-60`}
+                style={{ width: `${(company.transactionCount / max) * 100}%` }}
+              />
+              <div className="mt-1 text-[11px] text-faint">{company.transactionCount} transaktioner</div>
             </div>
-            <div className={`h-0.5 rounded-full transition-all duration-500 ${barColor} opacity-60`}
-              style={{ width: `${(company.transactionCount / max) * 100}%` }}
-            />
-            <div className="mt-1 text-[11px] text-faint">{company.transactionCount} transaktioner</div>
+          </>
+        );
+
+        return canNavigate ? (
+          <Link key={i} href={href!} className={rowClass}>
+            {inner}
+          </Link>
+        ) : (
+          <div key={i} className={rowClass}>
+            {inner}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

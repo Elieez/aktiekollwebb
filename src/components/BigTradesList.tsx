@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
 
 interface TopTradesProps {
@@ -43,11 +44,18 @@ export default function BigTradesList({ trades }: TopTradesProps) {
       <div className="overflow-hidden rounded-xl border border-border bg-bg2 card-shadow">
         {trades.map((trade, index) => {
           const isBuy = trade.transactionType === "Förvärv";
-          return (
-            <div
-              key={index}
-              className="flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-100 last:border-b-0 hover:bg-bg3 cursor-pointer"
-            >
+          const rawSymbol = trade.symbol;
+          const canNavigate = !!rawSymbol && rawSymbol !== "UNRESOLVED";
+          const href = canNavigate
+            ? `/stocks/${rawSymbol!.replace(/\.ST$/i, "")}.ST`
+            : undefined;
+
+          const rowClass =
+            "flex items-center gap-3 border-b border-border px-4 py-3 transition-colors duration-100 last:border-b-0 hover:bg-bg3" +
+            (canNavigate ? " cursor-pointer" : "");
+
+          const inner = (
+            <>
               {/* Rank */}
               <span className={`w-5 shrink-0 text-center font-mono text-[12px] font-semibold ${rankStyle[index] ?? "text-faint"}`}>
                 {index + 1}
@@ -55,7 +63,7 @@ export default function BigTradesList({ trades }: TopTradesProps) {
 
               {/* Name + insider */}
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[13px] font-medium text-ink leading-none mb-0.5" title={trade.companyName || '-'}>
+                <div className="truncate text-[13px] font-medium text-ink leading-none mb-0.5" title={trade.companyName || "-"}>
                   {trade.companyName}
                 </div>
                 <div className="truncate text-[12px] text-faint">{trade.insiderName}</div>
@@ -73,6 +81,16 @@ export default function BigTradesList({ trades }: TopTradesProps) {
                   </span>
                 </div>
               </div>
+            </>
+          );
+
+          return canNavigate ? (
+            <Link key={index} href={href!} className={rowClass}>
+              {inner}
+            </Link>
+          ) : (
+            <div key={index} className={rowClass}>
+              {inner}
             </div>
           );
         })}
