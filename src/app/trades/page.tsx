@@ -4,6 +4,7 @@ import TradesCount from "@/components/TradesCount";
 import TradesList from "@/components/TradesList";
 import BigTradesList from "@/components/BigTradesList";
 import Hero from "@/components/Hero";
+import Ticker from "@/components/Ticker";
 
 import {
   getInsiderTrades,
@@ -32,11 +33,12 @@ export default async function TradesPage() {
 
   return (
     <Page className="min-h-screen bg-bg text-ink antialiased">
-      <Hero stats={stats} />
+      <Ticker trades={trades} />
+      <Hero stats={stats} trades={trades} />
       <div>
         <div className="mx-auto grid max-w-380 grid-cols-1 gap-6 px-4 py-6 sm:px-8 sm:py-8 lg:grid-cols-[1fr_340px]">
           {/* Recent trades — order 2 on mobile, left column on desktop */}
-          <Section className="order-2 lg:order-0">
+          <Section id="affarer" className="order-2 lg:order-0">
             <TradesList trades={trades} enablePagination/>
           </Section>
 

@@ -119,7 +119,7 @@ export default function CompanySearch() {
         aria-activedescendant={
           open && highlight >= 0 ? `${listId}-option-${highlight}` : undefined
         }
-        className="w-full rounded-lg border border-white/[0.07] bg-bg3 py-2 pl-9 pr-3 font-sans text-[13px]
+        className="w-full rounded-lg border border-white/[0.07] bg-bg3 py-2 pl-9 pr-3 font-sans text-base sm:text-[13px]
         text-ink placeholder:text-[#666] outline-none transition-colors focus:border-white/12"
       />
 

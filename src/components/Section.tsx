@@ -1,13 +1,12 @@
 interface Props {
   children: React.ReactNode;
   className?: string;
+  id?: string;
 }
 
-export default function Section({ children, className }: Props) {
+export default function Section({ children, className, id }: Props) {
   return (
-    <section
-      className={`rounded-lg ${className}`}
-    >
+    <section id={id} className={`rounded-lg ${className}`}>
       {children}
     </section>
   );

@@ -149,6 +149,18 @@ body {
 .ticker-animate {
   animation: ticker 30s linear infinite;
 }
+.ticker-track {
+  animation: ticker 55s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+/* ── Pulse dot ───────────────────────────────────────────────── */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(1.5); }
+}
 
 /* ── Entrance animations ─────────────────────────────────────── */
 @keyframes fadeUp {
