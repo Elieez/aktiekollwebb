@@ -34,7 +34,7 @@ export default async function TradesPage() {
   return (
     <Page className="min-h-screen bg-bg text-ink antialiased">
       <Ticker trades={trades} />
-      <Hero stats={stats} trades={trades} />
+      <Hero stats={stats} />
       <div>
         <div className="mx-auto grid max-w-380 grid-cols-1 gap-6 px-4 py-6 sm:px-8 sm:py-8 lg:grid-cols-[1fr_340px]">
           {/* Recent trades — order 2 on mobile, left column on desktop */}
