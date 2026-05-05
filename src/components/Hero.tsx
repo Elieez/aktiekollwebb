@@ -1,10 +1,8 @@
 import { TradeStats } from "@/lib/types/TradeStats";
-import { InsiderTrade } from "@/lib/types/InsiderTrade";
 import HeroCTA from "@/components/HeroCTA";
 
 interface HeroProps {
   stats: TradeStats;
-  trades: InsiderTrade[];
 }
 
 function formatStatValue(v: number): string {
@@ -13,11 +11,9 @@ function formatStatValue(v: number): string {
   return `${new Intl.NumberFormat("sv-SE").format(v)} kr`;
 }
 
-export default function Hero({ stats, trades }: HeroProps) {
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const todayTrades = trades.filter(t => t.publishingDate?.startsWith(todayStr));
-  const todayCount  = todayTrades.length;
-  const todayValue  = todayTrades.reduce((s, t) => s + t.shares * t.price, 0);
+export default function Hero({ stats }: HeroProps) {
+  const todayCount = stats.todayCount;
+  const todayValue = stats.todayValue;
 
   const todayLabel = todayValue >= 1_000_000
     ? `+${(todayValue / 1_000_000).toFixed(1)} Mkr idag`
