@@ -42,3 +42,15 @@ export async function getInsiderTradesStats(): Promise<TradeStats> {
     next: { revalidate: 21600 }, 
   });
 }
+
+export interface TradedSymbol {
+  symbol: string;
+  lastTradeDate: string;
+}
+
+/** All symbols that have at least one insider trade (used for the sitemap). */
+export async function getTradedSymbols() {
+  return await get<TradedSymbol[]>("insidertrades/symbols", {
+    next: { revalidate: 86400 },
+  });
+}

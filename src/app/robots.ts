@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
     return {
         rules: [
-            { userAgent: "*", allow: "/" },
-            { userAgent: "*", disallow: ["/auth", "/bevakningslista", "/installningar"] },
+            { userAgent: "*", allow: "/", disallow: ["/auth", "/bevakningslista", "/installningar"] },
         ],
-        sitemap: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://aktiekoll.se"}/sitemap.xml`,
+        sitemap: `${SITE_URL}/sitemap.xml`,
     };
 }

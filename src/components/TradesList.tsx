@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/ThemeProvider";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
+import { formatMoney } from "@/lib/utils";
 import { 
   getInsiderTrades,
   getInsiderTradesBySymbol,
@@ -39,18 +40,6 @@ const getTransactionTypeColor = (type: string, isLight: boolean) => {
     default:
       return { badge: 'bg-[rgba(128,128,128,0.1)] text-muted', dot: 'bg-gray-600' };
   }
-};
-
-const formatCurrency = (amount: number, showDecimals: boolean = false) => {
-
-  const hasDecimals = amount % 1 !== 0;
-
-  return new Intl.NumberFormat('sv-SE', {
-    style: 'currency',
-    currency: 'SEK',
-    minimumFractionDigits: showDecimals && hasDecimals ? 2 : 0,
-    maximumFractionDigits: showDecimals && hasDecimals ? 2 : 0,
-  }).format(amount);
 };
 
 const formatNumber = (num: number) => {
@@ -242,7 +231,7 @@ export default function TradesList({
                       </td>
                       <td className="hidden px-3 py-3.5 text-right sm:px-4 md:table-cell">
                         <span className="font-mono text-[13px] text-ink">
-                          {formatCurrency(t.price, true)}
+                          {formatMoney(t.price, t.currency, true)}
                         </span>
                       </td>
                     </>
@@ -250,7 +239,7 @@ export default function TradesList({
 
                   <td className="px-3 py-3.5 sm:px-4">
                     <div className="font-mono text-[13px] font-medium text-ink text-right whitespace-nowrap">
-                      {formatCurrency(t.shares * t.price)}
+                      {formatMoney(t.shares * t.price, t.currency)}
                     </div>
                     <div suppressHydrationWarning className="mt-0.5 font-mono text-[11px] text-faint text-right whitespace-nowrap sm:hidden">
                       {formatDate(t.publishingDate)}

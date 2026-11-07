@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/components/Auth";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { SITE_URL } from "@/lib/site";
 
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
@@ -30,8 +31,6 @@ const dmMono = DM_Mono({
   display: "swap",
   weight: ["400", "500"],
 });
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aktiekoll.se";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

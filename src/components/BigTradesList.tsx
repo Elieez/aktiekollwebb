@@ -1,17 +1,10 @@
 import Link from "next/link";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
+import { formatMoney } from "@/lib/utils";
 
 interface TopTradesProps {
   trades: InsiderTrade[];
 }
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('sv-SE', {
-    style: 'currency',
-    currency: 'SEK',
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -72,7 +65,7 @@ export default function BigTradesList({ trades }: TopTradesProps) {
               {/* Value + type */}
               <div className="shrink-0 text-right">
                 <div className={`font-mono text-[13px] font-semibold ${isBuy ? "text-buy" : "text-sell"}`}>
-                  {formatCurrency(trade.price * trade.shares)}
+                  {formatMoney(trade.price * trade.shares, trade.currency)}
                 </div>
                 <div className="mt-0.5 flex items-center justify-end gap-1.5">
                   <span className={`inline-block h-1.5 w-1.5 rounded-full ${isBuy ? "bg-buy" : "bg-sell"}`} />

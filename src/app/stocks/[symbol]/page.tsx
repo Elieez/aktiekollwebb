@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps) {
   return {
     title: `${upper} – Insiderhandel & Aktiedata`,
     description: `Se insidertransaktioner, kursutveckling och handelsaktivitet för ${upper} på Stockholmsbörsen.`,
-    alternates: { canonical: `/stocks/${symbol}` },
+    alternates: { canonical: `/stocks/${encodeURIComponent(upper)}` },
   };
 }
 
