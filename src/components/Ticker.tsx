@@ -1,4 +1,5 @@
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
+import { tradeValueSek } from "@/lib/utils";
 
 interface TickerProps {
   trades: InsiderTrade[];
@@ -49,7 +50,7 @@ export default function Ticker({ trades }: TickerProps) {
         <div className="ticker-track flex h-full min-w-max items-center gap-8">
           {doubled.map((t, i) => {
             const buy = isBuy(t.transactionType);
-            const amt = t.shares * t.price;
+            const amt = tradeValueSek(t) ?? 0;
             return (
               <span
                 key={i}

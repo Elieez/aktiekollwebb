@@ -1,6 +1,7 @@
 import { TradeStats } from "@/lib/types/TradeStats";
 import { InsiderTrade } from "@/lib/types/InsiderTrade";
 import HeroCTA from "@/components/HeroCTA";
+import { tradeValueSek } from "@/lib/utils";
 
 interface HeroProps {
   stats: TradeStats;
@@ -17,7 +18,7 @@ export default function Hero({ stats, trades }: HeroProps) {
   const todayStr = new Date().toISOString().slice(0, 10);
   const todayTrades = trades.filter(t => t.publishingDate?.startsWith(todayStr));
   const todayCount  = todayTrades.length;
-  const todayValue  = todayTrades.reduce((s, t) => s + t.shares * t.price, 0);
+  const todayValue  = todayTrades.reduce((s, t) => s + (tradeValueSek(t) ?? 0), 0);
 
   const todayLabel = todayValue >= 1_000_000
     ? `+${(todayValue / 1_000_000).toFixed(1)} Mkr idag`

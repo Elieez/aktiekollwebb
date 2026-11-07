@@ -270,7 +270,7 @@ export default function StockChart({ data, trades = [] }: StockChartProps) {
           makeRow(`${tradesAtTime.length} transaktion(er)`, textSecondary),
           ...tradesAtTime.slice(0, 3).map((t) =>
             makeRow(
-              `${t.transactionType} ${t.price ?? '--'} SEK`,
+              `${t.transactionType} ${t.price ?? '--'} ${t.currency ?? 'SEK'}`,
               getTradeColor(t.transactionType),
               'margin-top:4px',
             )
