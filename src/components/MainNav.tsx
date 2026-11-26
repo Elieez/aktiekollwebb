@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const is = (p: string, base: string) => p === base || p.startsWith(base + "/");
+
 const links = [
-  { href: "/", label: "Insideraffärer", match: (p: string) => p === "/" || p.startsWith("/trades") },
-  { href: "/blankning", label: "Blankning", match: (p: string) => p.startsWith("/blankning") },
+  { href: "/", label: "Insideraffärer", match: (p: string) => p === "/" || is(p, "/trades") },
+  { href: "/blankning", label: "Blankning", match: (p: string) => is(p, "/blankning") },
 ];
 
 export default function MainNav() {

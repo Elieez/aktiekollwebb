@@ -31,13 +31,15 @@ export default function Header() {
 
           <MainNav />
 
-          {/* Middle: Search — absolutely centered, desktop only */}
-          <div className="hidden sm:block absolute left-1/2 -translate-x-1/2 w-full sm:max-w-[16rem] lg:max-w-md px-4">
-            <CompanySearch />
+          {/* Middle: Search takes remaining space, desktop only */}
+          <div className="hidden sm:flex flex-1 min-w-0 justify-center px-4">
+            <div className="w-full max-w-md">
+              <CompanySearch />
+            </div>
           </div>
 
           {/* Right: Theme toggle (desktop only) + Auth */}
-          <div className="ml-auto flex shrink-0 items-center gap-3">
+          <div className="ml-auto sm:ml-0 flex shrink-0 items-center gap-3">
             <button
               onClick={toggle}
               aria-label={theme === "dark" ? "Byt till ljust läge" : "Byt till mörkt läge"}
