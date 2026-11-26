@@ -20,19 +20,29 @@ export function formatChange(v: number | null): { text: string; tone: Tone } {
     : { text: `▼ \u2212${abs}`, tone: "down" };
 }
 
-/** "sedan 26 nov" */
-export function formatSince(iso: string | null): string | null {
+function shortDate(iso: string | null): string | null {
   if (!iso) return null;
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  const s = new Intl.DateTimeFormat("sv-SE", {
+  return new Intl.DateTimeFormat("sv-SE", {
     day: "numeric",
     month: "short",
     timeZone: "Europe/Stockholm",
   })
     .format(d)
     .replace(/\.$/, "");
-  return `sedan ${s}`;
+}
+
+/** "sedan 26 nov" */
+export function formatSince(iso: string | null): string | null {
+  const s = shortDate(iso);
+  return s ? `sedan ${s}` : null;
+}
+
+/** "Uppdaterad 26 nov" */
+export function formatUpdated(iso: string | null): string | null {
+  const s = shortDate(iso);
+  return s ? `Uppdaterad ${s}` : null;
 }
 
 export function formatInsiders(
