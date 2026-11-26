@@ -35,7 +35,7 @@ function Name({ item }: { item: ShortListItem }) {
 
 function Change({ item }: { item: ShortListItem }) {
   const c = formatChange(item.change);
-  const since = item.change !== null ? formatSince(item.changeSince) : null;
+  const since = item.change !== null && c.tone !== "flat" ? formatSince(item.changeSince) : null;
   return (
     <div className="text-right">
       <div className={`font-mono ${changeTone[c.tone]}`}>{c.text}</div>

@@ -26,12 +26,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     // Shorted stocks may lack insider trades; add them unless already listed. Errors -> skip.
-    const seen = new Set(symbols.map((s) => s.symbol.toUpperCase()));
+    const baseOf = (sym: string) => sym.replace(/\.ST$/i, "").toUpperCase();
+    const seen = new Set(symbols.map((s) => baseOf(s.symbol)));
     const shorted = await getMostShorted("highest", 100);
     const shortedPages: MetadataRoute.Sitemap = [];
     for (const item of shorted?.items ?? []) {
         if (!item.symbol) continue;
-        const symbol = `${item.symbol.replace(/\.ST$/i, "")}.ST`;
+        const symbol = item.symbol.replace(/\.ST$/i, "");
         if (seen.has(symbol.toUpperCase())) continue;
         seen.add(symbol.toUpperCase());
         shortedPages.push({

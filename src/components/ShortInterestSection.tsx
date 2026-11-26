@@ -32,8 +32,8 @@ export default function ShortInterestSection({ data }: { data: ShortCompany | nu
           </p>
           <p className={`font-mono text-[14px] ${toneClass[change.tone]}`}>
             {change.text}
-            {since && change.text !== "–" && (
-              <span className="text-muted"> {since}</span>
+            {change.text !== "–" && (
+              <span className="text-muted"> {since ?? "senaste 30 d"}</span>
             )}
           </p>
         </div>
@@ -56,8 +56,8 @@ export default function ShortInterestSection({ data }: { data: ShortCompany | nu
                 </tr>
               </thead>
               <tbody>
-                {data.holders.map((h) => (
-                  <tr key={h.holderName} className="border-b border-border last:border-0">
+                {data.holders.map((h, i) => (
+                  <tr key={`${h.holderName}|${h.positionDate}|${i}`} className="border-b border-border last:border-0">
                     <td className="py-2 pr-3 text-ink">{h.holderName}</td>
                     <td className="py-2 px-3 text-right font-mono text-ink whitespace-nowrap">
                       {formatPercent(h.positionPercent)}

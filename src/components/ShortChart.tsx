@@ -11,7 +11,6 @@ import {
   type IChartApi,
   type ISeriesApi,
   type LineData,
-  type UTCTimestamp,
 } from 'lightweight-charts';
 
 interface ShortChartProps {
@@ -27,16 +26,18 @@ const palette = (isLight: boolean) => ({
   grid: isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.04)',
 });
 
+// API dates are offset-less business days ("2026-11-26T00:00:00"); use the day string so the
+// chart never shifts a day through timezone conversion.
 function toLineData(points: SeriesPoint[]): LineData[] {
-  const byTime = new Map<number, number>();
+  const byDay = new Map<string, number>();
   for (const p of points) {
-    const ms = new Date(p.date).getTime();
-    if (Number.isNaN(ms) || typeof p.value !== 'number') continue;
-    byTime.set(Math.floor(ms / 1000), p.value);
+    const day = typeof p.date === 'string' ? p.date.slice(0, 10) : '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || typeof p.value !== 'number' || Number.isNaN(p.value)) continue;
+    byDay.set(day, p.value);
   }
-  return Array.from(byTime.entries())
-    .sort((a, b) => a[0] - b[0])
-    .map(([t, v]) => ({ time: t as UTCTimestamp, value: v }));
+  return Array.from(byDay.entries())
+    .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+    .map(([time, value]) => ({ time, value }));
 }
 
 const pctFormat = (v: number) =>
@@ -119,6 +120,8 @@ export default function ShortChart({ totalSeries, significantSeries }: ShortChar
     if (!chart) return;
     totalRef.current?.setData(showTotal ? total : []);
     sigRef.current?.setData(showSig ? sig : []);
+    const el = containerRef.current;
+    if (el && el.clientWidth > 0) chart.resize(el.clientWidth, el.clientHeight || 256);
     chart.timeScale().fitContent();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalSeries, significantSeries]);
@@ -138,6 +141,8 @@ export default function ShortChart({ totalSeries, significantSeries }: ShortChar
     sigRef.current?.applyOptions({ color: c.muted });
   }, [theme]);
 
+  const hasData = showTotal || showSig;
+
   return (
     <div>
       {(showTotal || showSig) && (
@@ -156,7 +161,8 @@ export default function ShortChart({ totalSeries, significantSeries }: ShortChar
           )}
         </div>
       )}
-      <div ref={containerRef} className="w-full h-64 sm:h-72" />
+      {!hasData && <p className="text-[13px] text-muted">Otillräcklig historik</p>}
+      <div ref={containerRef} className={hasData ? 'w-full h-64 sm:h-72' : 'hidden'} />
     </div>
   );
 }
