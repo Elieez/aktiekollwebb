@@ -5,6 +5,7 @@ import {
   formatInsiders,
   formatPercent,
   formatSince,
+  stockHref,
   type Tone,
 } from "@/lib/shorts-format";
 
@@ -21,12 +22,8 @@ const insiderTone: Record<Tone, string> = {
   flat: "text-muted",
 };
 
-function stockHref(item: ShortListItem): string | null {
-  return item.symbol ? `/stocks/${item.symbol.replace(/\.ST$/i, "")}.ST` : null;
-}
-
 function Name({ item }: { item: ShortListItem }) {
-  const href = stockHref(item);
+  const href = stockHref(item.symbol);
   return href ? (
     <Link href={href} className="font-medium text-ink hover:underline">
       {item.issuerName}

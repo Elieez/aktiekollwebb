@@ -55,3 +55,7 @@ export function formatInsiders(
     return { text: `${buys} köp · ${sells} sälj`, tone: "flat" };
   return { text: "–", tone: "flat" };
 }
+
+export function stockHref(symbol: string | null): string | null {
+  return symbol ? `/stocks/${symbol.replace(/\.ST$/i, "")}.ST` : null;
+}
