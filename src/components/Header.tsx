@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Sun, Moon } from "lucide-react";
 import { AuthStatus, EmailVerificationBanner } from "./Auth";
 import CompanySearch from "@/components/SearchBar";
+import MainNav from "@/components/MainNav";
 import { useTheme } from "@/components/ThemeProvider";
 
 export default function Header() {
@@ -28,8 +29,10 @@ export default function Header() {
             </Link>
           </div>
 
+          <MainNav />
+
           {/* Middle: Search — absolutely centered, desktop only */}
-          <div className="hidden sm:block absolute left-1/2 -translate-x-1/2 w-full max-w-md px-4">
+          <div className="hidden sm:block absolute left-1/2 -translate-x-1/2 w-full sm:max-w-[16rem] lg:max-w-md px-4">
             <CompanySearch />
           </div>
 
