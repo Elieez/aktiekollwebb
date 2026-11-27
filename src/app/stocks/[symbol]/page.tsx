@@ -13,6 +13,8 @@ import {
   getInsiderTradesBySymbol,
 } from "@/lib/api/insider-trades";
 import { getCompanyByCode } from "@/lib/api/companies";
+import { getCompanyShorts } from "@/lib/api/short-positions";
+import ShortInterestSection from "@/components/ShortInterestSection";
 
 const yahooFinance = new YahooFinance({ suppressNotices: ['yahooSurvey'] });
 
@@ -53,14 +55,15 @@ export default async function StockPage({ params }: PageProps) {
     start.setFullYear(end.getFullYear() - 1);
     const query = `days=365&symbol=${encodeURIComponent(cleanSymbol)}`;
 
-    const [quote, chartRes, trades, companyData, companyTradeCountsBuy, companyTradeCountsSell] =
+    const [quote, chartRes, trades, companyData, companyTradeCountsBuy, companyTradeCountsSell, shorts] =
       await Promise.all([
         yahooFinance.quote(yahooSymbol),
         yahooFinance.chart(yahooSymbol, { period1: start, period2: end, interval: "1d" }).catch(() => null),
-        getInsiderTradesBySymbol(cleanSymbol, 0, 10),
+        getInsiderTradesBySymbol(cleanSymbol, 0, 10).catch(() => []),
         getCompanyByCode(cleanSymbol).catch(() => null),
-        getCompanyTradesCountBuy(query),
-        getCompanyTradesCountSell(query),
+        getCompanyTradesCountBuy(query).catch(() => []),
+        getCompanyTradesCountSell(query).catch(() => []),
+        getCompanyShorts(cleanSymbol).catch(() => null),
       ]);
 
     if (!quote || !quote.regularMarketPrice) {
@@ -161,8 +164,9 @@ export default async function StockPage({ params }: PageProps) {
                 </div>
               )}
             </Section>
+            <ShortInterestSection data={shorts} />
             <Section className="bg-bg2 border border-border rounded-xl overflow-hidden">
-              <TradesList 
+              <TradesList
               trades={trades} 
               enablePagination 
               symbol={cleanSymbol} 

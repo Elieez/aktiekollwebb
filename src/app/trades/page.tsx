@@ -5,6 +5,8 @@ import TradesList from "@/components/TradesList";
 import BigTradesList from "@/components/BigTradesList";
 import Hero from "@/components/Hero";
 import Ticker from "@/components/Ticker";
+import MostShortedCard from "@/components/MostShortedCard";
+import { getMostShorted } from "@/lib/api/short-positions";
 
 import {
   getInsiderTrades,
@@ -23,12 +25,13 @@ export const metadata = {
 };
 
 export default async function TradesPage() {
-  const [trades, bigTrades, tradesCountBuy, tradesCountSell, stats] = await Promise.all([
+  const [trades, bigTrades, tradesCountBuy, tradesCountSell, stats, mostShorted] = await Promise.all([
     getInsiderTrades(1, 15),
     getBigInsiderTrades(),
     getCompanyTradesCountBuy(),
     getCompanyTradesCountSell(),
     getInsiderTradesStats(),
+    getMostShorted("highest", 5),
   ]);
 
   return (
@@ -62,6 +65,13 @@ export default async function TradesPage() {
                 <TradesCount companies={tradesCountSell} title="▼ Mest sålda" variant="sell" />
               </div>
             </Section>
+
+            {/* Most shorted — last; hidden if the shorts API is unavailable */}
+            {mostShorted && mostShorted.items.length > 0 && (
+              <Section className="order-4">
+                <MostShortedCard items={mostShorted.items} />
+              </Section>
+            )}
           </div>
         </div>
       </div>
